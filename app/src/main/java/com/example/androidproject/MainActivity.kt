@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.androidproject.database._PlaygroundDB
+import com.example.androidproject.data._PlaygroundDB
 import com.example.androidproject.ui.theme.AndroidProjectTheme
 
 class MainActivity : ComponentActivity() {

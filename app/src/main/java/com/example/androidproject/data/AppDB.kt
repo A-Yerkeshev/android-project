@@ -1,9 +1,15 @@
-package com.example.androidproject.database
+package com.example.androidproject.data
 
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.androidproject.App
+import com.example.androidproject.data.daos.CheckpointDao
+import com.example.androidproject.data.daos.QuestDao
+import com.example.androidproject.data.daos.TaskDao
+import com.example.androidproject.data.models.CheckpointEntity
+import com.example.androidproject.data.models.QuestEntity
+import com.example.androidproject.data.models.TaskEntity
 
 @Database(entities = [CheckpointEntity::class, TaskEntity::class, QuestEntity::class], version = 1, exportSchema = false)
 abstract class AppDB : RoomDatabase() {

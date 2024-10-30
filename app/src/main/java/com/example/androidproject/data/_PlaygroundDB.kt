@@ -1,9 +1,14 @@
-package com.example.androidproject.database
+package com.example.androidproject.data
 
 import android.util.Log
+import com.example.androidproject.data.daos.CheckpointDao
+import com.example.androidproject.data.daos.QuestDao
+import com.example.androidproject.data.daos.TaskDao
+import com.example.androidproject.data.models.CheckpointEntity
+import com.example.androidproject.data.models.QuestEntity
+import com.example.androidproject.data.models.TaskEntity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class _PlaygroundDB {
     private val database: AppDB = AppDB.getDatabase()
