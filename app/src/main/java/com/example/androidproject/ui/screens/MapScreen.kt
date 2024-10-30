@@ -31,7 +31,7 @@ import org.osmdroid.views.overlay.Marker
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun MapScreen() {
+fun MapScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     // Initialize OSMDroid configuration
@@ -53,19 +53,17 @@ fun MapScreen() {
     }
 
     if (locationPermissionState.status.isGranted) {
-        // Use a Column to arrange UI elements vertically
-        Column(modifier = Modifier.fillMaxSize()) {
+        // Apply the modifier to the Column
+        Column(modifier = modifier.fillMaxSize()) {
             // Other UI elements above the map
             Text(text = "Welcome to the Map Screen")
-
-            // Space between elements
             Spacer(modifier = Modifier.height(16.dp))
 
             // Map with specified height
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp) // Set the height as needed
+                    .height(300.dp)
             ) {
                 ShowMap()
             }
