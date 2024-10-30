@@ -23,7 +23,11 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.isGranted
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import com.example.androidproject.R
+import org.osmdroid.views.overlay.Marker
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -49,15 +53,30 @@ fun MapScreen() {
     }
 
     if (locationPermissionState.status.isGranted) {
-        ShowMap()
+        // Use a Column to arrange UI elements vertically
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Other UI elements above the map
+            Text(text = "Welcome to the Map Screen")
+
+            // Space between elements
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Map with specified height
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp) // Set the height as needed
+            ) {
+                ShowMap()
+            }
+
+            // Other UI elements below the map
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "Additional content below the map")
+        }
     } else {
         // Handle permission not granted scenario
-        // For example, show a message to the user
-        Toast.makeText(
-            context,
-            "Location permission is required to display the map.",
-            Toast.LENGTH_LONG
-        ).show()
+        Text(text = "Location permission is required to display the map.")
     }
 }
 
@@ -71,6 +90,7 @@ fun ShowMap() {
                 // Enable pinch to zoom
                 setMultiTouchControls(true)
 
+                // Configure map controller
                 val mapController = controller
                 mapController.setZoom(15.0)
 
@@ -84,6 +104,7 @@ fun ShowMap() {
 
                 val location = if (hasFineLocationPermission) {
                     locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                        ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                 } else {
                     null
                 }
@@ -91,11 +112,22 @@ fun ShowMap() {
                 val startPoint = if (location != null) {
                     GeoPoint(location.latitude, location.longitude)
                 } else {
-                    // Default to Helsinki coordinates if location is unavailable
-                    GeoPoint(60.1699, 24.9384)
+                    // Default coordinates if location is unavailable
+                    GeoPoint(60.1699, 24.9384) // Helsinki
                 }
 
                 mapController.setCenter(startPoint)
+
+                // Add a marker at the user's location
+                val userMarker = Marker(this)
+                userMarker.position = startPoint
+                userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+
+                // Use a custom icon or default
+                userMarker.icon = ContextCompat.getDrawable(ctx, R.drawable.ic_location_marker)
+                userMarker.title = "Your Location"
+
+                overlays.add(userMarker)
             }
         },
         modifier = Modifier.fillMaxSize()

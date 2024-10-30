@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
 
     <application
         android:name=".App"
@@ -13,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidProject"
         tools:targetApi="31">
+        <!-- OSMDroid configuration -->
+        <meta-data android:name="osmdroid.user_agent_value" android:value="com.example.yourapp" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,5 +32,6 @@
             </intent-filter>
         </activity>
     </application>
+
 
 </manifest>
