@@ -51,12 +51,20 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.ui.viewbinding)
     val room_version = "2.6.1"
 
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
+
+    // OSMDroid for OpenStreetMap
+    implementation("org.osmdroid:osmdroid-android:6.1.12")
+
+    implementation("com.google.accompanist:accompanist-permissions:0.28.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
