@@ -11,12 +11,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.androidproject.database._PlaygroundDB
 import com.example.androidproject.ui.theme.AndroidProjectTheme
 
 class MainActivity : ComponentActivity() {
+    val dbPlayground = _PlaygroundDB()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        dbPlayground.play()
         setContent {
             AndroidProjectTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
