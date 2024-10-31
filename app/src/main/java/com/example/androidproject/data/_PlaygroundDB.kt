@@ -18,10 +18,7 @@ class _PlaygroundDB {
 
     fun play() {
         GlobalScope.launch {
-            val questId: Int = (questDao.insert(QuestEntity())).toInt()
-            val checkpointId: Int = (checkpointDao.insert(CheckpointEntity(questId = questId, lat = 60.168490, long = 24.959860))).toInt()
-            val taskId: Int = (taskDao.insert(TaskEntity(checkpointId = checkpointId))).toInt()
-            questDao.unsetAllCurrent()
+            database.fillWithTestData()
 
             Log.d("DBG", "Database playground didn't crash")
         }
