@@ -1,5 +1,6 @@
 package com.example.androidproject.data
 
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -21,10 +22,10 @@ abstract class AppDB : RoomDatabase() {
         @Volatile
         private var Instance: AppDB? = null
 
-        fun getDatabase(): AppDB {
+        fun getDatabase(context: Context = App.appContext): AppDB {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
-                    App.appContext,
+                    context,
                     AppDB::class.java,
                     "quest_app_database"
                 ).build().also { Instance = it }
