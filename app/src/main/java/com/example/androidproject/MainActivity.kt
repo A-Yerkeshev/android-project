@@ -47,7 +47,7 @@ fun MainScreen() {
         content = { innerPadding ->
             // Your app's main content
             MapScreen(modifier = Modifier.padding(innerPadding))
-            _PlaygroundVM().play()
+            _PlaygroundVM().Play()
         }
     )
 }
