@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import com.example.androidproject.data._PlaygroundDB
 import com.example.androidproject.ui.screens.MapScreen
 import com.example.androidproject.ui.theme.AndroidProjectTheme
+import com.example.androidproject.viewmodels._PlaygroundVM
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +47,7 @@ fun MainScreen() {
         content = { innerPadding ->
             // Your app's main content
             MapScreen(modifier = Modifier.padding(innerPadding))
+            _PlaygroundVM().play()
         }
     )
 }
