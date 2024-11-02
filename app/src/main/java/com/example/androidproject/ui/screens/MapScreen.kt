@@ -24,6 +24,8 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.isGranted
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -129,6 +131,8 @@ fun ShowMap() {
                 overlays.add(userMarker)
             }
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .clipToBounds()
     )
 }
