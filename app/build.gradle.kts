@@ -51,8 +51,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.ui.viewbinding)
+    implementation(libs.androidx.navigation.compose)
     val room_version = "2.6.1"
 
     implementation("androidx.room:room-runtime:$room_version")

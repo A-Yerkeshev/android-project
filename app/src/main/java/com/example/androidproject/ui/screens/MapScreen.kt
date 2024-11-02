@@ -26,12 +26,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import com.example.androidproject.R
 import org.osmdroid.views.overlay.Marker
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun MapScreen(modifier: Modifier = Modifier) {
+fun MapScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     // Initialize OSMDroid configuration
