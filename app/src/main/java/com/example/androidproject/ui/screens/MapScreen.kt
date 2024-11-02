@@ -23,6 +23,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.isGranted
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,11 +31,18 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.androidproject.R
-import org.osmdroid.views.overlay.Marker
+import com.example.androidproject.ui.theme.AndroidProjectTheme
+import com.utsman.osmandcompose.Marker
+import com.utsman.osmandcompose.OpenStreetMap
+import com.utsman.osmandcompose.rememberCameraState
+import com.utsman.osmandcompose.rememberMarkerState
+
+//import org.osmdroid.views.overlay.Marker
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MapScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
+
     val context = LocalContext.current
 
     // Initialize OSMDroid configuration
@@ -84,55 +92,46 @@ fun MapScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
 @Composable
 fun ShowMap() {
     val context = LocalContext.current
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-    AndroidView(
-        factory = { ctx ->
-            MapView(ctx).apply {
-                // Enable pinch to zoom
-                setMultiTouchControls(true)
+    val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
 
-                // Configure map controller
-                val mapController = controller
-                mapController.setZoom(15.0)
+    val location = if (hasFineLocationPermission) {
+        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+    } else {
+        null
+    }
 
-                // Get user's current location
-                val locationManager = ctx.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val startPoint = if (location != null) {
+        GeoPoint(location.latitude, location.longitude)
+    } else {
+        // Default coordinates if location is unavailable
+        GeoPoint(60.1699, 24.9384) // Helsinki
+    }
 
-                val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
-                    ctx,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        val cameraState = rememberCameraState {
+            geoPoint = GeoPoint(startPoint.latitude, startPoint.longitude)
+            zoom = 15.0
+        }
 
-                val location = if (hasFineLocationPermission) {
-                    locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                        ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                } else {
-                    null
-                }
-
-                val startPoint = if (location != null) {
-                    GeoPoint(location.latitude, location.longitude)
-                } else {
-                    // Default coordinates if location is unavailable
-                    GeoPoint(60.1699, 24.9384) // Helsinki
-                }
-
-                mapController.setCenter(startPoint)
-
-                // Add a marker at the user's location
-                val userMarker = Marker(this)
-                userMarker.position = startPoint
-                userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-
-                // Use a custom icon or default
-                userMarker.icon = ContextCompat.getDrawable(ctx, R.drawable.ic_location_marker)
-                userMarker.title = "Your Location"
-
-                overlays.add(userMarker)
-            }
-        },
-        modifier = Modifier
-            .fillMaxSize()
-            .clipToBounds()
-    )
+        OpenStreetMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraState = cameraState
+        ) {
+            Marker(
+                state = rememberMarkerState(
+                    geoPoint = GeoPoint(startPoint.latitude, startPoint.longitude)
+                ),
+                icon = ContextCompat.getDrawable(context, R.drawable.ic_location_marker),
+                title = "Your Location"
+            )
+        }
+    }
 }

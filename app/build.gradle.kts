@@ -1,3 +1,5 @@
+import org.gradle.internal.impldep.com.fasterxml.jackson.core.JsonPointer.compile
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -51,6 +53,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.osmdroid.android)
+    implementation("tech.utsmankece:osm-android-compose:0.0.5")
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.ui.viewbinding)
@@ -63,7 +67,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
 
     // OSMDroid for OpenStreetMap
-    implementation("org.osmdroid:osmdroid-android:6.1.12")
+//    implementation("org.osmdroid:osmdroid-android:6.1.12")
 
     implementation("com.google.accompanist:accompanist-permissions:0.28.0")
 
