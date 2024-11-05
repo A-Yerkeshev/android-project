@@ -19,5 +19,5 @@ class QuestRepository(
     fun getQuestById(questId: Int): Flow<List<QuestEntity>> = questDao.getById(questId)
 
     // Fetch checkpoints for a quest
-    fun getCheckpointsByQuestId(questId: Int): Flow<List<CheckpointEntity>> = checkpointDao.getById(questId)
+    fun getCheckpointsByQuestId(questId: Int): Flow<List<CheckpointEntity>> = checkpointDao.getAll(questId)
 }
