@@ -9,6 +9,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -69,6 +70,12 @@ fun QuestDetailScreen(
         // Observe checkpoints from the ViewModel
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
 
+        LaunchedEffect(checkpoints) {
+            Log.d("QuestDetailScreen", "Number of checkpoints: ${checkpoints.size}")
+            checkpoints.forEach { checkpoint ->
+                Log.d("QuestDetailScreen", "Checkpoint: ${checkpoint.name} at (${checkpoint.lat}, ${checkpoint.long})")
+            }
+        }
         // State to hold the selected checkpoint for description display
         var selectedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
 
