@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/location_on/baseline_location_on_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/radio_button_checked/baseline_radio_button_checked_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,8 +28,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="44b32e" />
-                            <entry key="outputName" value="baseline_location_on_24" />
+                            <entry key="color" value="d71f23" />
+                            <entry key="outputName" value="baseline_radio_button_checked_24" />
                             <entry key="sourceFile" value="C:\Users\annlinde\AndroidStudioProjects\android-project" />
                           </map>
                         </option>

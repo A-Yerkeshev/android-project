@@ -13,20 +13,25 @@ import androidx.compose.material3.*
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.androidproject.data._PlaygroundDB
 import com.example.androidproject.ui.screens.MapScreen
+import com.example.androidproject.ui.screens.QuestDetailScreen
 import com.example.androidproject.ui.screens.QuestsListScreen
 import com.example.androidproject.ui.screens.WelcomeScreen
 import com.example.androidproject.ui.theme.AndroidProjectTheme
+import com.example.androidproject.viewmodels.QuestViewModel
 import com.example.androidproject.viewmodels._PlaygroundVM
 
 enum class Screens {
     Welcome,
     QuestsList,
-    Map
+    QuestDetail
 }
 
 class MainActivity : ComponentActivity() {
@@ -36,6 +41,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
+            val questViewModel: QuestViewModel = viewModel()
 
             AndroidProjectTheme {
                 Scaffold(
@@ -56,10 +62,22 @@ class MainActivity : ComponentActivity() {
                             WelcomeScreen(navCtrl = navController, modifier = Modifier.padding(innerPadding))
                         }
                         composable(route = Screens.QuestsList.name) {
-                            QuestsListScreen(navCtrl = navController, modifier = Modifier.padding(innerPadding))
+                            QuestsListScreen(navCtrl = navController, questViewModel = questViewModel, modifier = Modifier.padding(innerPadding))
                         }
-                        composable(route = Screens.Map.name) {
-                            MapScreen(navCtrl = navController, modifier = Modifier.padding(innerPadding))
+//                        composable(route = Screens.Map.name) {
+//                            MapScreen(navCtrl = navController, modifier = Modifier.padding(innerPadding))
+//                        }
+                        composable(
+                            route = "${Screens.QuestDetail.name}/{questId}",
+                            arguments = listOf(navArgument("questId") { type = NavType.IntType })
+                        ) { backStackEntry ->
+                            val questId = backStackEntry.arguments?.getInt("questId") ?: 0
+                            QuestDetailScreen(
+                                navCtrl = navController,
+                                questViewModel = questViewModel,
+                                questId = questId,
+                                modifier = Modifier.padding(innerPadding)
+                            )
                         }
                     }
                 }
