@@ -14,6 +14,9 @@ interface QuestDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(questEntity: QuestEntity): Long
 
+    @Query("SELECT * FROM quests")
+    fun getAllQuests(): Flow<List<QuestEntity>>
+
     @Query("select * from quests where id = :id")
     fun getById(id: Int): Flow<List<QuestEntity>>
 
