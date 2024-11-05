@@ -5,39 +5,29 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
-import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.isGranted
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.androidproject.R
-import com.example.androidproject.ui.theme.AndroidProjectTheme
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 
-//import org.osmdroid.views.overlay.Marker
+//this file is not used in the app as Quest map? instead QuestDetailScreen.kt is used.
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -82,6 +72,7 @@ fun MapScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
             // Other UI elements below the map
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Additional content below the map")
+
         }
     } else {
         // Handle permission not granted scenario

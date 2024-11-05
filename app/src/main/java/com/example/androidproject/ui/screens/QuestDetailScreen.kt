@@ -3,20 +3,23 @@ package com.example.androidproject.ui.screens
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.isGranted
-
-
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -107,6 +110,27 @@ fun QuestDetailScreen(
 //                    modifier = Modifier.padding(horizontal = 8.dp)
 //                )
             }
+
+            Spacer(modifier = Modifier.weight(1f)) //here to push the button to the bottom!!!
+
+            Button(
+                onClick = { navCtrl.popBackStack() },
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp)
+                    .padding(bottom = 16.dp)
+            ) {
+                Text(
+                    text = "Go Back",
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
         }
     } else {
         // Handle permission not granted scenario
