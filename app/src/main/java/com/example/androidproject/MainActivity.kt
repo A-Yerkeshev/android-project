@@ -5,31 +5,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.androidproject.data.AppDB
-import com.example.androidproject.data._PlaygroundDB
 import com.example.androidproject.repository.QuestRepository
+import com.example.androidproject.ui.MyApp
 import com.example.androidproject.ui.navigation.AppNavigation
 import com.example.androidproject.ui.navigation.BottomNavigationBar
-import com.example.androidproject.ui.screens.MapScreen
-import com.example.androidproject.ui.screens.QuestDetailScreen
-import com.example.androidproject.ui.screens.QuestsListScreen
-import com.example.androidproject.ui.screens.WelcomeScreen
 import com.example.androidproject.ui.theme.AndroidProjectTheme
 import com.example.androidproject.viewmodels.QuestViewModel
 import com.example.androidproject.viewmodels.QuestViewModelFactory
-import com.example.androidproject.viewmodels._PlaygroundVM
-import com.example.androidproject.ui.MyApp
 
 
 enum class Screens {
@@ -45,7 +34,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         // Initialize the database and repository
-        val database = AppDB.getDatabase(this)
+        val database = AppDB.getDatabase()
         val repository = QuestRepository(database.questDao(), database.checkpointDao())
 
         // Create the ViewModel using a factory

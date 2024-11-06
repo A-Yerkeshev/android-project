@@ -34,7 +34,6 @@ fun MyApp(questViewModel: QuestViewModel) {
                 composable(route = Screens.QuestsList.name) {
                     QuestsListScreen(
                         navCtrl = navController,
-                        questViewModel = questViewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
