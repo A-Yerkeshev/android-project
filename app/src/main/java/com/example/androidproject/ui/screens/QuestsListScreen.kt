@@ -59,7 +59,7 @@ fun QuestsListScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
                 isExpanded = isExpanded,
                 onExpandChanged = { isExpanded = it },
                 onNavigateToMap = {
-                    navCtrl.navigate(Screens.Map.name)
+                    navCtrl.navigate("${Screens.QuestDetail.name}/${questWithCheckpoints.quest.id}")
                 }
             )
         }
@@ -106,19 +106,19 @@ fun QuestItem(
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                if (quest.current) {
-                    Button(
-                        onClick = onNavigateToMap,
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                        modifier = Modifier.height(32.dp)
-                    ) {
-                        Text(
-                            text = "Go to Map",
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
+
+                Button(
+                    onClick = onNavigateToMap,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                    modifier = Modifier.height(32.dp)
+                ) {
+                    Text(
+                        text = "Go to Map",
+                        style = MaterialTheme.typography.labelMedium
+                    )
                 }
+
             }
 
             if (isExpanded) {

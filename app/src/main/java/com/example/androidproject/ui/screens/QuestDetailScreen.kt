@@ -22,10 +22,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.androidproject.R
+import com.example.androidproject.data.AppDB
 import com.example.androidproject.data.models.CheckpointEntity
-import com.example.androidproject.viewmodels.QuestViewModel
+import com.example.androidproject.repository.QuestRepository
+import com.example.androidproject.ui.viewmodels.QuestViewModel
+import com.example.androidproject.ui.viewmodels.QuestViewModelFactory
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.utsman.osmandcompose.Marker
@@ -38,13 +43,14 @@ import org.osmdroid.util.GeoPoint
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun QuestDetailScreen(
-
     navCtrl: NavController,
-    questViewModel: QuestViewModel,
     questId: Int,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val database = AppDB.getDatabase()
+    val repository = QuestRepository(database.questDao(), database.checkpointDao())
+    val questViewModel: QuestViewModel = viewModel(factory = QuestViewModelFactory(repository))
 
     // Initialize OSMDroid configuration
     DisposableEffect(Unit) {
@@ -160,6 +166,8 @@ fun ShowMap(
 
     val startPoint = if (location != null) {
         GeoPoint(location.latitude, location.longitude)
+    } else if (!checkpoints.isEmpty()) {
+        GeoPoint(checkpoints[0].lat, checkpoints[0].long)
     } else {
         // Default coordinates if location is unavailable
         GeoPoint(60.1699, 24.9384) // Helsinki
@@ -186,7 +194,6 @@ fun ShowMap(
                 title = "Your Location"
             )
 
-            // Checkpoint markers
             checkpoints.forEach { checkpoint ->
                 Marker(
                     state = rememberMarkerState(

@@ -13,19 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import com.example.androidproject.data.AppDB
 import com.example.androidproject.repository.QuestRepository
-import com.example.androidproject.ui.MyApp
 import com.example.androidproject.ui.navigation.AppNavigation
 import com.example.androidproject.ui.navigation.BottomNavigationBar
 import com.example.androidproject.ui.theme.AndroidProjectTheme
-import com.example.androidproject.viewmodels.QuestViewModel
-import com.example.androidproject.viewmodels.QuestViewModelFactory
-
-
-enum class Screens {
-    Welcome,
-    QuestsList,
-    QuestDetail
-}
+//import com.example.androidproject.viewmodels.QuestViewModel
+//import com.example.androidproject.viewmodels.QuestViewModelFactory
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -38,15 +30,13 @@ class MainActivity : ComponentActivity() {
         val repository = QuestRepository(database.questDao(), database.checkpointDao())
 
         // Create the ViewModel using a factory
-        val questViewModel: QuestViewModel = ViewModelProvider(
-            this,
-            QuestViewModelFactory(repository)
-        ).get(QuestViewModel::class.java)
+//        val questViewModel: QuestViewModel = ViewModelProvider(
+//            this,
+//            QuestViewModelFactory(repository)
+//        ).get(QuestViewModel::class.java)
 
         setContent {
             val navController = rememberNavController()
-
-            MyApp(questViewModel)
 
             AndroidProjectTheme {
                 Scaffold(
