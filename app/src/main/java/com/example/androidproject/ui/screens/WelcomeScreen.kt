@@ -9,7 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.androidproject.Screens
+
+import com.example.androidproject.ui.navigation.Screens
 
 @Composable
 fun WelcomeScreen(navCtrl: NavController, modifier: Modifier = Modifier) {

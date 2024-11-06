@@ -28,4 +28,7 @@ interface CheckpointDao {
 
     @Delete
     suspend fun delete(checkpointEntity: CheckpointEntity): Int
+
+    @Query("select * from checkpoints order by quest_id, id asc")
+    fun getAllCheckpoints(): Flow<List<CheckpointEntity>>
 }

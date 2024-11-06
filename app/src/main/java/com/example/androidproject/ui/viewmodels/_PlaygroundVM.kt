@@ -1,4 +1,4 @@
-package com.example.androidproject.viewmodels
+package com.example.androidproject.ui.viewmodels
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
