@@ -2,10 +2,14 @@ package com.example.androidproject.data.daos
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Embedded
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Relation
+import androidx.room.Transaction
 import androidx.room.Update
+import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -31,4 +35,7 @@ interface QuestDao {
 
     @Query("update quests set current = 0")
     fun unsetAllCurrent()
+
+    @Query("select * from quests")
+    fun getAll(): Flow<List<QuestEntity>>
 }

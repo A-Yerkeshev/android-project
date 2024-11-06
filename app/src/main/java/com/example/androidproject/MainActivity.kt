@@ -7,11 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +19,8 @@ import androidx.navigation.navArgument
 import com.example.androidproject.data.AppDB
 import com.example.androidproject.data._PlaygroundDB
 import com.example.androidproject.repository.QuestRepository
+import com.example.androidproject.ui.navigation.AppNavigation
+import com.example.androidproject.ui.navigation.BottomNavigationBar
 import com.example.androidproject.ui.screens.MapScreen
 import com.example.androidproject.ui.screens.QuestDetailScreen
 import com.example.androidproject.ui.screens.QuestsListScreen
@@ -57,56 +55,19 @@ class MainActivity : ComponentActivity() {
         ).get(QuestViewModel::class.java)
 
         setContent {
+            val navController = rememberNavController()
+
             MyApp(questViewModel)
+
+            AndroidProjectTheme {
+                Scaffold(
+                    bottomBar = {
+                        BottomNavigationBar(navController = navController)
+                    }
+                ) { innerPadding ->
+                    AppNavigation(navController = navController, modifier = Modifier.padding(innerPadding))
+                }
+            }
         }
-
-
-
-
-
-//        setContent {
-//            val navController = rememberNavController()
-//            val questViewModel: QuestViewModel = viewModel()
-//
-//            AndroidProjectTheme {
-//                Scaffold(
-////                    topBar = {
-////                        TopAppBar(
-////                            title = { Text("My App") },
-////                            navigationIcon = {
-////                                IconButton(onClick = { /* Handle navigation icon press */ }) {
-////                                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
-////                                }
-////                            }
-////                        )
-////                    },
-//                    modifier = Modifier.fillMaxSize()
-//                ) { innerPadding ->
-//                    NavHost(navController = navController, startDestination = Screens.Welcome.name) {
-//                        composable(route = Screens.Welcome.name) {
-//                            WelcomeScreen(navCtrl = navController, modifier = Modifier.padding(innerPadding))
-//                        }
-//                        composable(route = Screens.QuestsList.name) {
-//                            QuestsListScreen(navCtrl = navController, questViewModel = questViewModel, modifier = Modifier.padding(innerPadding))
-//                        }
-////                        composable(route = Screens.Map.name) {
-////                            MapScreen(navCtrl = navController, modifier = Modifier.padding(innerPadding))
-////                        }
-//                        composable(
-//                            route = "${Screens.QuestDetail.name}/{questId}",
-//                            arguments = listOf(navArgument("questId") { type = NavType.IntType })
-//                        ) { backStackEntry ->
-//                            val questId = backStackEntry.arguments?.getInt("questId") ?: 0
-//                            QuestDetailScreen(
-//                                navCtrl = navController,
-//                                questViewModel = questViewModel,
-//                                questId = questId,
-//                                modifier = Modifier.padding(innerPadding)
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 }

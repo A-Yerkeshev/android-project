@@ -13,11 +13,13 @@ class QuestRepository(
 ) {
 
     // Fetch all quests
-    fun getAllQuests(): Flow<List<QuestEntity>> = questDao.getAllQuests()
+    fun getAllQuests(): Flow<List<QuestEntity>> = questDao.getAll()
 
     // Fetch a quest by ID
     fun getQuestById(questId: Int): Flow<List<QuestEntity>> = questDao.getById(questId)
 
     // Fetch checkpoints for a quest
     fun getCheckpointsByQuestId(questId: Int): Flow<List<CheckpointEntity>> = checkpointDao.getAll(questId)
+
+    fun getAllCheckpoints(): Flow<List<CheckpointEntity>> = checkpointDao.getAllCheckpoints()
 }
