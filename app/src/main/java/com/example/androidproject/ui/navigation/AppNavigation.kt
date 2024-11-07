@@ -17,36 +17,24 @@ import com.example.androidproject.ui.screens.WelcomeScreen
 
 @Composable
 fun AppNavigation(navController: NavController, modifier: Modifier = Modifier) {
-    NavHost(
-        navController = navController as NavHostController,
-        startDestination = Screens.Welcome.name
-    ) {
+    NavHost(navController = navController as NavHostController, startDestination = Screens.Welcome.name) {
         composable(route = Screens.Welcome.name) {
-            WelcomeScreen(
-                navCtrl = navController
-            )
+            WelcomeScreen(navCtrl = navController, modifier)
         }
         composable(route = Screens.QuestsList.name) {
-            QuestsListScreen(
-                navCtrl = navController
-            )
+            QuestsListScreen(navCtrl = navController, modifier)
         }
-        composable(
-            route = "${Screens.QuestDetail.name}/{questId}",
-            arguments = listOf(navArgument("questId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val questId = backStackEntry.arguments?.getInt("questId") ?: 0
-            QuestDetailScreen(
-                navCtrl = navController,
-                questId = questId
-            )
+        composable(route = Screens.Map.name) {
+            MapScreen(navCtrl = navController, modifier)
         }
     }
+
+//    BottomNavigationBar(navController = navController)
 }
 
 enum class Screens {
     Welcome,
     QuestsList,
-    QuestDetail
+    Map
 }
 

@@ -66,14 +66,14 @@ fun BottomNavigationBar(navController: NavController) {
                 Icon(
                     imageVector = Icons.Default.Place,
                     contentDescription = "Map",
-                    modifier = Modifier.size(if (currentRoute == Screens.QuestDetail.name) 30.dp else 24.dp)
+                    modifier = Modifier.size(if (currentRoute == Screens.Map.name) 30.dp else 24.dp)
                 )
             },
-            label = { if (currentRoute == Screens.QuestDetail.name) Text("Map") },
-            selected = currentRoute == Screens.QuestDetail.name,
+            label = { if (currentRoute == Screens.Map.name) Text("Map") },
+            selected = currentRoute == Screens.Map.name,
             onClick = {
-                navController.navigate(Screens.QuestDetail.name) {
-                    popUpTo(Screens.QuestDetail.name) { inclusive = true }
+                navController.navigate(Screens.Map.name) {
+                    popUpTo(Screens.Map.name) { inclusive = true }
                 }
             }
         )
