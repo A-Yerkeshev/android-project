@@ -25,16 +25,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Initialize the database and repository
-        val database = AppDB.getDatabase()
-        val repository = QuestRepository(database.questDao(), database.checkpointDao())
-
-        // Create the ViewModel using a factory
-//        val questViewModel: QuestViewModel = ViewModelProvider(
-//            this,
-//            QuestViewModelFactory(repository)
-//        ).get(QuestViewModel::class.java)
-
         setContent {
             val navController = rememberNavController()
 
