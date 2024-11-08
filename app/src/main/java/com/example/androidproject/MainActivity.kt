@@ -24,17 +24,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        // Initialize the database and repository
-        val database = AppDB.getDatabase()
-        val repository = QuestRepository(database.questDao(), database.checkpointDao())
-
-        // Create the ViewModel using a factory
-//        val questViewModel: QuestViewModel = ViewModelProvider(
-//            this,
-//            QuestViewModelFactory(repository)
-//        ).get(QuestViewModel::class.java)
-
         setContent {
             val navController = rememberNavController()
 
@@ -44,6 +33,17 @@ class MainActivity : ComponentActivity() {
                         BottomNavigationBar(navController = navController)
                     }
                 ) { innerPadding ->
+//                    NavHost(navController = navController, startDestination = Screens.Welcome.name) {
+//                        composable(route = Screens.Welcome.name) {
+//                            WelcomeScreen(navCtrl = navController, modifier = Modifier.padding(innerPadding))
+//                        }
+//                        composable(route = Screens.QuestsList.name) {
+//                            QuestsListScreen(navCtrl = navController, modifier = Modifier.padding(innerPadding))
+//                        }
+//                        composable(route = Screens.Map.name) {
+//                            MapScreen(navCtrl = navController, modifier = Modifier.padding(innerPadding))
+//                        }
+//                    }
                     AppNavigation(navController = navController, modifier = Modifier.padding(innerPadding))
                 }
             }
