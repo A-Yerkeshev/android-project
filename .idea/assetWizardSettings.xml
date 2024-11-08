@@ -28,8 +28,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="d71f23" />
-                            <entry key="outputName" value="baseline_radio_button_checked_24" />
+                            <entry key="color" value="44b32e" />
+                            <entry key="outputName" value="ic_selected_marker" />
                             <entry key="sourceFile" value="C:\Users\annlinde\AndroidStudioProjects\android-project" />
                           </map>
                         </option>
