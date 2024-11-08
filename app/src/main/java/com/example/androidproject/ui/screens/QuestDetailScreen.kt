@@ -164,7 +164,7 @@ fun ShowMap(
         null
     }
 
-    val startPoint = if (location != null) {
+    val startPoint = if (location != null && location.latitude > 0 && location.longitude > 0) {
         GeoPoint(location.latitude, location.longitude)
     } else if (!checkpoints.isEmpty()) {
         GeoPoint(checkpoints[0].lat, checkpoints[0].long)
