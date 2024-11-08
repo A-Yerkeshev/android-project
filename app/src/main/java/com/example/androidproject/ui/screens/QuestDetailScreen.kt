@@ -8,7 +8,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,6 +36,7 @@ import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModelFactory
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import com.utsman.osmandcompose.CameraState
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.rememberCameraState
@@ -78,6 +82,13 @@ fun QuestDetailScreen(
     if (locationPermissionState.status.isGranted) {
         // Observe checkpoints from the ViewModel
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
+        val selectedQuest by questViewModel.selectedQuest.observeAsState()
+
+        // State to hold the selected checkpoint for highlighting
+        var highlightedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
+
+        // Initialize the map camera state
+        val cameraState = rememberCameraState()
 
         LaunchedEffect(checkpoints) {
             Log.d("QuestDetailScreen", "Number of checkpoints: ${checkpoints.size}")
@@ -85,8 +96,6 @@ fun QuestDetailScreen(
                 Log.d("QuestDetailScreen", "Checkpoint: ${checkpoint.name} at (${checkpoint.lat}, ${checkpoint.long})")
             }
         }
-        // State to hold the selected checkpoint for description display
-        var selectedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
 
         // Apply the modifier to the Column
         Column(modifier = modifier.fillMaxSize()) {
@@ -96,26 +105,40 @@ fun QuestDetailScreen(
                     .fillMaxWidth()
                     .height(400.dp)
             ) {
-                ShowMap(checkpoints = checkpoints) { checkpoint ->
-                    selectedCheckpoint = checkpoint
+                ShowMap(
+                    checkpoints = checkpoints,
+                    cameraState = cameraState,
+                    onCheckpointClick = { checkpoint ->
+                        highlightedCheckpoint = checkpoint
+                        cameraState.geoPoint = GeoPoint(checkpoint.lat, checkpoint.long) // Center map on checkpoint
+                    }
+                )
+            }
+            // Display the quest title
+            Text(
+                text = selectedQuest?.description.orEmpty(),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(8.dp)
+            )
+
+            // Display the list of checkpoints
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                items(checkpoints) { checkpoint ->
+                    Text(
+                        text = checkpoint.name,
+                        color = if (checkpoint == highlightedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .clickable {
+                                highlightedCheckpoint = checkpoint
+                                cameraState.geoPoint = GeoPoint(checkpoint.lat, checkpoint.long) // Center map
+                            }
+                    )
                 }
             }
 
-            // Display the checkpoint description below the map
-            selectedCheckpoint?.let {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = it.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(8.dp)
-                )
-                // add a 'description' field
-//                Text(
-//                    text = it.description ?: "No description available.",
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    modifier = Modifier.padding(horizontal = 8.dp)
-//                )
-            }
+
 
             Spacer(modifier = Modifier.weight(1f)) //here to push the button to the bottom!!!
 
@@ -147,6 +170,7 @@ fun QuestDetailScreen(
 @Composable
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
+    cameraState: CameraState,
     onCheckpointClick: (CheckpointEntity) -> Unit
 ) {
     val context = LocalContext.current
