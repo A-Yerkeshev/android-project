@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.androidproject.R
@@ -43,6 +42,8 @@ import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -80,20 +81,65 @@ fun QuestDetailScreen(
     }
 
     if (locationPermissionState.status.isGranted) {
-        // Observe checkpoints from the ViewModel
+        // Observe checkpoints and selected quest from the ViewModel
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
-
-        // State to hold the selected checkpoint for highlighting
-        var highlightedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
-
-        // Initialize the map camera state
-        val cameraState = rememberCameraState()
 
         LaunchedEffect(checkpoints) {
             Log.d("QuestDetailScreen", "Number of checkpoints: ${checkpoints.size}")
             checkpoints.forEach { checkpoint ->
                 Log.d("QuestDetailScreen", "Checkpoint: ${checkpoint.name} at (${checkpoint.lat}, ${checkpoint.long})")
+            }
+        }
+
+        // State to hold the selected/highlighted checkpoint
+        var selectedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
+
+        // Initialize camera state
+        val cameraState = rememberCameraState()
+
+        // Get the user's location
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val location = if (hasFineLocationPermission) {
+            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        } else {
+            null
+        }
+
+        val startPoint = remember(checkpoints, location) {
+            val point = if (location != null
+                && location.latitude != 0.0 && location.longitude != 0.0
+                && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
+            ) {
+                GeoPoint(location.latitude, location.longitude)
+            } else if (checkpoints.isNotEmpty()) {
+                GeoPoint(checkpoints[0].lat, checkpoints[0].long)
+            } else {
+                // Default coordinates if location is unavailable
+                GeoPoint(60.1699, 24.9384) // Helsinki
+            }
+            Log.d("QuestDetailScreen", "startPoint: ${point.latitude}, ${point.longitude}")
+            point
+        }
+
+        // Set initial camera position and zoom
+        LaunchedEffect(startPoint) {
+            cameraState.geoPoint = startPoint
+            cameraState.zoom = 15.0
+        }
+
+        // Center the map on the selected checkpoint when it changes
+        LaunchedEffect(selectedCheckpoint) {
+            selectedCheckpoint?.let {
+                cameraState.geoPoint = GeoPoint(it.lat, it.long)
+                cameraState.zoom = 17.0
             }
         }
 
@@ -108,39 +154,73 @@ fun QuestDetailScreen(
                 ShowMap(
                     checkpoints = checkpoints,
                     cameraState = cameraState,
+                    selectedCheckpoint = selectedCheckpoint,
                     onCheckpointClick = { checkpoint ->
-                        highlightedCheckpoint = checkpoint
-                        cameraState.geoPoint = GeoPoint(checkpoint.lat, checkpoint.long) // Center map on checkpoint
+                        selectedCheckpoint = checkpoint
                     }
                 )
+
+                // Add the Recenter Button overlaid on the map
+                Button(
+                    onClick = {
+                        // On button click, recenter the map
+//                        val newCenter = if (location != null
+//                            && location.latitude != 0.0 && location.longitude != 0.0
+//                            && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
+//                        ) {
+//                            GeoPoint(location.latitude, location.longitude)
+//                        } else {
+//                            // Default to Helsinki
+//                            GeoPoint(60.1699, 24.9384)
+//                        }
+                        //temporarily solves recenter in emulator
+                        val newCenter = GeoPoint(60.1699, 24.9384)
+                        cameraState.geoPoint = newCenter
+                        cameraState.zoom = 15.0
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text(
+                        text = "Recenter",
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
+
             // Display the quest title
-            Text(
-                text = selectedQuest?.description.orEmpty(),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(8.dp)
-            )
+            selectedQuest?.let {
+                Text(
+                    text = it.description.orEmpty(),  // Use 'description' if 'name' is not available
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
 
             // Display the list of checkpoints
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(checkpoints) { checkpoint ->
+                    // Highlight checkpoint in list if it matches selectedCheckpoint
                     Text(
                         text = checkpoint.name,
-                        color = if (checkpoint == highlightedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                        color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
                             .clickable {
-                                highlightedCheckpoint = checkpoint
-                                cameraState.geoPoint = GeoPoint(checkpoint.lat, checkpoint.long) // Center map
+                                selectedCheckpoint = checkpoint  // Highlight the checkpoint in the list
                             }
                     )
                 }
             }
 
-
-
-            Spacer(modifier = Modifier.weight(1f)) //here to push the button to the bottom!!!
+            Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
 
             Button(
                 onClick = { navCtrl.popBackStack() },
@@ -159,7 +239,6 @@ fun QuestDetailScreen(
                     fontWeight = FontWeight.SemiBold
                 )
             }
-
         }
     } else {
         // Handle permission not granted scenario
@@ -171,59 +250,53 @@ fun QuestDetailScreen(
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
     cameraState: CameraState,
+    selectedCheckpoint: CheckpointEntity?,
     onCheckpointClick: (CheckpointEntity) -> Unit
 ) {
     val context = LocalContext.current
-    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-    val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
-
-    val location = if (hasFineLocationPermission) {
-        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-    } else {
-        null
-    }
-
-    val startPoint = if (location != null && location.latitude > 0 && location.longitude > 0) {
-        GeoPoint(location.latitude, location.longitude)
-    } else if (!checkpoints.isEmpty()) {
-        GeoPoint(checkpoints[0].lat, checkpoints[0].long)
-    } else {
-        // Default coordinates if location is unavailable
-        GeoPoint(60.1699, 24.9384) // Helsinki
-    }
 
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        val cameraState = rememberCameraState {
-            geoPoint = GeoPoint(startPoint.latitude, startPoint.longitude)
-            zoom = 15.0
-        }
 
         OpenStreetMap(
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState
         ) {
             // User location marker
-            Marker(
-                state = rememberMarkerState(
-                    geoPoint = GeoPoint(startPoint.latitude, startPoint.longitude)
-                ),
-                icon = ContextCompat.getDrawable(context, R.drawable.ic_location_marker),
-                title = "Your Location"
-            )
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+            val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            val location = if (hasFineLocationPermission) {
+                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                    ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            } else {
+                null
+            }
+
+            if (location != null && location.latitude > 0 && location.longitude > 0) {
+                Marker(
+                    state = rememberMarkerState(
+                        geoPoint = GeoPoint(location.latitude, location.longitude)
+                    ),
+                    icon = ContextCompat.getDrawable(context, R.drawable.ic_location_marker),
+                    title = "Your Location"
+                )
+            }
 
             checkpoints.forEach { checkpoint ->
                 Marker(
                     state = rememberMarkerState(
                         geoPoint = GeoPoint(checkpoint.lat, checkpoint.long)
                     ),
-                    icon = ContextCompat.getDrawable(context, R.drawable.baseline_radio_button_checked_24),
+                    icon = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.baseline_radio_button_checked_24
+                    ),
                     title = checkpoint.name,
                     onClick = {
                         onCheckpointClick(checkpoint)
