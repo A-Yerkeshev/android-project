@@ -1,5 +1,6 @@
 package com.example.androidproject.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -66,13 +67,13 @@ fun BottomNavigationBar(navController: NavController) {
                 Icon(
                     imageVector = Icons.Default.Place,
                     contentDescription = "Map",
-                    modifier = Modifier.size(if (currentRoute == Screens.QuestDetail.name) 30.dp else 24.dp)
+                    modifier = Modifier.size(if (currentRoute == "${Screens.QuestDetail.name}/{questId}") 30.dp else 24.dp)
                 )
             },
-            label = { if (currentRoute == Screens.QuestDetail.name) Text("Map") },
-            selected = currentRoute == Screens.QuestDetail.name,
+            label = { if (currentRoute == "${Screens.QuestDetail.name}/{questId}") Text("Map") },
+            selected = currentRoute == "${Screens.QuestDetail.name}/{questId}",
             onClick = {
-                navController.navigate(Screens.QuestDetail.name) {
+                navController.navigate("${Screens.QuestDetail.name}/0") {
                     popUpTo(Screens.QuestDetail.name) { inclusive = true }
                 }
             }
@@ -83,5 +84,6 @@ fun BottomNavigationBar(navController: NavController) {
 @Composable
 fun currentRoute(navController: NavController): String? {
     val backStackEntry = navController.currentBackStackEntryAsState().value
+    Log.d("XXX", "${backStackEntry?.destination?.route}")
     return backStackEntry?.destination?.route
 }
