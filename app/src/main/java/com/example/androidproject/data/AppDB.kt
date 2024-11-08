@@ -56,6 +56,15 @@ abstract class AppDB : RoomDatabase() {
             )
         )
 
+        questDao.insert(
+            QuestEntity(
+                id = 3,
+                description = "Metropolia UAS Campuses",
+                category = "Education",
+                current = false
+            )
+        )
+
         val checkpoints1 = listOf(
             CheckpointEntity(id = 1, questId = 1, lat = 60.1699, long = 24.9384, name = "Helsinki Cathedral"),
             CheckpointEntity(id = 2, questId = 1, lat = 60.1609, long = 24.9522, name = "Suomenlinna Fortress"),
@@ -83,6 +92,16 @@ abstract class AppDB : RoomDatabase() {
         )
 
         checkpoints2.forEach { checkpoint ->
+            checkpointDao.insert(checkpoint)
+        }
+
+        val metropoliaCheckpoints = listOf(
+            CheckpointEntity(id = 15, questId = 3, lat = 60.2206, long = 24.8056, name = "Myllypuro Campus"),
+            CheckpointEntity(id = 16, questId = 3, lat = 60.2026, long = 24.9342, name = "Karamalmi Campus"),
+            CheckpointEntity(id = 17, questId = 3, lat = 60.2230, long = 24.7582, name = "Leppävaara Campus"),
+            CheckpointEntity(id = 18, questId = 3, lat = 60.1691, long = 24.9402, name = "Hämeentie Campus")
+        )
+        metropoliaCheckpoints.forEach { checkpoint ->
             checkpointDao.insert(checkpoint)
         }
     }
