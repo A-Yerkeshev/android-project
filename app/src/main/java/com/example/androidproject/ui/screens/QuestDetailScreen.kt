@@ -6,6 +6,7 @@ import com.google.accompanist.permissions.isGranted
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -44,6 +45,7 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
+import com.example.androidproject.data.models.TaskEntity
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -85,8 +87,7 @@ fun QuestDetailScreen(
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
         val tasks by taskViewModel.currentTasks.collectAsState()
-
-        Log.d("DBG", "Current tasks: $tasks")
+        val completableTasks = completableTasks(tasks, checkpoints)
 
         LaunchedEffect(checkpoints) {
             Log.d("QuestDetailScreen", "Number of checkpoints: ${checkpoints.size}")
@@ -267,20 +268,7 @@ fun ShowMap(
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState
         ) {
-            // User location marker
-            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-            val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-
-            val location = if (hasFineLocationPermission) {
-                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            } else {
-                null
-            }
+            val location = getLocation(context)
 
             if (location != null && location.latitude > 0 && location.longitude > 0) {
                 Marker(
@@ -309,5 +297,58 @@ fun ShowMap(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun completableTasks(tasks: List<TaskEntity>, checkpoints: List<CheckpointEntity>): List<TaskEntity> {
+    val context = LocalContext.current
+
+    val availableCheckpoints = checkpoints.filter { checkpoint ->
+        checkpoint.completed == false && isNear(checkpoint, context)
+    }
+
+    return tasks.filter { task ->
+        availableCheckpoints.any { checkpoint ->
+            task.checkpointId == checkpoint.id
+        }
+    }
+}
+
+fun isNear(checkpoint: CheckpointEntity, context: Context): Boolean {
+//    val location = getLocation(context)
+
+    // Arman's home for testing
+    val location = GeoPoint(60.235610, 25.006100)
+
+    if (location != null) {
+        val distance = FloatArray(1)
+        Location.distanceBetween(
+            location.latitude,
+            location.longitude,
+            checkpoint.lat,
+            checkpoint.long,
+            distance
+        )
+        return distance[0] < 30
+    } else {
+        return false
+    }
+}
+
+fun getLocation(context: Context): Location? {
+    // User location marker
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+    val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
+    return if (hasFineLocationPermission) {
+        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+    } else {
+        null
     }
 }

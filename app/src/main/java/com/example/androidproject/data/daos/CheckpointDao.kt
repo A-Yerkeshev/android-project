@@ -31,4 +31,7 @@ interface CheckpointDao {
 
     @Query("select * from checkpoints order by quest_id, id asc")
     fun getAllCheckpoints(): Flow<List<CheckpointEntity>>
+
+    @Query("select * from checkpoints where quest_id in (select id from quests where current = 1)")
+    fun getCurrent(): Flow<List<CheckpointEntity>>
 }
