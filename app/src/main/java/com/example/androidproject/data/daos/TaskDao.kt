@@ -25,4 +25,9 @@ interface TaskDao {
 
     @Delete
     suspend fun delete(taskEntity: TaskEntity): Int
+
+    @Query("select * from tasks where checkpoint_id in" +
+            "(select id from checkpoints where quest_id in" +
+            "(select id from quests where current = 1))")
+    fun getCurrent(): Flow<List<TaskEntity>>
 }

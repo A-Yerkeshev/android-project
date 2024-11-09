@@ -12,13 +12,21 @@ import kotlinx.coroutines.launch
 
 class TaskViewModel : ViewModel() {
     private val database = AppDB.getDatabase()
-    private val repository = TaskRepository(database.checkpointDao())
+    private val repository = TaskRepository(database.questDao(), database.checkpointDao(), database.taskDao())
 
-    private val _tasks = MutableStateFlow<List<TaskEntity>>(emptyList())
-    val tasks: StateFlow<List<TaskEntity>> = _tasks
+    private val _currentTasks = MutableStateFlow<List<TaskEntity>>(emptyList())
+    val currentTasks: StateFlow<List<TaskEntity>> = _currentTasks
 
     init {
+        getCurrentTasks()
+    }
 
+    private fun getCurrentTasks() {
+        viewModelScope.launch {
+            repository.getCurrentTasks().collect { tasks ->
+                _currentTasks.value = tasks
+            }
+        }
     }
 
     fun markCompleted(task: TaskEntity) {

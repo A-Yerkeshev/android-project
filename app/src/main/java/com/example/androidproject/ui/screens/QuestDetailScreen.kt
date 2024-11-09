@@ -84,6 +84,9 @@ fun QuestDetailScreen(
         // Observe checkpoints and selected quest from the ViewModel
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
+        val tasks by taskViewModel.currentTasks.collectAsState()
+
+        Log.d("DBG", "Current tasks: $tasks")
 
         LaunchedEffect(checkpoints) {
             Log.d("QuestDetailScreen", "Number of checkpoints: ${checkpoints.size}")
@@ -214,7 +217,8 @@ fun QuestDetailScreen(
                             .fillMaxWidth()
                             .padding(8.dp)
                             .clickable {
-                                selectedCheckpoint = checkpoint  // Highlight the checkpoint in the list
+                                selectedCheckpoint =
+                                    checkpoint  // Highlight the checkpoint in the list
                             }
                     )
                 }
