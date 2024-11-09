@@ -316,10 +316,10 @@ fun completableTasks(tasks: List<TaskEntity>, checkpoints: List<CheckpointEntity
 }
 
 fun isNear(checkpoint: CheckpointEntity, context: Context): Boolean {
-//    val location = getLocation(context)
+    val location = getLocation(context)
 
     // Arman's home for testing
-    val location = GeoPoint(60.235610, 25.006100)
+//    val location = GeoPoint(60.235610, 25.006100)
 
     if (location != null) {
         val distance = FloatArray(1)
