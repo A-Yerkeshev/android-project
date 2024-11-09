@@ -44,6 +44,7 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
+import com.example.androidproject.ui.viewmodels.TaskViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -54,6 +55,7 @@ fun QuestDetailScreen(
 ) {
     val context = LocalContext.current
     val questViewModel = QuestViewModel()
+    val taskViewModel = TaskViewModel()
 
     // Initialize OSMDroid configuration
     DisposableEffect(Unit) {

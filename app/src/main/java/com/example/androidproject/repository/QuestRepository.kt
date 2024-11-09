@@ -6,7 +6,9 @@ import com.example.androidproject.data.daos.QuestDao
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -14,7 +16,6 @@ class QuestRepository(
     private val questDao: QuestDao,
     private val checkpointDao: CheckpointDao,
 ) {
-
     // Fetch all quests
     fun getAllQuests(): Flow<List<QuestEntity>> = questDao.getAll()
 

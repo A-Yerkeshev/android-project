@@ -33,6 +33,24 @@ abstract class AppDB : RoomDatabase() {
         }
     }
 
+    suspend fun setCurrentIfNotExists() {
+        val db: AppDB = getDatabase()
+        val questDao = db.questDao()
+
+        val currentQuestFlow = questDao.getCurrent()
+        currentQuestFlow.collect { currentQuest ->
+            if (currentQuest.firstOrNull() == null) {
+                questDao.getAll().collect {
+                    if (it.isNotEmpty()) {
+                        val quest = it[0]
+                        quest.current = true
+                        questDao.update(quest)
+                    }
+                }
+            }
+        }
+    }
+
     suspend fun fillWithTestData() {
         val db: AppDB = getDatabase()
         val questDao = db.questDao()
@@ -62,6 +80,13 @@ abstract class AppDB : RoomDatabase() {
                 description = "Metropolia UAS Campuses",
                 category = "Education",
                 current = false
+            )
+        )
+
+        questDao.insert(
+            QuestEntity(
+                id = 4,
+                description = "Arman's surroundings"
             )
         )
 
@@ -103,6 +128,22 @@ abstract class AppDB : RoomDatabase() {
         )
         metropoliaCheckpoints.forEach { checkpoint ->
             checkpointDao.insert(checkpoint)
+        }
+
+        val armanCheckpoints = listOf(
+            CheckpointEntity(id = 19, questId = 4, lat = 60.235610, long = 25.006100, name = "Home"),
+            CheckpointEntity(id = 20, questId = 4, lat = 60.234281, long = 25.011228, name = "S-market Pihlajamäki"),
+        )
+        armanCheckpoints.forEach { checkpoint ->
+            checkpointDao.insert(checkpoint)
+        }
+
+        val armanTasks = listOf(
+            TaskEntity(id = 1, checkpointId = 19, description = "Do project"),
+            TaskEntity(id = 2, checkpointId = 20, description = "Buy grocery"),
+        )
+        armanTasks.forEach { task ->
+            taskDao().insert(task)
         }
     }
 }

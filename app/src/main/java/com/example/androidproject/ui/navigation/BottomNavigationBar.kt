@@ -21,14 +21,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val currentRoute = currentRoute(navController)
     val questViewModel = QuestViewModel()
-    val currentQuest by questViewModel.currentQuest.collectAsState()
-    val currentQuestId = currentQuest?.id ?: 0
+    val questsWithCheckpoints by questViewModel.questsWithCheckpoints.collectAsState()
+    val currentQuest: QuestEntity? by questViewModel.currentQuest.collectAsState()
+    val questId: Int = if (currentQuest != null) {
+        currentQuest!!.id
+    } else if (questsWithCheckpoints.isNotEmpty()) {
+        questsWithCheckpoints.first().quest.id
+    } else {
+        0
+    }
 
     NavigationBar(
         containerColor = Color.White,
@@ -79,7 +87,7 @@ fun BottomNavigationBar(navController: NavController) {
             label = { if (currentRoute == "${Screens.QuestDetail.name}/{questId}") Text("Map") },
             selected = currentRoute == "${Screens.QuestDetail.name}/{questId}",
             onClick = {
-                navController.navigate("${Screens.QuestDetail.name}/${currentQuestId}") {
+                navController.navigate("${Screens.QuestDetail.name}/${questId ?: ""}") {
                     popUpTo(Screens.QuestDetail.name) { inclusive = true }
                 }
             }

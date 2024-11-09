@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class QuestViewModel() : ViewModel() {
+class QuestViewModel : ViewModel() {
     private val database = AppDB.getDatabase()
     private val repository = QuestRepository(database.questDao(), database.checkpointDao())
 

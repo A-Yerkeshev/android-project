@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.example.androidproject.data.AppDB
 import com.example.androidproject.data._PlaygroundDB
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -17,8 +18,9 @@ class App: Application() {
         appContext = applicationContext
 
         val database: AppDB = AppDB.getDatabase()
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             database.fillWithTestData()
+            database.setCurrentIfNotExists()
         }
     }
 }

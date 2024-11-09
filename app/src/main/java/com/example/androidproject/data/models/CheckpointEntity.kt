@@ -28,7 +28,7 @@ data class CheckpointEntity(
     @ColumnInfo(name = "long")
     val long: Double,
     @ColumnInfo(name = "completed")
-    val completed: Boolean = false,
+    var completed: Boolean = false,
     @ColumnInfo(name = "name")
     val name: String = ""
 )
