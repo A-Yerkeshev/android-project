@@ -26,6 +26,8 @@ class QuestRepository(
 
     fun getAllCheckpoints(): Flow<List<CheckpointEntity>> = checkpointDao.getAllCheckpoints()
 
+    fun getCurrentQuest(): Flow<List<QuestEntity>> = questDao.getCurrent()
+
     suspend fun setQuestCurrent(quest: QuestEntity) {
         questDao.unsetAllCurrent()
         quest.current = true

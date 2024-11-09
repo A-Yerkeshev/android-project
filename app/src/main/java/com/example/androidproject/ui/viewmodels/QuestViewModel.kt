@@ -25,9 +25,12 @@ class QuestViewModel() : ViewModel() {
 
     private val _questsWithCheckpoints = MutableStateFlow<List<QuestWithCheckpoints>>(emptyList())
     val questsWithCheckpoints: StateFlow<List<QuestWithCheckpoints>> = _questsWithCheckpoints
+    private val _currentQuest = MutableStateFlow<QuestEntity?>(null)
+    val currentQuest: StateFlow<QuestEntity?> = _currentQuest
 
     init {
         getQuestsWithCheckpoints()
+        getCurrentQuest()
     }
 
     private fun getQuestsWithCheckpoints() {
@@ -44,6 +47,13 @@ class QuestViewModel() : ViewModel() {
                 }
             }.collect { combinedData ->
                 _questsWithCheckpoints.value = combinedData
+            }
+        }
+    }
+    private fun getCurrentQuest() {
+        viewModelScope.launch {
+            repository.getCurrentQuest().let { quest ->
+                _currentQuest.value = quest.firstOrNull()?.first()
             }
         }
     }

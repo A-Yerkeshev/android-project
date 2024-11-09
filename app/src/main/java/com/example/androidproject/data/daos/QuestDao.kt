@@ -38,4 +38,7 @@ interface QuestDao {
 
     @Query("select * from quests")
     fun getAll(): Flow<List<QuestEntity>>
+
+    @Query("select * from quests where current = 1")
+    fun getCurrent(): Flow<List<QuestEntity>>
 }

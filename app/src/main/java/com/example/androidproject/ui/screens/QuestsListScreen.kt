@@ -41,7 +41,6 @@ import com.example.androidproject.ui.viewmodels.QuestViewModelFactory
 @Composable
 fun QuestsListScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
     val viewModel = QuestViewModel()
-
     val questsWithCheckpoints by viewModel.questsWithCheckpoints.collectAsState()
 
     LazyColumn(
