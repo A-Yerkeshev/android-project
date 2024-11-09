@@ -40,9 +40,7 @@ import com.example.androidproject.ui.viewmodels.QuestViewModelFactory
 
 @Composable
 fun QuestsListScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
-    val database = AppDB.getDatabase()
-    val repository = QuestRepository(database.questDao(), database.checkpointDao())
-    val viewModel: QuestViewModel = viewModel(factory = QuestViewModelFactory(repository))
+    val viewModel = QuestViewModel()
 
     val questsWithCheckpoints by viewModel.questsWithCheckpoints.collectAsState()
 
@@ -59,6 +57,7 @@ fun QuestsListScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
                 isExpanded = isExpanded,
                 onExpandChanged = { isExpanded = it },
                 onNavigateToMap = {
+                    viewModel.setQuestCurrent(questWithCheckpoints.quest)
                     navCtrl.navigate("${Screens.QuestDetail.name}/${questWithCheckpoints.quest.id}")
                 }
             )

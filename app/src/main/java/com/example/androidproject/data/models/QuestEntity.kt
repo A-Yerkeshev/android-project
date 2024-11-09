@@ -12,11 +12,11 @@ data class QuestEntity(
     @ColumnInfo(name = "id")
     val id: Int = 0,
     @ColumnInfo(name = "description")
-    val description: String = "",
+    var description: String = "",
     @ColumnInfo(name = "category")
-    val category: String? = null,
+    var category: String? = null,
     @ColumnInfo(name = "completed_at")
-    val completedAt: String? = null,
+    var completedAt: String? = null,
     @ColumnInfo(name = "current")
-    val current: Boolean = false
+    var current: Boolean = false
 )

@@ -5,11 +5,14 @@ import com.example.androidproject.data.daos.CheckpointDao
 import com.example.androidproject.data.daos.QuestDao
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class QuestRepository(
     private val questDao: QuestDao,
-    private val checkpointDao: CheckpointDao
+    private val checkpointDao: CheckpointDao,
 ) {
 
     // Fetch all quests
@@ -22,4 +25,10 @@ class QuestRepository(
     fun getCheckpointsByQuestId(questId: Int): Flow<List<CheckpointEntity>> = checkpointDao.getAll(questId)
 
     fun getAllCheckpoints(): Flow<List<CheckpointEntity>> = checkpointDao.getAllCheckpoints()
+
+    suspend fun setQuestCurrent(quest: QuestEntity) {
+        questDao.unsetAllCurrent()
+        quest.current = true
+        questDao.update(quest)
+    }
 }

@@ -7,16 +7,22 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import com.example.androidproject.data.AppDB
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.repository.QuestRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class QuestViewModel(private val repository: QuestRepository) : ViewModel() {
+class QuestViewModel() : ViewModel() {
+    private val database = AppDB.getDatabase()
+    private val repository = QuestRepository(database.questDao(), database.checkpointDao())
+
     private val _questsWithCheckpoints = MutableStateFlow<List<QuestWithCheckpoints>>(emptyList())
     val questsWithCheckpoints: StateFlow<List<QuestWithCheckpoints>> = _questsWithCheckpoints
 
@@ -62,6 +68,12 @@ class QuestViewModel(private val repository: QuestRepository) : ViewModel() {
     // Method to set the selected quest ID
     fun selectQuest(questId: Int) {
         _selectedQuestId.value = questId
+    }
+
+    fun setQuestCurrent(quest: QuestEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.setQuestCurrent(quest)
+        }
     }
 }
 

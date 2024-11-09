@@ -53,9 +53,7 @@ fun QuestDetailScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val database = AppDB.getDatabase()
-    val repository = QuestRepository(database.questDao(), database.checkpointDao())
-    val questViewModel: QuestViewModel = viewModel(factory = QuestViewModelFactory(repository))
+    val questViewModel = QuestViewModel()
 
     // Initialize OSMDroid configuration
     DisposableEffect(Unit) {
