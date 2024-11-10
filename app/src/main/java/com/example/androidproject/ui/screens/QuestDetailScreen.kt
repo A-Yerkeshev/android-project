@@ -14,11 +14,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -47,8 +51,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import com.example.androidproject.data.models.TaskEntity
 import com.example.androidproject.ui.viewmodels.TaskViewModel
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun QuestDetailScreen(
     navCtrl: NavController,
@@ -143,9 +148,15 @@ fun QuestDetailScreen(
         LaunchedEffect(selectedCheckpoint) {
             selectedCheckpoint?.let {
                 cameraState.geoPoint = GeoPoint(it.lat, it.long)
-                cameraState.zoom = 17.0
+                cameraState.zoom = 15.0
             }
         }
+
+
+        var showBottomSheet by remember { mutableStateOf(false) }
+        val sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = false // Enables the partial view
+        )
 
         // Apply the modifier to the Column
         Column(modifier = modifier.fillMaxSize()) {
@@ -227,24 +238,54 @@ fun QuestDetailScreen(
 
             Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
 
-            Button(
-                onClick = { navCtrl.popBackStack() },
-                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
-                    .padding(bottom = 16.dp)
+//            Button(
+//                onClick = { navCtrl.popBackStack() },
+//                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
+//                shape = RoundedCornerShape(20.dp),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 16.dp)
+//                    .padding(top = 16.dp)
+//                    .padding(bottom = 16.dp)
+//            ) {
+//                Text(
+//                    text = "Go Back",
+//                    color = MaterialTheme.colorScheme.onSecondary,
+//                    fontSize = 18.sp,
+//                    fontWeight = FontWeight.SemiBold
+//                )
+//            }
+        }
+        Button(
+            onClick = { showBottomSheet = true },
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+        ) {
+            Text(
+                text = "Open Bottom Sheet",
+                color = MaterialTheme.colorScheme.onSecondary,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        // Bottom Sheet
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                sheetState = sheetState,
+                onDismissRequest = { showBottomSheet = false }
             ) {
                 Text(
-                    text = "Go Back",
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
+                    "This is an empty bottom sheet. Swipe up to expand halfway or dismiss.",
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }
+
     } else {
         // Handle permission not granted scenario
         Text(text = "Location permission is required to display the map.")
