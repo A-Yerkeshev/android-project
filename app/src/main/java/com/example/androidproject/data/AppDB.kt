@@ -123,8 +123,8 @@ abstract class AppDB : RoomDatabase() {
         val metropoliaCheckpoints = listOf(
             CheckpointEntity(id = 15, questId = 3, lat = 60.2206, long = 24.8056, name = "Myllypuro Campus"),
             CheckpointEntity(id = 16, questId = 3, lat = 60.2026, long = 24.9342, name = "Karamalmi Campus"),
-            CheckpointEntity(id = 17, questId = 3, lat = 60.2230, long = 24.7582, name = "Leppävaara Campus"),
-            CheckpointEntity(id = 18, questId = 3, lat = 60.1691, long = 24.9402, name = "Hämeentie Campus")
+            CheckpointEntity(id = 17, questId = 3, lat = 60.2230, long = 24.7582, name = "Myyrmäki Campus"),
+            CheckpointEntity(id = 18, questId = 3, lat = 60.2090, long = 24.9650, name = "Arabia Campus")
         )
         metropoliaCheckpoints.forEach { checkpoint ->
             checkpointDao.insert(checkpoint)
