@@ -220,23 +220,6 @@ fun QuestDetailScreen(
                 )
             }
 
-            // Display the list of checkpoints
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(checkpoints) { checkpoint ->
-                    // Highlight checkpoint in list if it matches selectedCheckpoint
-                    Text(
-                        text = checkpoint.name,
-                        color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .clickable {
-                                selectedCheckpoint =
-                                    checkpoint  // Highlight the checkpoint in the list
-                            }
-                    )
-                }
-            }
 
             Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
 
@@ -264,9 +247,12 @@ fun QuestDetailScreen(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .height(sheetHeight)
-                    .padding(bottom = bottomSheetPadding)
+                    .padding(bottom = bottomSheetPadding) // Add padding for bottom toolbar
                     .clickable { isBottomSheetExpanded = !isBottomSheetExpanded }
-                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .background(
+                        MaterialTheme.colorScheme.surface,
+                        RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                    )
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -277,9 +263,25 @@ fun QuestDetailScreen(
                     )
                     if (isBottomSheetExpanded) {
                         Text(
-                            "Additional content when expanded...",
-                            style = MaterialTheme.typography.bodyMedium
+                            "List of Checkpoints:",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(vertical = 8.dp)
                         )
+                        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                            items(checkpoints) { checkpoint ->
+                                // Highlight checkpoint in list if it matches selectedCheckpoint
+                                Text(
+                                    text = checkpoint.name,
+                                    color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                        .clickable {
+                                            selectedCheckpoint = checkpoint
+                                        }
+                                )
+                            }
+                        }
                     }
                 }
             }
