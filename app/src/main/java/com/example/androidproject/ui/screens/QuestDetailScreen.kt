@@ -158,7 +158,7 @@ fun QuestDetailScreen(
 
         // Persistent bottom sheet state
         var isBottomSheetExpanded by remember { mutableStateOf(false) }
-        val sheetHeight = if (isBottomSheetExpanded) 500.dp else 140.dp
+        val sheetHeight = if (isBottomSheetExpanded) 350.dp else 140.dp
         val bottomSheetPadding = 50.dp  //
 
         // Main UI layout
@@ -192,17 +192,17 @@ fun QuestDetailScreen(
                 Button(
                     onClick = {
                         // On button click, recenter the map
-//                        val newCenter = if (location != null
-//                            && location.latitude != 0.0 && location.longitude != 0.0
-//                            && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
-//                        ) {
-//                            GeoPoint(location.latitude, location.longitude)
-//                        } else {
-//                            // Default to Helsinki
-//                            GeoPoint(60.1699, 24.9384)
-//                        }
+                        val newCenter = if (location != null
+                            && location.latitude != 0.0 && location.longitude != 0.0
+                            && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
+                        ) {
+                            GeoPoint(location.latitude, location.longitude)
+                        } else {
+                            // Default to Helsinki
+                            GeoPoint(60.1699, 24.9384)
+                        }
                         //temporarily solves recenter in emulator
-                        val newCenter = GeoPoint(60.1699, 24.9384)
+                        //val newCenter = GeoPoint(60.1699, 24.9384)
                         cameraState.geoPoint = newCenter
                         cameraState.zoom = 15.0
                     },
