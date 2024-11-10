@@ -157,7 +157,7 @@ fun QuestDetailScreen(
 
         // Persistent bottom sheet state
         var isBottomSheetExpanded by remember { mutableStateOf(false) }
-        val sheetHeight = if (isBottomSheetExpanded) 500.dp else 180.dp
+        val sheetHeight = if (isBottomSheetExpanded) 500.dp else 190.dp
         val bottomSheetPadding = 100.dp  //
 
         // Main UI layout
@@ -263,7 +263,7 @@ fun QuestDetailScreen(
                 ) {
                     BottomSheetDefaults.DragHandle(
                         modifier = Modifier
-                            .padding(vertical = 8.dp)
+
                             .clickable { isBottomSheetExpanded = !isBottomSheetExpanded }
                     )
                     Text(
