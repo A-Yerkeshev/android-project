@@ -161,12 +161,15 @@ fun QuestDetailScreen(
 
         // Main UI layout
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = sheetHeight)
+            ) {
             // Map with specified height
                 Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(400.dp)
                  ) {
                 ShowMap(
                     checkpoints = checkpoints,
