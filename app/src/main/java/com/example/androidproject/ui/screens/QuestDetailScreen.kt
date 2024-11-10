@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults
@@ -156,7 +157,7 @@ fun QuestDetailScreen(
 
         // Persistent bottom sheet state
         var isBottomSheetExpanded by remember { mutableStateOf(false) }
-        val sheetHeight = if (isBottomSheetExpanded) 400.dp else 200.dp
+        val sheetHeight = if (isBottomSheetExpanded) 500.dp else 180.dp
         val bottomSheetPadding = 100.dp  //
 
         // Main UI layout
@@ -245,24 +246,31 @@ fun QuestDetailScreen(
 //            }
         }
             // Persistent Bottom Sheet
-            Box(
+            Surface(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .height(sheetHeight)
                     .padding(bottom = bottomSheetPadding) // Add padding for bottom toolbar
-                    .clickable { isBottomSheetExpanded = !isBottomSheetExpanded }
-                    .background(
-                        MaterialTheme.colorScheme.surface,
-                        RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                    )
-                    .padding(16.dp)
+                    .clickable { isBottomSheetExpanded = !isBottomSheetExpanded },
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                color = MaterialTheme.colorScheme.surface,
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = if (isBottomSheetExpanded) Arrangement.Top else Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    BottomSheetDefaults.DragHandle(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .clickable { isBottomSheetExpanded = !isBottomSheetExpanded }
+                    )
                     Text(
-                        "Persistent Bottom Sheet. Click to expand/collapse.",
+                        text = selectedQuest?.description ?: "Quest Details",
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(8.dp)
+                        modifier = Modifier.padding(8.dp),
+                        textAlign = TextAlign.Center
                     )
                     if (isBottomSheetExpanded) {
                         Text(
