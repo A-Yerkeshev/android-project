@@ -50,6 +50,7 @@ import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import com.example.androidproject.data.models.TaskEntity
 import com.example.androidproject.ui.viewmodels.TaskViewModel
@@ -157,20 +158,26 @@ fun QuestDetailScreen(
 
         // Persistent bottom sheet state
         var isBottomSheetExpanded by remember { mutableStateOf(false) }
-        val sheetHeight = if (isBottomSheetExpanded) 500.dp else 190.dp
-        val bottomSheetPadding = 100.dp  //
+        val sheetHeight = if (isBottomSheetExpanded) 500.dp else 140.dp
+        val bottomSheetPadding = 50.dp  //
 
         // Main UI layout
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = sheetHeight)
+
             ) {
-            // Map with specified height
+                // Destimated height of the navigation bar
+                val navigationBarHeight = 40.dp
+
+                // Calculate the combined padding
+                val combinedPadding = sheetHeight + navigationBarHeight
+                // Map with specified height
                 Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(bottom = combinedPadding)
                  ) {
                 ShowMap(
                     checkpoints = checkpoints,
@@ -246,15 +253,15 @@ fun QuestDetailScreen(
 //            }
         }
             // Persistent Bottom Sheet
-            Surface(
+            Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .height(sheetHeight)
-                    .padding(bottom = bottomSheetPadding) // Add padding for bottom toolbar
+                    .align(Alignment.BottomCenter)
+                    .offset(y = -bottomSheetPadding) // Move up by navbar height
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .background(MaterialTheme.colorScheme.surface)
                     .clickable { isBottomSheetExpanded = !isBottomSheetExpanded },
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                color = MaterialTheme.colorScheme.surface,
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
