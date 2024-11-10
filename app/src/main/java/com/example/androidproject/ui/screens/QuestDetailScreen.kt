@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -153,19 +154,20 @@ fun QuestDetailScreen(
         }
 
 
-        var showBottomSheet by remember { mutableStateOf(false) }
-        val sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = false // Enables the partial view
-        )
+        // Persistent bottom sheet state
+        var isBottomSheetExpanded by remember { mutableStateOf(false) }
+        val sheetHeight = if (isBottomSheetExpanded) 400.dp else 200.dp
+        val bottomSheetPadding = 100.dp  //
 
-        // Apply the modifier to the Column
-        Column(modifier = modifier.fillMaxSize()) {
+        // Main UI layout
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = modifier.fillMaxSize()) {
             // Map with specified height
-            Box(
+                Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(400.dp)
-            ) {
+                 ) {
                 ShowMap(
                     checkpoints = checkpoints,
                     cameraState = cameraState,
@@ -256,38 +258,33 @@ fun QuestDetailScreen(
 //                )
 //            }
         }
-        Button(
-            onClick = { showBottomSheet = true },
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
-            shape = RoundedCornerShape(20.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp)
-        ) {
-            Text(
-                text = "Open Bottom Sheet",
-                color = MaterialTheme.colorScheme.onSecondary,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-
-        // Bottom Sheet
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                sheetState = sheetState,
-                onDismissRequest = { showBottomSheet = false }
+            // Persistent Bottom Sheet
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(sheetHeight)
+                    .padding(bottom = bottomSheetPadding)
+                    .clickable { isBottomSheetExpanded = !isBottomSheetExpanded }
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .padding(16.dp)
             ) {
-                Text(
-                    "This is an empty bottom sheet. Swipe up to expand halfway or dismiss.",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Persistent Bottom Sheet. Click to expand/collapse.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    if (isBottomSheetExpanded) {
+                        Text(
+                            "Additional content when expanded...",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
             }
         }
-
     } else {
-        // Handle permission not granted scenario
         Text(text = "Location permission is required to display the map.")
     }
 }
