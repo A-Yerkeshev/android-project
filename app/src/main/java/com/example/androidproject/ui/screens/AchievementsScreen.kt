@@ -10,23 +10,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 
 data class Achievement(val title: String, val completed: Boolean)
 
 @Composable
-fun AchievementsScreen(navCtrl: NavController) {
+fun AchievementsScreen() {
     val achievements = listOf(
         Achievement("Complete First Quest", true),
         Achievement("Reach Level 5", false),
         Achievement("Discover Hidden Item", true),
-        // Add more achievements here
     )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(30.dp)
     ) {
         Text(
             text = "User Achievements",

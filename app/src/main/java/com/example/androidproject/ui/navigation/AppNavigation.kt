@@ -42,9 +42,7 @@ fun AppNavigation(navController: NavController, modifier: Modifier = Modifier) {
         }
 
         composable(route = Screens.Achievements.name) {
-            AchievementsScreen(
-                navCtrl = navController
-            )
+            AchievementsScreen()
         }
     }
 }
