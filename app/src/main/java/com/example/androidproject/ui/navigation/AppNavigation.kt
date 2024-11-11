@@ -1,6 +1,5 @@
 package com.example.androidproject.ui.navigation
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -8,9 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.androidproject.ui.screens.MapScreen
+import com.example.androidproject.ui.screens.AchievementsScreen
 import com.example.androidproject.ui.screens.QuestDetailScreen
 import com.example.androidproject.ui.screens.QuestsListScreen
 import com.example.androidproject.ui.screens.WelcomeScreen
@@ -31,6 +29,7 @@ fun AppNavigation(navController: NavController, modifier: Modifier = Modifier) {
                 navCtrl = navController
             )
         }
+
         composable(
             route = "${Screens.QuestDetail.name}/{questId}",
             arguments = listOf(navArgument("questId") { type = NavType.IntType })
@@ -41,12 +40,18 @@ fun AppNavigation(navController: NavController, modifier: Modifier = Modifier) {
                 questId = questId
             )
         }
+
+        composable(route = Screens.Achievements.name) {
+            AchievementsScreen(
+                navCtrl = navController
+            )
+        }
     }
 }
 
 enum class Screens {
     Welcome,
     QuestsList,
-    QuestDetail
+    QuestDetail,
+    Achievements
 }
-

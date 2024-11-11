@@ -81,6 +81,26 @@ fun WelcomeScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
                     fontWeight = FontWeight.SemiBold
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    navCtrl.navigate(Screens.Achievements.name)
+                },
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
+            ) {
+                Text(
+                    text = "Go to Achievements",
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 }
