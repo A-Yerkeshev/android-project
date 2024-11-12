@@ -229,7 +229,7 @@ fun QuestDetailScreen(
                         .padding(16.dp),
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                     shape = CircleShape,
-                    contentPadding = PaddingValues(8.dp)
+                    contentPadding = PaddingValues(4.dp)
                 ) {
 //                    Text(
 //                        text = "Recenter",
@@ -239,10 +239,10 @@ fun QuestDetailScreen(
 //                        textAlign = TextAlign.Center
 //                    )
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_mylocation),
+                        painter = painterResource(id = R.drawable.ic_rounded_my_location),
                         contentDescription = "Center to my position",
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(36.dp)
                     )
                 }
             }
