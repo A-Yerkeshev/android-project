@@ -54,6 +54,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import com.example.androidproject.data.models.TaskEntity
 import com.example.androidproject.ui.viewmodels.TaskViewModel
+import com.example.androidproject.utils.locationPermission
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -77,20 +78,14 @@ fun QuestDetailScreen(
     }
 
     // Request location permission
-    val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
-
-    LaunchedEffect(locationPermissionState.status) {
-        if (!locationPermissionState.status.isGranted) {
-            locationPermissionState.launchPermissionRequest()
-        }
-    }
+    val locationPermissionGranted = locationPermission()
 
     // Set the selected quest ID in the ViewModel
     LaunchedEffect(questId) {
         questViewModel.selectQuest(questId)
     }
 
-    if (locationPermissionState.status.isGranted) {
+    if (locationPermissionGranted) {
         // Observe checkpoints and selected quest from the ViewModel
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
