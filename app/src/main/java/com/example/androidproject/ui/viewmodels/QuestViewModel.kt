@@ -1,5 +1,6 @@
 package com.example.androidproject.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,10 +26,12 @@ class QuestViewModel : ViewModel() {
 
     private val _questsWithCheckpoints = MutableStateFlow<List<QuestWithCheckpoints>>(emptyList())
     val questsWithCheckpoints: StateFlow<List<QuestWithCheckpoints>> = _questsWithCheckpoints
+
     private val _currentQuest = MutableStateFlow<QuestEntity?>(null)
     val currentQuest: StateFlow<QuestEntity?> = _currentQuest
 
     init {
+        Log.d("XXX", "QuestViewModel init")
         getQuestsWithCheckpoints()
         getCurrentQuest()
     }
@@ -55,6 +58,7 @@ class QuestViewModel : ViewModel() {
             repository.getCurrentQuest().let { quest ->
                 _currentQuest.value = quest.firstOrNull()?.first()
             }
+            Log.d("XXX", "Load from DB currentQuestId: ${_currentQuest.value?.id}")
         }
     }
 

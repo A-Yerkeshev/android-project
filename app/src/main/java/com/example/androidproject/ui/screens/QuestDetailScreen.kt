@@ -65,7 +65,12 @@ fun QuestDetailScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val questViewModel = QuestViewModel()
+
+//    val questViewModel = QuestViewModel()
+    // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
+    // ViewModel from the provider, and persists through recomposition of the composable. It means when
+    // the composable recomposes, the ViewModel stays the same, with all its state variables/data
+    val questViewModel: QuestViewModel = viewModel()
     val taskViewModel = TaskViewModel()
 
     // Initialize OSMDroid configuration

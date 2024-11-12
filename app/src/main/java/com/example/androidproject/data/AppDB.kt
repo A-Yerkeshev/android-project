@@ -11,6 +11,7 @@ import com.example.androidproject.data.daos.TaskDao
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.data.models.TaskEntity
+import kotlinx.coroutines.flow.firstOrNull
 
 @Database(entities = [CheckpointEntity::class, TaskEntity::class, QuestEntity::class], version = 1, exportSchema = false)
 abstract class AppDB : RoomDatabase() {
@@ -37,16 +38,31 @@ abstract class AppDB : RoomDatabase() {
         val db: AppDB = getDatabase()
         val questDao = db.questDao()
 
-        val currentQuestFlow = questDao.getCurrent()
-        currentQuestFlow.collect { currentQuest ->
-            if (currentQuest.firstOrNull() == null) {
-                questDao.getAll().collect {
-                    if (it.isNotEmpty()) {
-                        val quest = it[0]
-                        quest.current = true
-                        questDao.update(quest)
-                    }
-                }
+        // using Flow causes database to update questsWithCheckpoints and currentQuest repeatedly in
+        // the viewModel and subsequently in the bottomNavigation, which makes the bottomNavigation
+        // to recompose all the time (check the Logcat with tag "XXX", it's in the currentRoute function)
+//        val currentQuestFlow = questDao.getCurrent()
+//        currentQuestFlow.collect { currentQuest ->
+//            if (currentQuest.firstOrNull() == null) {
+//                questDao.getAll().collect {
+//                    if (it.isNotEmpty()) {
+//                        val quest = it[0]
+//                        quest.current = true
+//                        questDao.update(quest)
+//                    }
+//                }
+//            }
+//        }
+
+        // maybe check this just one time (when the app starts, in the onCreate in App),
+        // no need to use Flow
+        val currentQuest = questDao.getCurrent().firstOrNull()
+        if (currentQuest == null) {
+            val allQuests = questDao.getAll().firstOrNull()
+            if (!allQuests.isNullOrEmpty()) {
+                    val quest = allQuests[0]
+                    quest.current = true
+                    questDao.update(quest)
             }
         }
     }
