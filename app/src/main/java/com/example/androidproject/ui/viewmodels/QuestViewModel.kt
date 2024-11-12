@@ -32,7 +32,12 @@ class QuestViewModel : ViewModel() {
 
     init {
         Log.d("XXX", "QuestViewModel init")
+
+        // get all quests information (with their checkpoints) to populate the QuestList screen (that
+        // screen collects the questsWithCheckpoints variable here as State in the composable)
         getQuestsWithCheckpoints()
+
+        // gets currentQuest the first time (when the ViewModel initializes)
         getCurrentQuest()
     }
 
@@ -53,6 +58,7 @@ class QuestViewModel : ViewModel() {
             }
         }
     }
+
     private fun getCurrentQuest() {
         viewModelScope.launch {
             repository.getCurrentQuest().let { quest ->
@@ -87,6 +93,9 @@ class QuestViewModel : ViewModel() {
     fun setQuestCurrent(quest: QuestEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.setQuestCurrent(quest)
+
+            // update currentQuest variable when setting new quest as current
+            getCurrentQuest()
         }
     }
 }

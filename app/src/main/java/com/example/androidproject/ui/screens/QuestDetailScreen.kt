@@ -1,8 +1,6 @@
 package com.example.androidproject.ui.screens
 
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.isGranted
+//import androidx.compose.material.icons.filled.ExpandMore
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -11,37 +9,53 @@ import android.location.LocationManager
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-//import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.*
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.*
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.androidproject.R
-import com.example.androidproject.data.AppDB
 import com.example.androidproject.data.models.CheckpointEntity
-import com.example.androidproject.repository.QuestRepository
+import com.example.androidproject.data.models.TaskEntity
 import com.example.androidproject.ui.viewmodels.QuestViewModel
-import com.example.androidproject.ui.viewmodels.QuestViewModelFactory
+import com.example.androidproject.ui.viewmodels.TaskViewModel
+import com.example.androidproject.utils.locationPermission
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 import com.utsman.osmandcompose.CameraState
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
@@ -49,29 +63,26 @@ import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
-import com.example.androidproject.data.models.TaskEntity
-import com.example.androidproject.ui.viewmodels.TaskViewModel
-import com.example.androidproject.utils.locationPermission
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun QuestDetailScreen(
+    modifier: Modifier = Modifier,
     navCtrl: NavController,
-    questId: Int,
-    modifier: Modifier = Modifier
+    questViewModel: QuestViewModel,
+    taskViewModel: TaskViewModel,
+    questId: Int
 ) {
     val context = LocalContext.current
 
 //    val questViewModel = QuestViewModel()
+
     // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
     // ViewModel from the provider, and persists through recomposition of the composable. It means when
     // the composable recomposes, the ViewModel stays the same, with all its state variables/data
-    val questViewModel: QuestViewModel = viewModel()
-    val taskViewModel = TaskViewModel()
+//    val questViewModel: QuestViewModel = viewModel()
+
+//    val taskViewModel = TaskViewModel()
 
     // Initialize OSMDroid configuration
     DisposableEffect(Unit) {
@@ -363,7 +374,7 @@ fun completableTasks(tasks: List<TaskEntity>, checkpoints: List<CheckpointEntity
     val context = LocalContext.current
 
     val availableCheckpoints = checkpoints.filter { checkpoint ->
-        checkpoint.completed == false && isNear(checkpoint, context)
+        !checkpoint.completed && isNear(checkpoint, context)
     }
 
     return tasks.filter { task ->

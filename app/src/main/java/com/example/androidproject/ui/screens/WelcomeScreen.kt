@@ -22,7 +22,10 @@ import androidx.navigation.NavController
 import com.example.androidproject.ui.navigation.Screens
 
 @Composable
-fun WelcomeScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
+fun WelcomeScreen(
+    modifier: Modifier = Modifier,
+    navCtrl: NavController
+) {
     Box(
         modifier = modifier
             .fillMaxSize()

@@ -5,37 +5,37 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavController
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    questViewModel: QuestViewModel
+) {
     val currentRoute = currentRoute(navController)
 
 //    val questViewModel = QuestViewModel()
+
     // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
     // ViewModel from the provider, and persists through recomposition of the composable. It means when
     // the composable recomposes, the ViewModel stays the same, with all its state variables/data
-    val questViewModel: QuestViewModel = viewModel()
+//    val questViewModel: QuestViewModel = viewModel()
 
     // this listens to changes from viewModel all the time, which makes the nav bar recomposes
     // repeatedly. Ideally nav bar should just listen to change in currentQuest Id to update the
@@ -57,7 +57,7 @@ fun BottomNavigationBar(navController: NavController) {
     // correct navigation of the icons
     val questId: Int by rememberUpdatedState(currentQuest?.id ?: 0)
 
-    Log.d("XXX", "currentQuest Id updated: ${currentQuest?.id ?: 0}")
+    Log.d("XXX", "NavBar currentQuest Id updated: ${currentQuest?.id ?: 0}")
 
     NavigationBar(
         containerColor = Color.White,
@@ -108,7 +108,7 @@ fun BottomNavigationBar(navController: NavController) {
             label = { if (currentRoute == "${Screens.QuestDetail.name}/{questId}") Text("Map") },
             selected = currentRoute == "${Screens.QuestDetail.name}/{questId}",
             onClick = {
-                navController.navigate("${Screens.QuestDetail.name}/${questId ?: ""}") {
+                navController.navigate("${Screens.QuestDetail.name}/${questId}") {
                     popUpTo(Screens.QuestDetail.name) { inclusive = true }
                 }
             }
