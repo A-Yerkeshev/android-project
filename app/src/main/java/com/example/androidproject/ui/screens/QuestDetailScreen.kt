@@ -39,6 +39,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,15 +82,6 @@ fun QuestDetailScreen(
 ) {
     val context = LocalContext.current
 
-//    val questViewModel = QuestViewModel()
-
-    // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
-    // ViewModel from the provider, and persists through recomposition of the composable. It means when
-    // the composable recomposes, the ViewModel stays the same, with all its state variables/data
-//    val questViewModel: QuestViewModel = viewModel()
-
-//    val taskViewModel = TaskViewModel()
-
     // Initialize OSMDroid configuration
     DisposableEffect(Unit) {
         Configuration.getInstance().load(
@@ -113,13 +105,6 @@ fun QuestDetailScreen(
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
         val tasks by taskViewModel.currentTasks.collectAsState()
         val completableTasks = completableTasks(tasks, checkpoints)
-
-        LaunchedEffect(checkpoints) {
-            Log.d("QuestDetailScreen", "Number of checkpoints: ${checkpoints.size}")
-            checkpoints.forEach { checkpoint ->
-                Log.d("QuestDetailScreen", "Checkpoint: ${checkpoint.name} at (${checkpoint.lat}, ${checkpoint.long})")
-            }
-        }
 
         // State to hold the selected/highlighted checkpoint
         var selectedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
@@ -160,7 +145,9 @@ fun QuestDetailScreen(
 
         // Set initial camera position and zoom
         LaunchedEffect(startPoint) {
-            cameraState.geoPoint = startPoint
+//            cameraState.geoPoint = startPoint
+            // Zoom to Arman's home for debugging
+            cameraState.geoPoint = GeoPoint(60.235610, 25.006100)
             cameraState.zoom = 15.0
         }
 
@@ -176,7 +163,7 @@ fun QuestDetailScreen(
         // Persistent bottom sheet state
         var isBottomSheetExpanded by remember { mutableStateOf(false) }
         val sheetHeight = if (isBottomSheetExpanded) 350.dp else 140.dp
-        val bottomSheetPadding = 50.dp  //
+        val bottomSheetPadding = 50.dp
 
         // Main UI layout
         Box(modifier = Modifier.fillMaxSize()) {
@@ -196,14 +183,16 @@ fun QuestDetailScreen(
                     .fillMaxWidth()
                     .padding(bottom = combinedPadding)
                  ) {
-                ShowMap(
-                    checkpoints = checkpoints,
-                    cameraState = cameraState,
-                    selectedCheckpoint = selectedCheckpoint,
-                    onCheckpointClick = { checkpoint ->
-                        selectedCheckpoint = checkpoint
-                    }
-                )
+                key(checkpoints) {
+                    ShowMap(
+                        checkpoints = checkpoints,
+                        cameraState = cameraState,
+                        selectedCheckpoint = selectedCheckpoint,
+                        onCheckpointClick = { checkpoint ->
+                            selectedCheckpoint = checkpoint
+                        }
+                    )
+                }
 
                 // Add the Recenter Button overlaid on the map
                 Button(
@@ -231,13 +220,6 @@ fun QuestDetailScreen(
                     shape = CircleShape,
                     contentPadding = PaddingValues(4.dp)
                 ) {
-//                    Text(
-//                        text = "Recenter",
-//                        color = MaterialTheme.colorScheme.onSecondary,
-//                        fontSize = 16.sp,
-//                        fontWeight = FontWeight.SemiBold,
-//                        textAlign = TextAlign.Center
-//                    )
                     Icon(
                         painter = painterResource(id = R.drawable.ic_rounded_my_location),
                         contentDescription = "Center to my position",
@@ -258,24 +240,6 @@ fun QuestDetailScreen(
 
 
             Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
-
-//            Button(
-//                onClick = { navCtrl.popBackStack() },
-//                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
-//                shape = RoundedCornerShape(20.dp),
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 16.dp)
-//                    .padding(top = 16.dp)
-//                    .padding(bottom = 16.dp)
-//            ) {
-//                Text(
-//                    text = "Go Back",
-//                    color = MaterialTheme.colorScheme.onSecondary,
-//                    fontSize = 18.sp,
-//                    fontWeight = FontWeight.SemiBold
-//                )
-//            }
         }
             // Persistent Bottom Sheet
             Box(
@@ -349,7 +313,7 @@ fun ShowMap(
 
         OpenStreetMap(
             modifier = Modifier.fillMaxSize(),
-            cameraState = cameraState
+            cameraState = cameraState,
         ) {
             val location = getLocation(context)
 

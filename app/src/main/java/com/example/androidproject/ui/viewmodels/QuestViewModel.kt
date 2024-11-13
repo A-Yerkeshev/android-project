@@ -31,8 +31,6 @@ class QuestViewModel : ViewModel() {
     val currentQuest: StateFlow<QuestEntity?> = _currentQuest
 
     init {
-        Log.d("XXX", "QuestViewModel init")
-
         // get all quests information (with their checkpoints) to populate the QuestList screen (that
         // screen collects the questsWithCheckpoints variable here as State in the composable)
         getQuestsWithCheckpoints()
