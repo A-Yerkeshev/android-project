@@ -144,12 +144,10 @@ fun QuestDetailScreen(
         }
 
         // Set initial camera position and zoom
-        LaunchedEffect(startPoint) {
-//            cameraState.geoPoint = startPoint
-            // Zoom to Arman's home for debugging
-            cameraState.geoPoint = GeoPoint(60.235610, 25.006100)
-            cameraState.zoom = 15.0
-        }
+        cameraState.geoPoint = startPoint
+        // Zoom to Arman's home for debugging
+//        cameraState.geoPoint = GeoPoint(60.235610, 25.006100)
+        cameraState.zoom = 15.0
 
         // Center the map on the selected checkpoint when it changes
         LaunchedEffect(selectedCheckpoint) {
@@ -316,7 +314,6 @@ fun ShowMap(
             cameraState = cameraState,
         ) {
             val location = getLocation(context)
-
             if (location != null && location.latitude > 0 && location.longitude > 0) {
                 Marker(
                     state = rememberMarkerState(
