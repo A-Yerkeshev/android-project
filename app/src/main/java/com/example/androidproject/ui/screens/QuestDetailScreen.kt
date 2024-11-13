@@ -145,9 +145,9 @@ fun QuestDetailScreen(
 
         // Set initial camera position and zoom
         LaunchedEffect(startPoint) {
-//            cameraState.geoPoint = startPoint
+            cameraState.geoPoint = startPoint
             // Zoom to Arman's home for debugging
-            cameraState.geoPoint = GeoPoint(60.235610, 25.006100)
+//            cameraState.geoPoint = GeoPoint(60.235610, 25.006100)
             cameraState.zoom = 15.0
         }
 
