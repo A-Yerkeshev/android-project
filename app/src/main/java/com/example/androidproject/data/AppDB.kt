@@ -1,5 +1,6 @@
 package com.example.androidproject.data
 
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -7,33 +8,29 @@ import com.example.androidproject.App
 import com.example.androidproject.data.daos.CheckpointDao
 import com.example.androidproject.data.daos.QuestDao
 import com.example.androidproject.data.daos.TaskDao
-import com.example.androidproject.data.daos.AchievementDao
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.data.models.TaskEntity
-import com.example.androidproject.data.models.AchievementEntity
+import kotlinx.coroutines.flow.firstOrNull
 
-@Database(entities = [CheckpointEntity::class, TaskEntity::class, QuestEntity::class, AchievementEntity::class], version = 2, exportSchema = false)
+@Database(entities = [CheckpointEntity::class, TaskEntity::class, QuestEntity::class], version = 1, exportSchema = false)
 abstract class AppDB : RoomDatabase() {
-
     abstract fun checkpointDao(): CheckpointDao
     abstract fun taskDao(): TaskDao
     abstract fun questDao(): QuestDao
-    abstract fun achievementDao(): AchievementDao
 
     companion object {
         @Volatile
         private var Instance: AppDB? = null
 
+        // Ensures that only one instance of the database is created
         fun getDatabase(): AppDB {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
                     App.appContext,
                     AppDB::class.java,
                     "quest_app_database"
-                )
-                    .fallbackToDestructiveMigration()  // This will delete the database when the schema changes
-                    .build().also { Instance = it }
+                ).build().also { Instance = it }
             }
         }
     }
@@ -42,53 +39,140 @@ abstract class AppDB : RoomDatabase() {
         val db: AppDB = getDatabase()
         val questDao = db.questDao()
 
-        val currentQuestFlow = questDao.getCurrent()
-        currentQuestFlow.collect { currentQuest ->
-            if (currentQuest.firstOrNull() == null) {
-                questDao.getAll().collect {
-                    if (it.isNotEmpty()) {
-                        val quest = it[0]
-                        quest.current = true
-                        questDao.update(quest)
-                    }
-                }
+        // using Flow causes database to update questsWithCheckpoints and currentQuest repeatedly in
+        // the viewModel and subsequently in the bottomNavigation, which makes the bottomNavigation
+        // to recompose all the time (check the Logcat with tag "XXX", it's in the currentRoute function)
+//        val currentQuestFlow = questDao.getCurrent()
+//        currentQuestFlow.collect { currentQuest ->
+//            if (currentQuest.firstOrNull() == null) {
+//                questDao.getAll().collect {
+//                    if (it.isNotEmpty()) {
+//                        val quest = it[0]
+//                        quest.current = true
+//                        questDao.update(quest)
+//                    }
+//                }
+//            }
+//        }
+
+        // maybe check this just one time (when the app starts, in the onCreate in App),
+        // no need to use Flow
+        val currentQuest = questDao.getCurrent().firstOrNull()
+        if (currentQuest == null) {
+            val allQuests = questDao.getAll().firstOrNull()
+            if (!allQuests.isNullOrEmpty()) {
+                val quest = allQuests[0]
+                quest.current = true
+                questDao.update(quest)
             }
         }
     }
 
     suspend fun fillWithTestData() {
-        val db: AppDB = getDatabase()
-        val questDao = db.questDao()
-        val checkpointDao = db.checkpointDao()
-        val taskDao = db.taskDao()
-        val achievementDao = db.achievementDao()
+        val db: AppDB = getDatabase()  // Get the database instance
+        val questDao = db.questDao()   // Get the QuestDao instance
+        val checkpointDao = db.checkpointDao() // Get the CheckpointDao instance
+        val taskDao = db.taskDao()     // Get the TaskDao instance
 
-        // Insert Quest Entities
-        questDao.insert(QuestEntity(id = 1, description = "Helsinki Historical Locations", category = "History", current = true))
-        questDao.insert(QuestEntity(id = 2, description = "Helsinki Tourist Attractions", category = "Attraction", current = false))
-        questDao.insert(QuestEntity(id = 3, description = "Metropolia UAS Campuses", category = "Education", current = false))
-        questDao.insert(QuestEntity(id = 4, description = "Arman's surroundings"))
+        // Add test data for quests and checkpoints
+        val yesterday = System.currentTimeMillis() - 24 * 60 * 60 * 1000
+        questDao.insert(
+            QuestEntity(
+                description = "Completed Quest Example",
+                category = "Test",
+                current = false,
+                completedAt = yesterday.toString()
+            )
+        )
 
-        // Insert Checkpoint Entities
+        questDao.insert(
+            QuestEntity(
+                id = 1,
+                description = "Helsinki Historical Locations",
+                category = "History",
+                current = true
+            )
+        )
+
+        questDao.insert(
+            QuestEntity(
+                id = 2,
+                description = "Helsinki Tourist Attractions",
+                category = "Attraction",
+                current = false
+            )
+        )
+
+        questDao.insert(
+            QuestEntity(
+                id = 3,
+                description = "Metropolia UAS Campuses",
+                category = "Education",
+                current = false
+            )
+        )
+
+        questDao.insert(
+            QuestEntity(
+                id = 4,
+                description = "Arman's surroundings"
+            )
+        )
+
         val checkpoints1 = listOf(
             CheckpointEntity(id = 1, questId = 1, lat = 60.1699, long = 24.9384, name = "Helsinki Cathedral"),
-            CheckpointEntity(id = 2, questId = 1, lat = 60.1609, long = 24.9522, name = "Suomenlinna Fortress")
+            CheckpointEntity(id = 2, questId = 1, lat = 60.1609, long = 24.9522, name = "Suomenlinna Fortress"),
+            CheckpointEntity(id = 3, questId = 2, lat = 60.1708, long = 24.9426, name = "Market Square"),
+            CheckpointEntity(id = 4, questId = 2, lat = 60.1870, long = 24.9210, name = "Sibelius Monument"),
+            CheckpointEntity(id = 5, questId = 2, lat = 60.1719, long = 24.9414, name = "Esplanadi Park"),
+            CheckpointEntity(id = 6, questId = 2, lat = 60.1756, long = 24.9389, name = "Ateneum Art Museum"),
+            CheckpointEntity(id = 7, questId = 1, lat = 60.1844, long = 24.9250, name = "Temppeliaukio Church")
         )
+
         checkpoints1.forEach { checkpoint ->
             checkpointDao.insert(checkpoint)
         }
 
-        // Insert tasks (after inserting checkpoints to ensure foreign key integrity)
-        val armanTasks = listOf(
-            TaskEntity(id = 1, checkpointId = 1, description = "Do project"),
-            TaskEntity(id = 2, checkpointId = 2, description = "Buy grocery")
+        questDao.insert(QuestEntity(id = 2, description = "Helsinki Tour - Route 2"))
+
+        val checkpoints2 = listOf(
+            CheckpointEntity(id = 8, questId = 2, lat = 60.1699, long = 24.9384, name = "Helsinki Cathedral"),
+            CheckpointEntity(id = 9, questId = 2, lat = 60.1609, long = 24.9522, name = "Suomenlinna Fortress"),
+            CheckpointEntity(id = 10, questId = 2, lat = 60.1708, long = 24.9426, name = "Market Square"),
+            CheckpointEntity(id = 11, questId = 2, lat = 60.1870, long = 24.9210, name = "Sibelius Monument"),
+            CheckpointEntity(id = 12, questId = 2, lat = 60.1719, long = 24.9414, name = "Esplanadi Park"),
+            CheckpointEntity(id = 13, questId = 2, lat = 60.1756, long = 24.9389, name = "Ateneum Art Museum"),
+            CheckpointEntity(id = 14, questId = 2, lat = 60.1844, long = 24.9250, name = "Temppeliaukio Church")
         )
-        armanTasks.forEach { task ->
-            taskDao.insert(task) // Ensure checkpoints are already in the database
+
+        checkpoints2.forEach { checkpoint ->
+            checkpointDao.insert(checkpoint)
         }
 
-        // Insert Achievements
-        achievementDao.insert(AchievementEntity(name = "Route Completed", type = "Completion", status = "Unlocked"))
-        achievementDao.insert(AchievementEntity(name = "Task Finished", type = "Task", status = "Locked"))
+        val metropoliaCheckpoints = listOf(
+            CheckpointEntity(id = 15, questId = 3, lat = 60.2206, long = 24.8056, name = "Myllypuro Campus"),
+            CheckpointEntity(id = 16, questId = 3, lat = 60.2026, long = 24.9342, name = "Karamalmi Campus"),
+            CheckpointEntity(id = 17, questId = 3, lat = 60.2230, long = 24.7582, name = "Myyrmäki Campus"),
+            CheckpointEntity(id = 18, questId = 3, lat = 60.2090, long = 24.9650, name = "Arabia Campus")
+        )
+        metropoliaCheckpoints.forEach { checkpoint ->
+            checkpointDao.insert(checkpoint)
+        }
+
+        val armanCheckpoints = listOf(
+            CheckpointEntity(id = 19, questId = 4, lat = 60.235610, long = 25.006100, name = "Home"),
+            CheckpointEntity(id = 20, questId = 4, lat = 60.234281, long = 25.011228, name = "S-market Pihlajamäki")
+        )
+        armanCheckpoints.forEach { checkpoint ->
+            checkpointDao.insert(checkpoint)
+        }
+
+        val armanTasks = listOf(
+            TaskEntity(id = 1, checkpointId = 19, description = "Do project"),
+            TaskEntity(id = 2, checkpointId = 20, description = "Buy grocery")
+        )
+        armanTasks.forEach { task ->
+            taskDao.insert(task)
+        }
     }
 }

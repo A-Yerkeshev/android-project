@@ -3,7 +3,6 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.example.androidproject.data.AppDB
-import com.example.androidproject.data._PlaygroundDB
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

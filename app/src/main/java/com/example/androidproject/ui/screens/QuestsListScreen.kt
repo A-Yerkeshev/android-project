@@ -29,19 +29,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-
-import com.example.androidproject.data.AppDB
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
-import com.example.androidproject.repository.QuestRepository
 import com.example.androidproject.ui.navigation.Screens
 import com.example.androidproject.ui.viewmodels.QuestViewModel
-import com.example.androidproject.ui.viewmodels.QuestViewModelFactory
 
 @Composable
-fun QuestsListScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
-    val viewModel = QuestViewModel()
-    val questsWithCheckpoints by viewModel.questsWithCheckpoints.collectAsState()
+fun QuestsListScreen(
+    modifier: Modifier = Modifier,
+    navCtrl: NavController,
+    questViewModel: QuestViewModel
+) {
+//    val viewModel = QuestViewModel()
+
+    // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
+    // ViewModel from the provider, and persists through recomposition of the composable. It means when
+    // the composable recomposes, the ViewModel stays the same, with all its state variables/data
+//    val viewModel: QuestViewModel = viewModel()
+
+    val questsWithCheckpoints by questViewModel.questsWithCheckpoints.collectAsState()
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -56,7 +62,7 @@ fun QuestsListScreen(navCtrl: NavController, modifier: Modifier = Modifier) {
                 isExpanded = isExpanded,
                 onExpandChanged = { isExpanded = it },
                 onNavigateToMap = {
-                    viewModel.setQuestCurrent(questWithCheckpoints.quest)
+                    questViewModel.setQuestCurrent(questWithCheckpoints.quest)
                     navCtrl.navigate("${Screens.QuestDetail.name}/${questWithCheckpoints.quest.id}")
                 }
             )

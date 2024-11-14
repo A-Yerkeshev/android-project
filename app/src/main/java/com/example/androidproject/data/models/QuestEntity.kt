@@ -18,5 +18,5 @@ data class QuestEntity(
     @ColumnInfo(name = "completed_at")
     var completedAt: String? = null,
     @ColumnInfo(name = "current")
-    var current: Boolean = false
+    var current: Boolean = false // Only one quest can be current at a time
 )

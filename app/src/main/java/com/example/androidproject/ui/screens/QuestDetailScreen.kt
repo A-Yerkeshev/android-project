@@ -1,47 +1,68 @@
 package com.example.androidproject.ui.screens
 
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.isGranted
+//import androidx.compose.material.icons.filled.ExpandMore
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.util.Log
+import androidx.compose.animation.core.animateSizeAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-//import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.*
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.*
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.androidproject.R
-import com.example.androidproject.data.AppDB
 import com.example.androidproject.data.models.CheckpointEntity
-import com.example.androidproject.repository.QuestRepository
+import com.example.androidproject.data.models.TaskEntity
 import com.example.androidproject.ui.viewmodels.QuestViewModel
-import com.example.androidproject.ui.viewmodels.QuestViewModelFactory
+import com.example.androidproject.ui.viewmodels.TaskViewModel
+import com.example.androidproject.utils.locationPermission
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 import com.utsman.osmandcompose.CameraState
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
@@ -49,23 +70,17 @@ import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
-import com.example.androidproject.data.models.TaskEntity
-import com.example.androidproject.ui.viewmodels.TaskViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun QuestDetailScreen(
+    modifier: Modifier = Modifier,
     navCtrl: NavController,
-    questId: Int,
-    modifier: Modifier = Modifier
+    questViewModel: QuestViewModel,
+    taskViewModel: TaskViewModel,
+    questId: Int
 ) {
     val context = LocalContext.current
-    val questViewModel = QuestViewModel()
-    val taskViewModel = TaskViewModel()
 
     // Initialize OSMDroid configuration
     DisposableEffect(Unit) {
@@ -77,32 +92,19 @@ fun QuestDetailScreen(
     }
 
     // Request location permission
-    val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
-
-    LaunchedEffect(locationPermissionState.status) {
-        if (!locationPermissionState.status.isGranted) {
-            locationPermissionState.launchPermissionRequest()
-        }
-    }
+    val locationPermissionGranted = locationPermission()
 
     // Set the selected quest ID in the ViewModel
     LaunchedEffect(questId) {
         questViewModel.selectQuest(questId)
     }
 
-    if (locationPermissionState.status.isGranted) {
+    if (locationPermissionGranted) {
         // Observe checkpoints and selected quest from the ViewModel
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
         val tasks by taskViewModel.currentTasks.collectAsState()
         val completableTasks = completableTasks(tasks, checkpoints)
-
-        LaunchedEffect(checkpoints) {
-            Log.d("QuestDetailScreen", "Number of checkpoints: ${checkpoints.size}")
-            checkpoints.forEach { checkpoint ->
-                Log.d("QuestDetailScreen", "Checkpoint: ${checkpoint.name} at (${checkpoint.lat}, ${checkpoint.long})")
-            }
-        }
 
         // State to hold the selected/highlighted checkpoint
         var selectedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
@@ -142,10 +144,10 @@ fun QuestDetailScreen(
         }
 
         // Set initial camera position and zoom
-        LaunchedEffect(startPoint) {
-            cameraState.geoPoint = startPoint
-            cameraState.zoom = 15.0
-        }
+        cameraState.geoPoint = startPoint
+        // Zoom to Arman's home for debugging
+//        cameraState.geoPoint = GeoPoint(60.235610, 25.006100)
+        cameraState.zoom = 15.0
 
         // Center the map on the selected checkpoint when it changes
         LaunchedEffect(selectedCheckpoint) {
@@ -159,7 +161,7 @@ fun QuestDetailScreen(
         // Persistent bottom sheet state
         var isBottomSheetExpanded by remember { mutableStateOf(false) }
         val sheetHeight = if (isBottomSheetExpanded) 350.dp else 140.dp
-        val bottomSheetPadding = 50.dp  //
+        val bottomSheetPadding = 50.dp
 
         // Main UI layout
         Box(modifier = Modifier.fillMaxSize()) {
@@ -175,83 +177,69 @@ fun QuestDetailScreen(
                 val combinedPadding = sheetHeight + navigationBarHeight
                 // Map with specified height
                 Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = combinedPadding)
-                 ) {
-                ShowMap(
-                    checkpoints = checkpoints,
-                    cameraState = cameraState,
-                    selectedCheckpoint = selectedCheckpoint,
-                    onCheckpointClick = { checkpoint ->
-                        selectedCheckpoint = checkpoint
-                    }
-                )
-
-                // Add the Recenter Button overlaid on the map
-                Button(
-                    onClick = {
-                        // On button click, recenter the map
-                        val newCenter = if (location != null
-                            && location.latitude != 0.0 && location.longitude != 0.0
-                            && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
-                        ) {
-                            GeoPoint(location.latitude, location.longitude)
-                        } else {
-                            // Default to Helsinki
-                            GeoPoint(60.1699, 24.9384)
-                        }
-                        //temporarily solves recenter in emulator
-                        //val newCenter = GeoPoint(60.1699, 24.9384)
-                        cameraState.geoPoint = newCenter
-                        cameraState.zoom = 15.0
-                    },
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
-                    shape = RoundedCornerShape(20.dp)
+                        .fillMaxWidth()
+                        .padding(bottom = combinedPadding)
                 ) {
+                    // key() wrapper is used to force recomposition of map, when checkpoints' state changes
+                    key(checkpoints) {
+                        ShowMap(
+                            checkpoints = checkpoints,
+                            cameraState = cameraState,
+                            selectedCheckpoint = selectedCheckpoint,
+                            onCheckpointClick = { checkpoint ->
+                                selectedCheckpoint = checkpoint
+                            }
+                        )
+                    }
+
+                    // Add the Recenter Button overlaid on the map
+                    Button(
+                        onClick = {
+                            // On button click, recenter the map
+                            val newCenter = if (location != null
+                                && location.latitude != 0.0 && location.longitude != 0.0
+                                && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
+                            ) {
+                                GeoPoint(location.latitude, location.longitude)
+                            } else {
+                                // Default to Helsinki
+                                GeoPoint(60.1699, 24.9384)
+                            }
+                            //temporarily solves recenter in emulator
+                            //val newCenter = GeoPoint(60.1699, 24.9384)
+                            cameraState.geoPoint = newCenter
+                            cameraState.zoom = 15.0
+                        },
+                        modifier = Modifier
+                            .size(76.dp)
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp),
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                        shape = CircleShape,
+                        contentPadding = PaddingValues(4.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_rounded_my_location),
+                            contentDescription = "Center to my position",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                }
+
+                // Display the quest title
+                selectedQuest?.let {
                     Text(
-                        text = "Recenter",
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Center
+                        text = it.description.orEmpty(),  // Use 'description' if 'name' is not available
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(8.dp)
                     )
                 }
+
+
+                Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
             }
-
-            // Display the quest title
-            selectedQuest?.let {
-                Text(
-                    text = it.description.orEmpty(),  // Use 'description' if 'name' is not available
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-
-
-            Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
-
-//            Button(
-//                onClick = { navCtrl.popBackStack() },
-//                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
-//                shape = RoundedCornerShape(20.dp),
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 16.dp)
-//                    .padding(top = 16.dp)
-//                    .padding(bottom = 16.dp)
-//            ) {
-//                Text(
-//                    text = "Go Back",
-//                    color = MaterialTheme.colorScheme.onSecondary,
-//                    fontSize = 18.sp,
-//                    fontWeight = FontWeight.SemiBold
-//                )
-//            }
-        }
             // Persistent Bottom Sheet
             Box(
                 modifier = Modifier
@@ -324,10 +312,9 @@ fun ShowMap(
 
         OpenStreetMap(
             modifier = Modifier.fillMaxSize(),
-            cameraState = cameraState
+            cameraState = cameraState,
         ) {
             val location = getLocation(context)
-
             if (location != null && location.latitude > 0 && location.longitude > 0) {
                 Marker(
                     state = rememberMarkerState(
@@ -363,7 +350,7 @@ fun completableTasks(tasks: List<TaskEntity>, checkpoints: List<CheckpointEntity
     val context = LocalContext.current
 
     val availableCheckpoints = checkpoints.filter { checkpoint ->
-        checkpoint.completed == false && isNear(checkpoint, context)
+        !checkpoint.completed && isNear(checkpoint, context)
     }
 
     return tasks.filter { task ->

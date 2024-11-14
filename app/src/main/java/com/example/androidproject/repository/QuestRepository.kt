@@ -29,6 +29,8 @@ class QuestRepository(
 
     fun getCurrentQuest(): Flow<List<QuestEntity>> = questDao.getCurrent()
 
+    fun getCompletedQuests(): Flow<List<QuestEntity>> = questDao.getCompletedQuests()
+
     suspend fun setQuestCurrent(quest: QuestEntity) {
         questDao.unsetAllCurrent()
         quest.current = true
