@@ -56,4 +56,3 @@ enum class Screens {
     QuestsList,
     QuestDetail
 }
-

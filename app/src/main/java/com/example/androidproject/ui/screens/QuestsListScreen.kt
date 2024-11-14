@@ -1,10 +1,8 @@
 package com.example.androidproject.ui.screens
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,10 +22,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
@@ -40,17 +36,20 @@ fun QuestsListScreen(
     navCtrl: NavController,
     questViewModel: QuestViewModel
 ) {
+  
 //    val viewModel = QuestViewModel()
 
     // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
     // ViewModel from the provider, and persists through recomposition of the composable. It means when
     // the composable recomposes, the ViewModel stays the same, with all its state variables/data
 //    val viewModel: QuestViewModel = viewModel()
-
+  
     val questsWithCheckpoints by questViewModel.questsWithCheckpoints.collectAsState()
 
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(bottom = 56.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
         items(questsWithCheckpoints) { questWithCheckpoints ->
@@ -95,34 +94,43 @@ fun QuestItem(
                 text = "#${quest.id} ${quest.description}",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.fillMaxWidth()
-
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            // Category and Status displayed in separate rows for clarity
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "Category: ${quest.category ?: "Uncategorized"}",
                     style = MaterialTheme.typography.titleMedium
                 )
 
-
-                Button(
-                    onClick = onNavigateToMap,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                    modifier = Modifier.height(32.dp)
-                ) {
-                    Text(
-                        text = "Go to Map",
-                        style = MaterialTheme.typography.labelMedium
-                    )
+                // Display completedAt status on a new line
+                val completedAtText = if (quest.completedAt != null) {
+                    "Completed: ${quest.completedAt}"
+                } else {
+                    "Status: Not Completed"
                 }
 
+                Text(
+                    text = completedAtText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (quest.completedAt != null) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = onNavigateToMap,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                modifier = Modifier.height(32.dp)
+            ) {
+                Text(
+                    text = "Go to Map",
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
 
             if (isExpanded) {

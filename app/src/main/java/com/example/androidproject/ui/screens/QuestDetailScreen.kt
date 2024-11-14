@@ -224,19 +224,9 @@ fun QuestDetailScreen(
                         contentDescription = "Center to my position",
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(36.dp)
+
                     )
                 }
-            }
-
-            // Display the quest title
-            selectedQuest?.let {
-                Text(
-                    text = it.description.orEmpty(),  // Use 'description' if 'name' is not available
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-
 
             Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
         }

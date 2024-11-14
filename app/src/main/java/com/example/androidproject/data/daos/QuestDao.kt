@@ -41,4 +41,7 @@ interface QuestDao {
 
     @Query("select * from quests where current = 1")
     fun getCurrent(): Flow<List<QuestEntity>>
+
+    @Query("SELECT * FROM quests WHERE completed_at IS NOT NULL")
+    fun getCompletedQuests(): Flow<List<QuestEntity>>
 }

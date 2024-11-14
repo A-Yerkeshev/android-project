@@ -13,7 +13,6 @@ import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.repository.QuestRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
