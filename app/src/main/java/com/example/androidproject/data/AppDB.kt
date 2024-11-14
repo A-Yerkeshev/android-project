@@ -23,6 +23,7 @@ abstract class AppDB : RoomDatabase() {
         @Volatile
         private var Instance: AppDB? = null
 
+        // Ensures that only one instance of the database is created
         fun getDatabase(): AppDB {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(

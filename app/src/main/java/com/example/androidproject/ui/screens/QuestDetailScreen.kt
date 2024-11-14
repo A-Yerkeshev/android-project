@@ -181,6 +181,7 @@ fun QuestDetailScreen(
                     .fillMaxWidth()
                     .padding(bottom = combinedPadding)
                  ) {
+                    // key() wrapper is used to force recomposition of map, when checkpoints' state changes
                 key(checkpoints) {
                     ShowMap(
                         checkpoints = checkpoints,

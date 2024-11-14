@@ -33,27 +33,6 @@ fun BottomNavigationBar(
     questViewModel: QuestViewModel
 ) {
     val currentRoute = currentRoute(navController)
-
-//    val questViewModel = QuestViewModel()
-
-    // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
-    // ViewModel from the provider, and persists through recomposition of the composable. It means when
-    // the composable recomposes, the ViewModel stays the same, with all its state variables/data
-//    val questViewModel: QuestViewModel = viewModel()
-
-    // this listens to changes from viewModel all the time, which makes the nav bar recomposes
-    // repeatedly. Ideally nav bar should just listen to change in currentQuest Id to update the
-    // questId val
-//    val questsWithCheckpoints by questViewModel.questsWithCheckpoints.collectAsState()
-//    val currentQuest: QuestEntity? by questViewModel.currentQuest.collectAsState()
-//    val questId: Int = if (currentQuest != null) {
-//        currentQuest!!.id
-//    } else if (questsWithCheckpoints.isNotEmpty()) {
-//        questsWithCheckpoints.first().quest.id
-//    } else {
-//        0
-//    }
-
     val currentQuest: QuestEntity? by questViewModel.currentQuest.collectAsState()
 
     // rememberUpdatedState: remembers the latest value but does not trigger the composable recomposition
