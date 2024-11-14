@@ -30,7 +30,9 @@ abstract class AppDB : RoomDatabase() {
                     App.appContext,
                     AppDB::class.java,
                     "quest_app_database"
-                ).build().also { Instance = it }
+                )
+                    .fallbackToDestructiveMigration() // Add this line to handle migration issues
+                    .build().also { Instance = it }
             }
         }
     }
