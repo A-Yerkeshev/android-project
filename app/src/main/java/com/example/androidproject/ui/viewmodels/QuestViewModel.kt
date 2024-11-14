@@ -30,10 +30,11 @@ class QuestViewModel : ViewModel() {
     val currentQuest: StateFlow<QuestEntity?> = _currentQuest
 
     init {
-        // Get all quests information (with their checkpoints) to populate the QuestList screen
+        // get all quests information (with their checkpoints) to populate the QuestList screen (that
+        // screen collects the questsWithCheckpoints variable here as State in the composable)
         getQuestsWithCheckpoints()
 
-        // Get currentQuest the first time (when the ViewModel initializes)
+        // gets currentQuest the first time (when the ViewModel initializes)
         getCurrentQuest()
     }
 
@@ -90,7 +91,7 @@ class QuestViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.setQuestCurrent(quest)
 
-            // Update currentQuest variable when setting new quest as current
+            // update currentQuest variable when setting new quest as current
             getCurrentQuest()
         }
     }

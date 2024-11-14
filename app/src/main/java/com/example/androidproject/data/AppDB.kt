@@ -1,6 +1,5 @@
 package com.example.androidproject.data
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -31,7 +30,8 @@ abstract class AppDB : RoomDatabase() {
                     AppDB::class.java,
                     "quest_app_database"
                 )
-                    .fallbackToDestructiveMigration() // Add this line to handle migration issues
+
+                    .fallbackToDestructiveMigration()
                     .build().also { Instance = it }
             }
         }
@@ -63,9 +63,9 @@ abstract class AppDB : RoomDatabase() {
         if (currentQuest == null) {
             val allQuests = questDao.getAll().firstOrNull()
             if (!allQuests.isNullOrEmpty()) {
-                val quest = allQuests[0]
-                quest.current = true
-                questDao.update(quest)
+                    val quest = allQuests[0]
+                    quest.current = true
+                    questDao.update(quest)
             }
         }
     }

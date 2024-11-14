@@ -26,7 +26,7 @@ data class TaskEntity (
     @ColumnInfo(name = "description")
     val description: String = "",
     @ColumnInfo(name = "type")
-    val type: String? = null,
+    val type: String? = null, // Which response is expected from user e.g. text, photo, audio etc.
     @ColumnInfo(name = "answer")
-    val answer: String? = null
+    val answer: String? = null // Currently applicable only to text type
 )

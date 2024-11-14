@@ -177,69 +177,59 @@ fun QuestDetailScreen(
                 val combinedPadding = sheetHeight + navigationBarHeight
                 // Map with specified height
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = combinedPadding)
-                ) {
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = combinedPadding)
+                 ) {
                     // key() wrapper is used to force recomposition of map, when checkpoints' state changes
-                    key(checkpoints) {
-                        ShowMap(
-                            checkpoints = checkpoints,
-                            cameraState = cameraState,
-                            selectedCheckpoint = selectedCheckpoint,
-                            onCheckpointClick = { checkpoint ->
-                                selectedCheckpoint = checkpoint
-                            }
-                        )
-                    }
-
-                    // Add the Recenter Button overlaid on the map
-                    Button(
-                        onClick = {
-                            // On button click, recenter the map
-                            val newCenter = if (location != null
-                                && location.latitude != 0.0 && location.longitude != 0.0
-                                && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
-                            ) {
-                                GeoPoint(location.latitude, location.longitude)
-                            } else {
-                                // Default to Helsinki
-                                GeoPoint(60.1699, 24.9384)
-                            }
-                            //temporarily solves recenter in emulator
-                            //val newCenter = GeoPoint(60.1699, 24.9384)
-                            cameraState.geoPoint = newCenter
-                            cameraState.zoom = 15.0
-                        },
-                        modifier = Modifier
-                            .size(76.dp)
-                            .align(Alignment.BottomEnd)
-                            .padding(16.dp),
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-                        shape = CircleShape,
-                        contentPadding = PaddingValues(4.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_rounded_my_location),
-                            contentDescription = "Center to my position",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(36.dp)
-                        )
-                    }
-                }
-
-                // Display the quest title
-                selectedQuest?.let {
-                    Text(
-                        text = it.description.orEmpty(),  // Use 'description' if 'name' is not available
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(8.dp)
+                key(checkpoints) {
+                    ShowMap(
+                        checkpoints = checkpoints,
+                        cameraState = cameraState,
+                        selectedCheckpoint = selectedCheckpoint,
+                        onCheckpointClick = { checkpoint ->
+                            selectedCheckpoint = checkpoint
+                        }
                     )
                 }
 
+                // Add the Recenter Button overlaid on the map
+                Button(
+                    onClick = {
+                        // On button click, recenter the map
+                        val newCenter = if (location != null
+                            && location.latitude != 0.0 && location.longitude != 0.0
+                            && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
+                        ) {
+                            GeoPoint(location.latitude, location.longitude)
+                        } else {
+                            // Default to Helsinki
+                            GeoPoint(60.1699, 24.9384)
+                        }
+                        //temporarily solves recenter in emulator
+                        //val newCenter = GeoPoint(60.1699, 24.9384)
+                        cameraState.geoPoint = newCenter
+                        cameraState.zoom = 15.0
+                    },
+                    modifier = Modifier
+                        .size(76.dp)
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(4.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_rounded_my_location),
+                        contentDescription = "Center to my position",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(36.dp)
 
-                Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
-            }
+                    )
+                }
+
+            Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
+        }
             // Persistent Bottom Sheet
             Box(
                 modifier = Modifier

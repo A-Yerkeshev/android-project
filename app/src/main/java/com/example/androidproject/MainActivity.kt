@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         questViewModel = questViewModel,
                         taskViewModel = taskViewModel
-                    )
+                        )
                 }
             }
         }
