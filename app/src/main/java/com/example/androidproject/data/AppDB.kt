@@ -1,6 +1,5 @@
 package com.example.androidproject.data
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -23,14 +22,15 @@ abstract class AppDB : RoomDatabase() {
         @Volatile
         private var Instance: AppDB? = null
 
-        // Ensures that only one instance of the database is created
         fun getDatabase(): AppDB {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
                     App.appContext,
                     AppDB::class.java,
                     "quest_app_database"
-                ).build().also { Instance = it }
+                )
+                    .fallbackToDestructiveMigration()
+                    .build().also { Instance = it }
             }
         }
     }
