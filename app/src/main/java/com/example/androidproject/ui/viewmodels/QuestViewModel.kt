@@ -13,7 +13,6 @@ import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.repository.QuestRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -31,11 +30,10 @@ class QuestViewModel : ViewModel() {
     val currentQuest: StateFlow<QuestEntity?> = _currentQuest
 
     init {
-        // get all quests information (with their checkpoints) to populate the QuestList screen (that
-        // screen collects the questsWithCheckpoints variable here as State in the composable)
+        // Get all quests information (with their checkpoints) to populate the QuestList screen
         getQuestsWithCheckpoints()
 
-        // gets currentQuest the first time (when the ViewModel initializes)
+        // Get currentQuest the first time (when the ViewModel initializes)
         getCurrentQuest()
     }
 
@@ -92,7 +90,7 @@ class QuestViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.setQuestCurrent(quest)
 
-            // update currentQuest variable when setting new quest as current
+            // Update currentQuest variable when setting new quest as current
             getCurrentQuest()
         }
     }
