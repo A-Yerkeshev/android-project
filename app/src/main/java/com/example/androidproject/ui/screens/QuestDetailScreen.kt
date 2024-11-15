@@ -145,8 +145,6 @@ fun QuestDetailScreen(
 
         // Set initial camera position and zoom
         cameraState.geoPoint = startPoint
-        // Zoom to Arman's home for debugging
-//        cameraState.geoPoint = GeoPoint(60.235610, 25.006100)
         cameraState.zoom = 15.0
 
         // Center the map on the selected checkpoint when it changes

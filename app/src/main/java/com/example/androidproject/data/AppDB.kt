@@ -80,6 +80,7 @@ abstract class AppDB : RoomDatabase() {
         val yesterday = System.currentTimeMillis() - 24 * 60 * 60 * 1000
         questDao.insert(
             QuestEntity(
+                id = 5,
                 description = "Completed Quest Example",
                 category = "Test",
                 current = false,
