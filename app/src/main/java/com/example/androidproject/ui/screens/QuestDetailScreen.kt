@@ -348,10 +348,22 @@ fun QuestDetailScreen(
                 Box(
                     modifier = Modifier.matchParentSize()
                 ) {
-                    CameraPreview(
-                        controller = cameraController,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    Box {
+                        CameraPreview(
+                            controller = cameraController,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        Button(onClick = {
+                            showCameraView = false
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_close_24),
+                                contentDescription = "Close camera previw",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(48.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
