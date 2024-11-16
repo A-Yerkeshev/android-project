@@ -4,8 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.camera.view.CameraController
+import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
@@ -28,6 +31,13 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val questViewModel: QuestViewModel = viewModel()
             val taskViewModel: TaskViewModel = viewModel()
+            val cameraController = remember {
+                LifecycleCameraController(this).apply {
+                    setEnabledUseCases(
+                        CameraController.IMAGE_CAPTURE
+                    )
+                }
+            }
 
             AndroidProjectTheme {
                 Scaffold(
@@ -42,7 +52,8 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         navController = navController,
                         questViewModel = questViewModel,
-                        taskViewModel = taskViewModel
+                        taskViewModel = taskViewModel,
+                        cameraController = cameraController
                         )
                 }
             }

@@ -1,5 +1,6 @@
 package com.example.androidproject.ui.navigation
 
+import androidx.camera.view.LifecycleCameraController
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -19,7 +20,8 @@ fun AppNavigation(
     modifier: Modifier = Modifier,
     navController: NavController,
     questViewModel: QuestViewModel,
-    taskViewModel: TaskViewModel
+    taskViewModel: TaskViewModel,
+    cameraController: LifecycleCameraController
 ) {
     NavHost(
         navController = navController as NavHostController,
@@ -45,7 +47,8 @@ fun AppNavigation(
                 navCtrl = navController,
                 questViewModel = questViewModel,
                 taskViewModel = taskViewModel,
-                questId = questId
+                questId = questId,
+                cameraController = cameraController
             )
         }
     }

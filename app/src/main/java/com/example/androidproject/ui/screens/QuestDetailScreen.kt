@@ -7,6 +7,18 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraX
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.LifecycleCameraController
+import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.animateSizeAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,14 +69,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.example.androidproject.R
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.TaskEntity
+import com.example.androidproject.ui.components.CameraPreview
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
+import com.example.androidproject.utils.cameraPermission
 import com.example.androidproject.utils.locationPermission
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.common.util.concurrent.ListenableFuture
 import com.utsman.osmandcompose.CameraState
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
@@ -72,15 +88,18 @@ import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestDetailScreen(
     modifier: Modifier = Modifier,
     navCtrl: NavController,
     questViewModel: QuestViewModel,
     taskViewModel: TaskViewModel,
-    questId: Int
+    questId: Int,
+    cameraController: LifecycleCameraController
 ) {
     val context = LocalContext.current
 
@@ -95,6 +114,10 @@ fun QuestDetailScreen(
 
     // Request location permission
     val locationPermissionGranted = locationPermission()
+
+    val cameraPermissionGranted = cameraPermission()
+
+    var showCameraView by remember { mutableStateOf(false) }
 
     // Set the selected quest ID in the ViewModel
     LaunchedEffect(questId) {
@@ -164,152 +187,171 @@ fun QuestDetailScreen(
 
         // Main UI layout
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
+            if (!showCameraView) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
 
-            ) {
-                // Destimated height of the navigation bar
-                val navigationBarHeight = 40.dp
+                ) {
+                    // Destimated height of the navigation bar
+                    val navigationBarHeight = 40.dp
 
-                // Calculate the combined padding
-                val combinedPadding = sheetHeight + navigationBarHeight
-                // Map with specified height
+                    // Calculate the combined padding
+                    val combinedPadding = sheetHeight + navigationBarHeight
+                    // Map with specified height
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = combinedPadding)
+                    ) {
+                        // key() wrapper is used to force recomposition of map, when checkpoints' state changes
+                        key(checkpoints) {
+                            ShowMap(
+                                checkpoints = checkpoints,
+                                cameraState = cameraState,
+                                selectedCheckpoint = selectedCheckpoint,
+                                onCheckpointClick = { checkpoint ->
+                                    selectedCheckpoint = checkpoint
+                                }
+                            )
+                        }
+
+                        // Add the Recenter Button overlaid on the map
+                        Button(
+                            onClick = {
+                                // On button click, recenter the map
+                                val newCenter = if (location != null
+                                    && location.latitude != 0.0 && location.longitude != 0.0
+                                    && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
+                                ) {
+                                    GeoPoint(location.latitude, location.longitude)
+                                } else {
+                                    // Default to Helsinki
+                                    GeoPoint(60.1699, 24.9384)
+                                }
+                                //temporarily solves recenter in emulator
+                                //val newCenter = GeoPoint(60.1699, 24.9384)
+                                cameraState.geoPoint = newCenter
+                                cameraState.zoom = 15.0
+                            },
+                            modifier = Modifier
+                                .size(76.dp)
+                                .align(Alignment.BottomEnd)
+                                .padding(16.dp),
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                            shape = CircleShape,
+                            contentPadding = PaddingValues(4.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_rounded_my_location),
+                                contentDescription = "Center to my position",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
+                    }
+
+                    // Display the quest title
+                    selectedQuest?.let {
+                        Text(
+                            text = it.description.orEmpty(),  // Use 'description' if 'name' is not available
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
+                }
+                // Persistent Bottom Sheet
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = combinedPadding)
+                        .height(sheetHeight)
+                        .align(Alignment.BottomCenter)
+                        .offset(y = -bottomSheetPadding) // Move up by navbar height
+                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .clickable { isBottomSheetExpanded = !isBottomSheetExpanded },
                 ) {
-                    // key() wrapper is used to force recomposition of map, when checkpoints' state changes
-                    key(checkpoints) {
-                        ShowMap(
-                            checkpoints = checkpoints,
-                            cameraState = cameraState,
-                            selectedCheckpoint = selectedCheckpoint,
-                            onCheckpointClick = { checkpoint ->
-                                selectedCheckpoint = checkpoint
-                            }
-                        )
-                    }
-
-                    // Add the Recenter Button overlaid on the map
-                    Button(
-                        onClick = {
-                            // On button click, recenter the map
-                            val newCenter = if (location != null
-                                && location.latitude != 0.0 && location.longitude != 0.0
-                                && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
-                            ) {
-                                GeoPoint(location.latitude, location.longitude)
-                            } else {
-                                // Default to Helsinki
-                                GeoPoint(60.1699, 24.9384)
-                            }
-                            //temporarily solves recenter in emulator
-                            //val newCenter = GeoPoint(60.1699, 24.9384)
-                            cameraState.geoPoint = newCenter
-                            cameraState.zoom = 15.0
-                        },
-                        modifier = Modifier
-                            .size(76.dp)
-                            .align(Alignment.BottomEnd)
-                            .padding(16.dp),
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-                        shape = CircleShape,
-                        contentPadding = PaddingValues(4.dp)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = if (isBottomSheetExpanded) Arrangement.Top else Arrangement.Center,
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_rounded_my_location),
-                            contentDescription = "Center to my position",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(36.dp)
+                        BottomSheetDefaults.DragHandle(
+                            modifier = Modifier
+
+                                .clickable { isBottomSheetExpanded = !isBottomSheetExpanded }
                         )
-                    }
-                }
-
-                // Display the quest title
-                selectedQuest?.let {
-                    Text(
-                        text = it.description.orEmpty(),  // Use 'description' if 'name' is not available
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
-
-                Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
-            }
-            // Persistent Bottom Sheet
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(sheetHeight)
-                    .align(Alignment.BottomCenter)
-                    .offset(y = -bottomSheetPadding) // Move up by navbar height
-                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .clickable { isBottomSheetExpanded = !isBottomSheetExpanded },
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = if (isBottomSheetExpanded) Arrangement.Top else Arrangement.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    BottomSheetDefaults.DragHandle(
-                        modifier = Modifier
-
-                            .clickable { isBottomSheetExpanded = !isBottomSheetExpanded }
-                    )
-                    Text(
-                        text = selectedQuest?.description ?: "Quest Details",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(8.dp),
-                        textAlign = TextAlign.Center
-                    )
-                    if (isBottomSheetExpanded) {
                         Text(
-                            "List of Checkpoints:",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(vertical = 8.dp)
+                            text = selectedQuest?.description ?: "Quest Details",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(8.dp),
+                            textAlign = TextAlign.Center
                         )
-                        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                            items(checkpoints) { checkpoint ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp, 0.dp)
-                                ) {
-                                    // Highlight checkpoint in list if it matches selectedCheckpoint
-                                    Text(
-                                        text = checkpoint.name,
-                                        color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                        if (isBottomSheetExpanded) {
+                            Text(
+                                "List of Checkpoints:",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                                items(checkpoints) { checkpoint ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier
-                                            .clickable {
-                                                selectedCheckpoint = checkpoint
-                                            }
-                                    )
-                                    val btnColor = if (checkpoint in completableCheckpoints) MaterialTheme.colorScheme.primary else Color.Gray
-                                    Button(
-                                        onClick = { /*TODO*/ },
-                                        modifier = Modifier
-                                            .size(76.dp)
-                                            .padding(16.dp),
-                                        colors = ButtonDefaults.buttonColors(btnColor),
-                                        shape = CircleShape,
-                                        contentPadding = PaddingValues(4.dp)
+                                            .fillMaxWidth()
+                                            .padding(8.dp, 0.dp)
                                     ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.baseline_photo_camera_24),
-                                            contentDescription = "Take a photo",
-                                            tint = MaterialTheme.colorScheme.onPrimary,
-                                            modifier = Modifier.size(36.dp)
+                                        // Highlight checkpoint in list if it matches selectedCheckpoint
+                                        Text(
+                                            text = checkpoint.name,
+                                            color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                            modifier = Modifier
+                                                .clickable {
+                                                    selectedCheckpoint = checkpoint
+                                                }
                                         )
+                                        val btnColor = if (checkpoint in completableCheckpoints) MaterialTheme.colorScheme.primary else Color.Gray
+                                        Button(
+                                            onClick = {
+                                                if (checkpoint in completableCheckpoints) {
+                                                    if (cameraPermissionGranted) {
+                                                        showCameraView = true
+                                                    } else {
+                                                        Toast.makeText(context, "Camera permission required.", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            },
+                                            modifier = Modifier
+                                                .size(76.dp)
+                                                .padding(16.dp),
+                                            colors = ButtonDefaults.buttonColors(btnColor),
+                                            shape = CircleShape,
+                                            contentPadding = PaddingValues(4.dp)
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.baseline_photo_camera_24),
+                                                contentDescription = "Take a photo",
+                                                tint = MaterialTheme.colorScheme.onPrimary,
+                                                modifier = Modifier.size(36.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                }
+            } else {
+                Box(
+                    modifier = Modifier.matchParentSize()
+                ) {
+                    CameraPreview(
+                        controller = cameraController,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }
