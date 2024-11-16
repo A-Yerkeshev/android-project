@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -103,8 +105,7 @@ fun QuestDetailScreen(
         // Observe checkpoints and selected quest from the ViewModel
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
-        val tasks by taskViewModel.currentTasks.collectAsState()
-        val completableTasks = completableTasks(tasks, checkpoints)
+        val completableCheckpoints = completableCheckpoints(checkpoints)
 
         // State to hold the selected/highlighted checkpoint
         var selectedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
@@ -273,17 +274,39 @@ fun QuestDetailScreen(
                         )
                         LazyColumn(modifier = Modifier.fillMaxWidth()) {
                             items(checkpoints) { checkpoint ->
-                                // Highlight checkpoint in list if it matches selectedCheckpoint
-                                Text(
-                                    text = checkpoint.name,
-                                    color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(8.dp)
-                                        .clickable {
-                                            selectedCheckpoint = checkpoint
-                                        }
-                                )
+                                        .padding(8.dp, 0.dp)
+                                ) {
+                                    // Highlight checkpoint in list if it matches selectedCheckpoint
+                                    Text(
+                                        text = checkpoint.name,
+                                        color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                        modifier = Modifier
+                                            .clickable {
+                                                selectedCheckpoint = checkpoint
+                                            }
+                                    )
+                                    val btnColor = if (checkpoint in completableCheckpoints) MaterialTheme.colorScheme.primary else Color.Gray
+                                    Button(
+                                        onClick = { /*TODO*/ },
+                                        modifier = Modifier
+                                            .size(76.dp)
+                                            .padding(16.dp),
+                                        colors = ButtonDefaults.buttonColors(btnColor),
+                                        shape = CircleShape,
+                                        contentPadding = PaddingValues(4.dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.baseline_photo_camera_24),
+                                            contentDescription = "Take a photo",
+                                            tint = MaterialTheme.colorScheme.onPrimary,
+                                            modifier = Modifier.size(36.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -343,26 +366,29 @@ fun ShowMap(
     }
 }
 
+// Returns list of checkpoints, which are near the user's location and not yet completed
 @Composable
-fun completableTasks(tasks: List<TaskEntity>, checkpoints: List<CheckpointEntity>): List<TaskEntity> {
+fun completableCheckpoints(checkpoints: List<CheckpointEntity>): List<CheckpointEntity> {
     val context = LocalContext.current
 
-    val availableCheckpoints = checkpoints.filter { checkpoint ->
+    return checkpoints.filter { checkpoint ->
         !checkpoint.completed && isNear(checkpoint, context)
     }
+}
 
+// Returns list of tasks, whose associated checkpoint is near the user's location
+@Composable
+fun completableTasks(tasks: List<TaskEntity>, checkpoints: List<CheckpointEntity>): List<TaskEntity> {
     return tasks.filter { task ->
-        availableCheckpoints.any { checkpoint ->
+        completableCheckpoints(checkpoints).any { checkpoint ->
             task.checkpointId == checkpoint.id
         }
     }
 }
 
+// Checks whether current location is within proximity of a checkpoint
 fun isNear(checkpoint: CheckpointEntity, context: Context): Boolean {
     val location = getLocation(context)
-
-    // Arman's home for testing
-//    val location = GeoPoint(60.235610, 25.006100)
 
     if (location != null) {
         val distance = FloatArray(1)
