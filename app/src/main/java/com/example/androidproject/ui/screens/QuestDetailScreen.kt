@@ -313,7 +313,9 @@ fun QuestDetailScreen(
                                                     selectedCheckpoint = checkpoint
                                                 }
                                         )
-                                        val btnColor = if (checkpoint in completableCheckpoints) MaterialTheme.colorScheme.primary else Color.Gray
+                                        var btnColor = if (checkpoint in completableCheckpoints) MaterialTheme.colorScheme.primary else Color.Gray
+                                        if (checkpoint.completed) { btnColor = Color.Green }
+
                                         Button(
                                             onClick = {
                                                 if (checkpoint in completableCheckpoints) {
@@ -331,8 +333,9 @@ fun QuestDetailScreen(
                                             shape = CircleShape,
                                             contentPadding = PaddingValues(4.dp)
                                         ) {
+                                            val icon = if (checkpoint.completed) R.drawable.baseline_check_circle_outline_24 else R.drawable.baseline_photo_camera_24
                                             Icon(
-                                                painter = painterResource(id = R.drawable.baseline_photo_camera_24),
+                                                painter = painterResource(id = icon),
                                                 contentDescription = "Take a photo",
                                                 tint = MaterialTheme.colorScheme.onPrimary,
                                                 modifier = Modifier.size(36.dp)

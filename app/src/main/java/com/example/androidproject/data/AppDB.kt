@@ -164,7 +164,8 @@ abstract class AppDB : RoomDatabase() {
 
         val armanCheckpoints = listOf(
             CheckpointEntity(id = 19, questId = 4, lat = 60.235610, long = 25.006100, name = "Home"),
-            CheckpointEntity(id = 20, questId = 4, lat = 60.234281, long = 25.011228, name = "S-market Pihlajamäki")
+            CheckpointEntity(id = 20, questId = 4, lat = 60.237243, long = 24.999844, name = "Helsingin uusi yhteiskoulu", completed = true),
+            CheckpointEntity(id = 21, questId = 4, lat = 60.234281, long = 25.011228, name = "S-market Pihlajamäki")
         )
         armanCheckpoints.forEach { checkpoint ->
             checkpointDao.insert(checkpoint)
@@ -172,7 +173,8 @@ abstract class AppDB : RoomDatabase() {
 
         val armanTasks = listOf(
             TaskEntity(id = 1, checkpointId = 19, description = "Do project"),
-            TaskEntity(id = 2, checkpointId = 20, description = "Buy grocery")
+            TaskEntity(id = 2, checkpointId = 20, description = "Fight with children"),
+            TaskEntity(id = 3, checkpointId = 21, description = "Buy grocery")
         )
         armanTasks.forEach { task ->
             taskDao.insert(task)
