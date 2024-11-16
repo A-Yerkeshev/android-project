@@ -21,6 +21,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.animateSizeAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -74,6 +75,7 @@ import androidx.navigation.NavController
 import com.example.androidproject.R
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.TaskEntity
+import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
@@ -351,22 +353,20 @@ fun QuestDetailScreen(
                 Box(
                     modifier = Modifier.matchParentSize()
                 ) {
-                    Box {
-                        CameraPreview(
-                            controller = cameraController,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                        Button(onClick = {
+                    CameraPreview(
+                        controller = cameraController,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    CameraControls(
+                        onPhotoCapture = {},
+                        onClose = {
                             showCameraView = false
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_close_24),
-                                contentDescription = "Close camera previw",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(48.dp)
-                            )
-                        }
-                    }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.Center)
+                            .border(2.dp, Color.White)
+                    )
                 }
             }
         }
