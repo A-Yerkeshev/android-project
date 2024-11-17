@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.androidproject.ui.screens.QuestDetailScreen
 import com.example.androidproject.ui.screens.QuestsListScreen
 import com.example.androidproject.ui.screens.WelcomeScreen
+import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 
@@ -21,7 +22,8 @@ fun AppNavigation(
     navController: NavController,
     questViewModel: QuestViewModel,
     taskViewModel: TaskViewModel,
-    cameraController: LifecycleCameraController
+    cameraController: LifecycleCameraController,
+    checkpointViewModel: CheckpointViewModel
 ) {
     NavHost(
         navController = navController as NavHostController,
@@ -44,11 +46,11 @@ fun AppNavigation(
         ) { backStackEntry ->
             val questId = backStackEntry.arguments?.getInt("questId") ?: 0
             QuestDetailScreen(
-                navCtrl = navController,
                 questViewModel = questViewModel,
                 taskViewModel = taskViewModel,
                 questId = questId,
-                cameraController = cameraController
+                cameraController = cameraController,
+                checkpointViewModel = checkpointViewModel
             )
         }
     }

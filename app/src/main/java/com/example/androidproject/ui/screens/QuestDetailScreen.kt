@@ -78,6 +78,7 @@ import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.TaskEntity
 import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
+import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 import com.example.androidproject.utils.cameraPermission
@@ -98,9 +99,9 @@ import java.util.concurrent.Executors
 @Composable
 fun QuestDetailScreen(
     modifier: Modifier = Modifier,
-    navCtrl: NavController,
     questViewModel: QuestViewModel,
     taskViewModel: TaskViewModel,
+    checkpointViewModel: CheckpointViewModel,
     questId: Int,
     cameraController: LifecycleCameraController
 ) {
@@ -121,6 +122,7 @@ fun QuestDetailScreen(
     val cameraPermissionGranted = cameraPermission()
 
     var showCameraView by remember { mutableStateOf(false) }
+    var photoForCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
 
     // Set the selected quest ID in the ViewModel
     LaunchedEffect(questId) {
@@ -357,6 +359,7 @@ fun QuestDetailScreen(
                                                 if (checkpoint in completableCheckpoints) {
                                                     if (cameraPermissionGranted) {
                                                         showCameraView = true
+                                                        photoForCheckpoint = checkpoint
                                                     } else {
                                                         Toast.makeText(context, "Camera permission required.", Toast.LENGTH_SHORT).show()
                                                     }
@@ -392,9 +395,17 @@ fun QuestDetailScreen(
                         modifier = Modifier.fillMaxSize(),
                     )
                     CameraControls(
-                        onPhotoCapture = {},
+                        onPhotoCapture = {
+                            val checkpoint = photoForCheckpoint
+                            if (checkpoint != null) {
+                                checkpointViewModel.markCompleted(checkpoint)
+                                showCameraView = false
+                                photoForCheckpoint = null
+                            }
+                        },
                         onClose = {
                             showCameraView = false
+                            photoForCheckpoint = null
                         },
                         modifier = Modifier
                             .fillMaxWidth()

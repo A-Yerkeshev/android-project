@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.androidproject.ui.navigation.AppNavigation
 import com.example.androidproject.ui.navigation.BottomNavigationBar
 import com.example.androidproject.ui.theme.AndroidProjectTheme
+import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val questViewModel: QuestViewModel = viewModel()
             val taskViewModel: TaskViewModel = viewModel()
+            val checkpointViewModel: CheckpointViewModel = viewModel()
             val cameraController = remember {
                 LifecycleCameraController(this).apply {
                     setEnabledUseCases(
@@ -53,7 +55,8 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         questViewModel = questViewModel,
                         taskViewModel = taskViewModel,
-                        cameraController = cameraController
+                        cameraController = cameraController,
+                        checkpointViewModel = checkpointViewModel
                         )
                 }
             }
