@@ -45,6 +45,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -131,6 +132,10 @@ fun QuestDetailScreen(
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
         val completableCheckpoints = completableCheckpoints(checkpoints)
+
+        // Calculate number of completed checkpoints
+        val totalCheckpoints = checkpoints.size
+        val completedCheckpoints = checkpoints.count {it.completed}
 
         // State to hold the selected/highlighted checkpoint
         var selectedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
@@ -260,10 +265,10 @@ fun QuestDetailScreen(
                             style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier.padding(8.dp)
                         )
+
                     }
 
-
-                    Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
+                    //Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
                 }
                 // Persistent Bottom Sheet
                 Box(
@@ -286,18 +291,47 @@ fun QuestDetailScreen(
 
                                 .clickable { isBottomSheetExpanded = !isBottomSheetExpanded }
                         )
-                        Text(
-                            text = selectedQuest?.description ?: "Quest Details",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(8.dp),
-                            textAlign = TextAlign.Center
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = selectedQuest?.description ?: "Quest Details",
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(8.dp),
+                                textAlign = TextAlign.Center
+                            )
+
+                            Surface(
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                            ) {
+                                Text(
+                                    text = "$completedCheckpoints / $totalCheckpoints visited",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                            // Linear progress indicator below quest title
+                            LinearProgressIndicator(
+                                progress = { if (totalCheckpoints > 0) completedCheckpoints / totalCheckpoints.toFloat() else 0f },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+
+                        }
                         if (isBottomSheetExpanded) {
                             Text(
                                 "List of Checkpoints:",
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(vertical = 8.dp)
                             )
+
                             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                                 items(checkpoints) { checkpoint ->
                                     Row(
