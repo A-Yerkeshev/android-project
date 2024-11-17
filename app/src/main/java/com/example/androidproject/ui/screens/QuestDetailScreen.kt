@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -388,7 +389,9 @@ fun QuestDetailScreen(
                 }
             } else {
                 Box(
-                    modifier = Modifier.matchParentSize()
+                    modifier = Modifier
+                        .matchParentSize()
+//                        .padding(0.dp, 0.dp, 0.dp, 100.dp)
                 ) {
                     CameraPreview(
                         controller = cameraController,
@@ -409,7 +412,8 @@ fun QuestDetailScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .align(Alignment.Center)
+                            .align(Alignment.BottomCenter)
+                            .absoluteOffset(y = -124.dp)
                             .border(2.dp, Color.White)
                     )
                 }

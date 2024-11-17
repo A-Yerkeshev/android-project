@@ -30,7 +30,7 @@ fun CameraControls(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "", modifier = Modifier
+        Spacer(modifier = Modifier
             .size(64.dp))
         IconButton(onClick = onPhotoCapture) {
             Icon(
