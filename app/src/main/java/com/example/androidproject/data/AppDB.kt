@@ -153,7 +153,7 @@ abstract class AppDB : RoomDatabase() {
         }
 
         val metropoliaCheckpoints = listOf(
-            CheckpointEntity(id = 15, questId = 3, lat = 60.2242, long = 25.0780, name = "Myllypuro Campus"),
+            CheckpointEntity(id = 15, questId = 3, lat = 60.2235, long = 25.0784, name = "Myllypuro Campus"),
             CheckpointEntity(id = 16, questId = 3, lat = 60.2241, long = 24.7585, name = "Karamalmi Campus"),
             CheckpointEntity(id = 17, questId = 3, lat = 60.2589, long = 24.8452, name = "Myyrmäki Campus"),
             CheckpointEntity(id = 18, questId = 3, lat = 60.2100, long = 24.9767, name = "Arabia Campus")
