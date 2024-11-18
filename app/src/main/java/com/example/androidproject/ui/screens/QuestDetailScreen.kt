@@ -64,6 +64,7 @@ import com.example.androidproject.ui.components.CameraPreview
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
+import com.example.androidproject.utils.Constants.CHECKPOINT_PROXIMITY_METERS
 import com.example.androidproject.utils.cameraPermission
 import com.example.androidproject.utils.locationPermission
 import com.utsman.osmandcompose.CameraState
@@ -490,7 +491,7 @@ fun isNear(checkpoint: CheckpointEntity, context: Context): Boolean {
             checkpoint.long,
             distance
         )
-        return distance[0] < 30
+        return distance[0] < CHECKPOINT_PROXIMITY_METERS
     } else {
         return false
     }
