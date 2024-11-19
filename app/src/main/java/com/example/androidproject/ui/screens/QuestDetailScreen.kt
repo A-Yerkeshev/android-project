@@ -343,6 +343,8 @@ fun QuestDetailScreen(
                                                     } else {
                                                         Toast.makeText(context, "Camera permission required.", Toast.LENGTH_SHORT).show()
                                                     }
+                                                } else {
+                                                    Toast.makeText(context, "Reach the checkpoint to activate the camera.", Toast.LENGTH_SHORT).show()
                                                 }
                                             },
                                             modifier = Modifier
