@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
@@ -56,12 +57,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androidproject.R
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.TaskEntity
 import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
+import com.example.androidproject.ui.viewmodels.MapViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 import com.example.androidproject.utils.Constants.CHECKPOINT_PROXIMITY_METERS
@@ -79,7 +82,7 @@ import org.osmdroid.util.GeoPoint
 @Composable
 fun QuestDetailScreen(
     modifier: Modifier = Modifier,
-//    mapViewModel: MapViewModel = viewModel(),
+    mapViewModel: MapViewModel = viewModel(),
     questViewModel: QuestViewModel,
     taskViewModel: TaskViewModel,
     checkpointViewModel: CheckpointViewModel,
@@ -88,7 +91,7 @@ fun QuestDetailScreen(
 ) {
     val context = LocalContext.current
 
-//    val myLocation by mapViewModel.myLocation.collectAsState()
+    val myLocation by mapViewModel.myLocation.collectAsState()
 
     // Initialize OSMDroid configuration
     DisposableEffect(Unit) {
@@ -200,7 +203,7 @@ fun QuestDetailScreen(
                         key(checkpoints) {
                             ShowMap(
                                 checkpoints = checkpoints,
-//                                myLocation = myLocation,
+                                myLocation = myLocation,
                                 cameraState = cameraState,
                                 selectedCheckpoint = selectedCheckpoint,
                                 onCheckpointClick = { checkpoint ->
@@ -410,7 +413,7 @@ fun QuestDetailScreen(
 @Composable
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
-//    myLocation: Location?,
+    myLocation: Location?,
     cameraState: CameraState,
     selectedCheckpoint: CheckpointEntity?,
     onCheckpointClick: (CheckpointEntity) -> Unit
@@ -425,12 +428,12 @@ fun ShowMap(
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState,
         ) {
-            val location = getLocation(context)
-            if (location != null && location.latitude > 0 && location.longitude > 0) {
-//            if (myLocation != null) {
+//            val location = getLocation(context)
+//            if (location != null && location.latitude > 0 && location.longitude > 0) {
+            if (myLocation != null) {
                 Marker(
                     state = rememberMarkerState(
-                        geoPoint = GeoPoint(location.latitude, location.longitude)
+                        geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
                     ),
                     icon = ContextCompat.getDrawable(context, R.drawable.ic_location_marker),
                     title = "Your Location"
