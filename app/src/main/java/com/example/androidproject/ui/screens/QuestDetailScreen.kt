@@ -44,6 +44,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -130,6 +131,7 @@ fun QuestDetailScreen(
 
         // Initialize camera state
         val cameraState = rememberCameraState()
+        var isCameraInitialized by remember { mutableStateOf(false) }
 
         // Get the user's location
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -163,8 +165,22 @@ fun QuestDetailScreen(
         }
 
         // Set initial camera position and zoom
-        cameraState.geoPoint = startPoint
-        cameraState.zoom = 15.0
+//        cameraState.geoPoint = startPoint
+//        cameraState.zoom = 15.0
+//        if (!isCameraInitialzed && myLocation != null) {
+//            cameraState.geoPoint = GeoPoint(myLocation!!.latitude, myLocation!!.longitude)
+//            cameraState.zoom = 18.0
+//
+//            isCameraInitialzed = true
+//        }
+        LaunchedEffect(isCameraInitialized, myLocation) {
+            if (!isCameraInitialized && myLocation != null) {
+            cameraState.geoPoint = GeoPoint(myLocation!!.latitude, myLocation!!.longitude)
+            cameraState.zoom = 18.0
+
+            isCameraInitialized = true
+            }
+        }
 
         // Center the map on the selected checkpoint when it changes
         LaunchedEffect(selectedCheckpoint) {
@@ -200,7 +216,7 @@ fun QuestDetailScreen(
                             .padding(bottom = combinedPadding)
                     ) {
                         // key() wrapper is used to force recomposition of map, when checkpoints' state changes
-                        key(checkpoints) {
+                        key(checkpoints, myLocation) {
                             ShowMap(
                                 checkpoints = checkpoints,
                                 myLocation = myLocation,
@@ -216,11 +232,13 @@ fun QuestDetailScreen(
                         Button(
                             onClick = {
                                 // On button click, recenter the map
-                                val newCenter = if (location != null
-                                    && location.latitude != 0.0 && location.longitude != 0.0
-                                    && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
-                                ) {
-                                    GeoPoint(location.latitude, location.longitude)
+//                                val newCenter = if (location != null
+//                                    && location.latitude != 0.0 && location.longitude != 0.0
+//                                    && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
+//                                ) {
+                                val newCenter = if (myLocation != null) {
+//                                    GeoPoint(location.latitude, location.longitude)
+                                    GeoPoint(myLocation!!.latitude, myLocation!!.longitude)
                                 } else {
                                     // Default to Helsinki
                                     GeoPoint(60.1699, 24.9384)
@@ -228,7 +246,7 @@ fun QuestDetailScreen(
                                 //temporarily solves recenter in emulator
                                 //val newCenter = GeoPoint(60.1699, 24.9384)
                                 cameraState.geoPoint = newCenter
-                                cameraState.zoom = 15.0
+                                cameraState.zoom = 18.0
                             },
                             modifier = Modifier
                                 .size(76.dp)
@@ -420,10 +438,19 @@ fun ShowMap(
 ) {
     val context = LocalContext.current
 
+//    val cameraState = rememberCameraState()
+//    var isCameraInitialized by remember { mutableStateOf(false) }
+//
+//    if (!isCameraInitialized && myLocation != null) {
+//        cameraState.geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
+//        cameraState.zoom = 18.0
+//
+//        isCameraInitialized = true
+//    }
+
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-
         OpenStreetMap(
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState,
@@ -435,7 +462,7 @@ fun ShowMap(
                     state = rememberMarkerState(
                         geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
                     ),
-                    icon = ContextCompat.getDrawable(context, R.drawable.ic_location_marker),
+                    icon = ContextCompat.getDrawable(context, R.drawable.ic_my_location_marker),
                     title = "Your Location"
                 )
             }
