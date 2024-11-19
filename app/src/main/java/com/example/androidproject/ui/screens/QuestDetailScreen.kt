@@ -79,6 +79,7 @@ import org.osmdroid.util.GeoPoint
 @Composable
 fun QuestDetailScreen(
     modifier: Modifier = Modifier,
+//    mapViewModel: MapViewModel = viewModel(),
     questViewModel: QuestViewModel,
     taskViewModel: TaskViewModel,
     checkpointViewModel: CheckpointViewModel,
@@ -86,6 +87,8 @@ fun QuestDetailScreen(
     cameraController: LifecycleCameraController
 ) {
     val context = LocalContext.current
+
+//    val myLocation by mapViewModel.myLocation.collectAsState()
 
     // Initialize OSMDroid configuration
     DisposableEffect(Unit) {
@@ -197,6 +200,7 @@ fun QuestDetailScreen(
                         key(checkpoints) {
                             ShowMap(
                                 checkpoints = checkpoints,
+//                                myLocation = myLocation,
                                 cameraState = cameraState,
                                 selectedCheckpoint = selectedCheckpoint,
                                 onCheckpointClick = { checkpoint ->
@@ -406,6 +410,7 @@ fun QuestDetailScreen(
 @Composable
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
+//    myLocation: Location?,
     cameraState: CameraState,
     selectedCheckpoint: CheckpointEntity?,
     onCheckpointClick: (CheckpointEntity) -> Unit
@@ -422,6 +427,7 @@ fun ShowMap(
         ) {
             val location = getLocation(context)
             if (location != null && location.latitude > 0 && location.longitude > 0) {
+//            if (myLocation != null) {
                 Marker(
                     state = rememberMarkerState(
                         geoPoint = GeoPoint(location.latitude, location.longitude)
