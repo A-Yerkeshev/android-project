@@ -102,11 +102,13 @@ class QuestViewModel : ViewModel() {
     }
 
     fun setQuestCurrent(quest: QuestEntity) {
+        _currentQuest.value = quest
+
         viewModelScope.launch(Dispatchers.IO) {
             repository.setQuestCurrent(quest)
 
             // update currentQuest variable when setting new quest as current
-            getCurrentQuest()
+//            getCurrentQuest()
         }
     }
 }
