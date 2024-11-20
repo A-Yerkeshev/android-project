@@ -14,6 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.androidproject.ui.navigation.AppNavigation
 import com.example.androidproject.ui.navigation.BottomNavigationBar
+import com.example.androidproject.ui.navigation.Screens
 import com.example.androidproject.ui.theme.AndroidProjectTheme
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
@@ -28,7 +29,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            // create single instance of each classes to be used across the app
+            // Create single instance of each ViewModel to be used across the app
             val navController = rememberNavController()
             val questViewModel: QuestViewModel = viewModel()
             val taskViewModel: TaskViewModel = viewModel()
@@ -40,6 +41,9 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+
+            // Set the start destination dynamically or hardcoded
+            val startDestination = Screens.Welcome.name // Example: "Welcome" screen as the start
 
             AndroidProjectTheme {
                 Scaffold(
@@ -53,11 +57,12 @@ class MainActivity : ComponentActivity() {
                     AppNavigation(
                         modifier = Modifier.padding(innerPadding),
                         navController = navController,
+                        startDestination = startDestination, // Provide the startDestination here
                         questViewModel = questViewModel,
                         taskViewModel = taskViewModel,
                         cameraController = cameraController,
                         checkpointViewModel = checkpointViewModel
-                        )
+                    )
                 }
             }
         }
