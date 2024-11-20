@@ -62,8 +62,10 @@ fun BottomNavigationBar(
                 ) },
             selected = currentRoute == Screens.Welcome.name,
             onClick = {
-                navController.navigate(Screens.Welcome.name) {
-                    popUpTo(Screens.Welcome.name) { inclusive = true }
+                if (currentRoute == Screens.Welcome.name) {
+                    navController.navigate(Screens.Welcome.name) {
+                        popUpTo(Screens.Welcome.name) { inclusive = true }
+                    }
                 }
             },
             colors = NavigationBarItemDefaults.colors(
@@ -88,8 +90,10 @@ fun BottomNavigationBar(
                 ) },
             selected = currentRoute == Screens.QuestsList.name,
             onClick = {
-                navController.navigate(Screens.QuestsList.name) {
-                    popUpTo(Screens.QuestsList.name) { inclusive = true }
+                if (currentRoute != Screens.QuestsList.name) {
+                    navController.navigate(Screens.QuestsList.name) {
+                        popUpTo(Screens.QuestsList.name) { inclusive = true }
+                    }
                 }
             },
             colors = NavigationBarItemDefaults.colors(
@@ -114,8 +118,11 @@ fun BottomNavigationBar(
                 ) },
             selected = currentRoute == "${Screens.QuestDetail.name}/{questId}",
             onClick = {
-                navController.navigate("${Screens.QuestDetail.name}/${questId}") {
-                    popUpTo(Screens.QuestDetail.name) { inclusive = true }
+
+                if (currentRoute != "${Screens.QuestDetail.name}/{questId}") {
+                    navController.navigate("${Screens.QuestDetail.name}/${questId}") {
+                        popUpTo(Screens.QuestDetail.name) { inclusive = true }
+                    }
                 }
             },
             colors = NavigationBarItemDefaults.colors(

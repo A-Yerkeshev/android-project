@@ -74,6 +74,7 @@ import com.example.androidproject.utils.locationPermission
 import com.utsman.osmandcompose.CameraState
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
+import com.utsman.osmandcompose.OsmAndroidComposable
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.config.Configuration
@@ -459,39 +460,40 @@ fun ShowMap(
         ) {
 //            val location = getLocation(context)
 //            if (location != null && location.latitude > 0 && location.longitude > 0) {
-            if (myLocation != null) {
-                Marker(
-                    state = rememberMarkerState(
-                        geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
-                    ),
-                    icon = ContextCompat.getDrawable(context, R.drawable.ic_my_location_marker),
-                    title = "Your Location"
-                )
-            }
 
-            checkpoints.forEach { checkpoint ->
-
-                val iconResId = if (checkpoint.completed) {
-                    R.drawable.ic_checkpoint_completed
-                } else {
-                    R.drawable.ic_checkpoint_not_completed
+                if (myLocation != null) {
+                    Marker(
+                        state = rememberMarkerState(
+                            geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
+                        ),
+                        icon = ContextCompat.getDrawable(context, R.drawable.ic_my_location_marker),
+                        title = "Your Location"
+                    )
                 }
 
-                Marker(
-                    state = rememberMarkerState(
-                        geoPoint = GeoPoint(checkpoint.lat, checkpoint.long)
-                    ),
-                    icon = ContextCompat.getDrawable(
-                        context,
-                        iconResId
-                    ),
-                    title = checkpoint.name,
-                    onClick = {
-                        onCheckpointClick(checkpoint)
-                        true
+                checkpoints.forEach { checkpoint ->
+
+                    val iconResId = if (checkpoint.completed) {
+                        R.drawable.ic_checkpoint_completed
+                    } else {
+                        R.drawable.ic_checkpoint_not_completed
                     }
-                )
-            }
+
+                    Marker(
+                        state = rememberMarkerState(
+                            geoPoint = GeoPoint(checkpoint.lat, checkpoint.long)
+                        ),
+                        icon = ContextCompat.getDrawable(
+                            context,
+                            iconResId
+                        ),
+                        title = checkpoint.name,
+                        onClick = {
+                            onCheckpointClick(checkpoint)
+                            true
+                        }
+                    )
+                }
         }
     }
 }
