@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.androidproject.data.UserPreferences
 import com.example.androidproject.ui.navigation.Screens
 
 @Composable
@@ -43,11 +42,9 @@ fun UserInputScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                // Save the name in SharedPreferences
                 sharedPreferences.edit().putString("user_name", userName).apply()
                 sharedPreferences.edit().putBoolean("is_user_name_set", true).apply()
 
-                // Navigate to WelcomeScreen
                 navCtrl.navigate(Screens.Welcome.name) {
                     popUpTo(Screens.UserInput.name) { inclusive = true }
                 }

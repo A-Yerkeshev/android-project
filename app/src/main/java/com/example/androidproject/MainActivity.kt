@@ -19,31 +19,29 @@ import com.example.androidproject.ui.theme.AndroidProjectTheme
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
-
-//import com.example.androidproject.viewmodels.QuestViewModel
-//import com.example.androidproject.viewmodels.QuestViewModelFactory
+import com.example.androidproject.data.UserPreferences
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val startDestination = if (UserPreferences.getUserName(this).isNullOrEmpty()) {
+            Screens.UserInput.name
+        } else {
+            Screens.Welcome.name
+        }
+
         setContent {
-            // Create single instance of each ViewModel to be used across the app
             val navController = rememberNavController()
             val questViewModel: QuestViewModel = viewModel()
             val taskViewModel: TaskViewModel = viewModel()
             val checkpointViewModel: CheckpointViewModel = viewModel()
             val cameraController = remember {
                 LifecycleCameraController(this).apply {
-                    setEnabledUseCases(
-                        CameraController.IMAGE_CAPTURE
-                    )
+                    setEnabledUseCases(CameraController.IMAGE_CAPTURE)
                 }
             }
-
-            // Set the start destination dynamically or hardcoded
-            val startDestination = Screens.Welcome.name // Example: "Welcome" screen as the start
 
             AndroidProjectTheme {
                 Scaffold(
@@ -57,11 +55,11 @@ class MainActivity : ComponentActivity() {
                     AppNavigation(
                         modifier = Modifier.padding(innerPadding),
                         navController = navController,
-                        startDestination = startDestination, // Provide the startDestination here
                         questViewModel = questViewModel,
                         taskViewModel = taskViewModel,
                         cameraController = cameraController,
-                        checkpointViewModel = checkpointViewModel
+                        checkpointViewModel = checkpointViewModel,
+                        startDestination = startDestination
                     )
                 }
             }
