@@ -62,7 +62,7 @@ fun BottomNavigationBar(
                 ) },
             selected = currentRoute == Screens.Welcome.name,
             onClick = {
-                if (currentRoute == Screens.Welcome.name) {
+                if (currentRoute != Screens.Welcome.name) {
                     navController.navigate(Screens.Welcome.name) {
                         popUpTo(Screens.Welcome.name) { inclusive = true }
                     }

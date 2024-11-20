@@ -44,7 +44,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -74,7 +73,6 @@ import com.example.androidproject.utils.locationPermission
 import com.utsman.osmandcompose.CameraState
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
-import com.utsman.osmandcompose.OsmAndroidComposable
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.config.Configuration
@@ -217,7 +215,7 @@ fun QuestDetailScreen(
                             .padding(bottom = combinedPadding)
                     ) {
                         // key() wrapper is used to force recomposition of map, when checkpoints' state changes
-                        key(checkpoints, myLocation) {
+//                        key(checkpoints, myLocation) {
                             ShowMap(
                                 checkpoints = checkpoints,
                                 myLocation = myLocation,
@@ -227,7 +225,7 @@ fun QuestDetailScreen(
                                     selectedCheckpoint = checkpoint
                                 }
                             )
-                        }
+//                        }
 
                         // Add the Recenter Button overlaid on the map
                         Button(
@@ -461,6 +459,7 @@ fun ShowMap(
 //            val location = getLocation(context)
 //            if (location != null && location.latitude > 0 && location.longitude > 0) {
 
+            key(myLocation) {
                 if (myLocation != null) {
                     Marker(
                         state = rememberMarkerState(
@@ -470,7 +469,9 @@ fun ShowMap(
                         title = "Your Location"
                     )
                 }
+            }
 
+            key(checkpoints) {
                 checkpoints.forEach { checkpoint ->
 
                     val iconResId = if (checkpoint.completed) {
@@ -494,6 +495,7 @@ fun ShowMap(
                         }
                     )
                 }
+            }
         }
     }
 }
