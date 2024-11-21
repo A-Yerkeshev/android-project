@@ -54,6 +54,7 @@ android {
 
 dependencies {
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation(libs.androidx.compose.material)
 
     val camerax_version = "1.4.0"
     implementation("androidx.camera:camera-core:${camerax_version}")

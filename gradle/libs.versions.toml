@@ -11,6 +11,7 @@ composeBom = "2024.04.01"
 navigationCompose = "2.8.3"
 osmdroidAndroid = "6.1.16"
 osmAndroidCompose = "0.0.5"
+composeMaterial = "1.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +33,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
 osm-android-compose = { group = "tech.utsmankece", name = "osm-android-compose", version.ref = "osmAndroidCompose" }
+androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
