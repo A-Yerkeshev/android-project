@@ -78,15 +78,6 @@ abstract class AppDB : RoomDatabase() {
 
         // Add test data for quests and checkpoints
         val yesterday = System.currentTimeMillis() - 24 * 60 * 60 * 1000
-        questDao.insert(
-            QuestEntity(
-                id = 5,
-                description = "Completed Quest Example",
-                category = "Test",
-                current = false,
-                completedAt = yesterday.toString()
-            )
-        )
 
         questDao.insert(
             QuestEntity(
@@ -119,6 +110,26 @@ abstract class AppDB : RoomDatabase() {
             QuestEntity(
                 id = 4,
                 description = "Arman's surroundings"
+            )
+        )
+
+        questDao.insert(
+            QuestEntity(
+                id = 5,
+                description = "Completed Quest Example",
+                category = "Test",
+                current = false,
+                completedAt = yesterday.toString()
+            )
+        )
+
+        questDao.insert(
+            QuestEntity(
+                id = 6,
+                description = "BULL RUN 2025",
+                category = "Test2",
+                current = false,
+                completedAt = yesterday.toString()
             )
         )
 
