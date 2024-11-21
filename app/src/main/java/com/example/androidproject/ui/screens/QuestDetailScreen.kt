@@ -32,6 +32,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
@@ -48,12 +49,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androidproject.R
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.TaskEntity
 import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
+import com.example.androidproject.ui.viewmodels.MapViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 import com.example.androidproject.utils.Constants.CHECKPOINT_PROXIMITY_METERS
@@ -71,6 +74,7 @@ import org.osmdroid.util.GeoPoint
 @Composable
 fun QuestDetailScreen(
     modifier: Modifier = Modifier,
+    mapViewModel: MapViewModel = viewModel(),
     questViewModel: QuestViewModel,
     taskViewModel: TaskViewModel,
     checkpointViewModel: CheckpointViewModel,
@@ -78,6 +82,8 @@ fun QuestDetailScreen(
     cameraController: LifecycleCameraController
 ) {
     val context = LocalContext.current
+
+    val myLocation by mapViewModel.myLocation.collectAsState()
 
     // Initialize OSMDroid configuration
     DisposableEffect(Unit) {
@@ -116,6 +122,7 @@ fun QuestDetailScreen(
 
         // Initialize camera state
         val cameraState = rememberCameraState()
+        var isCameraInitialized by remember { mutableStateOf(false) }
 
         // Get the user's location
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -149,8 +156,22 @@ fun QuestDetailScreen(
         }
 
         // Set initial camera position and zoom
-        cameraState.geoPoint = startPoint
-        cameraState.zoom = 15.0
+//        cameraState.geoPoint = startPoint
+//        cameraState.zoom = 15.0
+//        if (!isCameraInitialzed && myLocation != null) {
+//            cameraState.geoPoint = GeoPoint(myLocation!!.latitude, myLocation!!.longitude)
+//            cameraState.zoom = 18.0
+//
+//            isCameraInitialzed = true
+//        }
+        LaunchedEffect(isCameraInitialized, myLocation) {
+            if (!isCameraInitialized && myLocation != null) {
+            cameraState.geoPoint = GeoPoint(myLocation!!.latitude, myLocation!!.longitude)
+            cameraState.zoom = 18.0
+
+            isCameraInitialized = true
+            }
+        }
 
         // Center the map on the selected checkpoint when it changes
         LaunchedEffect(selectedCheckpoint) {
@@ -186,26 +207,29 @@ fun QuestDetailScreen(
                             .padding(bottom = combinedPadding)
                     ) {
                         // key() wrapper is used to force recomposition of map, when checkpoints' state changes
-                        key(checkpoints) {
+//                        key(checkpoints, myLocation) {
                             ShowMap(
                                 checkpoints = checkpoints,
+                                myLocation = myLocation,
                                 cameraState = cameraState,
                                 selectedCheckpoint = selectedCheckpoint,
                                 onCheckpointClick = { checkpoint ->
                                     selectedCheckpoint = checkpoint
                                 }
                             )
-                        }
+//                        }
 
                         // Add the Recenter Button overlaid on the map
                         Button(
                             onClick = {
                                 // On button click, recenter the map
-                                val newCenter = if (location != null
-                                    && location.latitude != 0.0 && location.longitude != 0.0
-                                    && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
-                                ) {
-                                    GeoPoint(location.latitude, location.longitude)
+//                                val newCenter = if (location != null
+//                                    && location.latitude != 0.0 && location.longitude != 0.0
+//                                    && location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0
+//                                ) {
+                                val newCenter = if (myLocation != null) {
+//                                    GeoPoint(location.latitude, location.longitude)
+                                    GeoPoint(myLocation!!.latitude, myLocation!!.longitude)
                                 } else {
                                     // Default to Helsinki
                                     GeoPoint(60.1699, 24.9384)
@@ -213,7 +237,7 @@ fun QuestDetailScreen(
                                 //temporarily solves recenter in emulator
                                 //val newCenter = GeoPoint(60.1699, 24.9384)
                                 cameraState.geoPoint = newCenter
-                                cameraState.zoom = 15.0
+                                cameraState.zoom = 18.0
                             },
                             modifier = Modifier
                                 .size(76.dp)
@@ -400,53 +424,69 @@ fun QuestDetailScreen(
 @Composable
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
+    myLocation: Location?,
     cameraState: CameraState,
     selectedCheckpoint: CheckpointEntity?,
     onCheckpointClick: (CheckpointEntity) -> Unit
 ) {
     val context = LocalContext.current
 
+//    val cameraState = rememberCameraState()
+//    var isCameraInitialized by remember { mutableStateOf(false) }
+//
+//    if (!isCameraInitialized && myLocation != null) {
+//        cameraState.geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
+//        cameraState.zoom = 18.0
+//
+//        isCameraInitialized = true
+//    }
+
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-
         OpenStreetMap(
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState,
         ) {
-            val location = getLocation(context)
-            if (location != null && location.latitude > 0 && location.longitude > 0) {
-                Marker(
-                    state = rememberMarkerState(
-                        geoPoint = GeoPoint(location.latitude, location.longitude)
-                    ),
-                    icon = ContextCompat.getDrawable(context, R.drawable.ic_location_marker),
-                    title = "Your Location"
-                )
+//            val location = getLocation(context)
+//            if (location != null && location.latitude > 0 && location.longitude > 0) {
+
+            key(myLocation) {
+                if (myLocation != null) {
+                    Marker(
+                        state = rememberMarkerState(
+                            geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
+                        ),
+                        icon = ContextCompat.getDrawable(context, R.drawable.ic_my_location_marker),
+                        title = "Your Location"
+                    )
+                }
             }
 
-            checkpoints.forEach { checkpoint ->
+            key(checkpoints) {
+                checkpoints.forEach { checkpoint ->
 
-                val iconResId = if (checkpoint.completed) {
-                    R.drawable.ic_checkpoint_completed
-                } else {
-                    R.drawable.ic_checkpoint_not_completed
-                }
-
-                Marker(
-                    state = rememberMarkerState(
-                        geoPoint = GeoPoint(checkpoint.lat, checkpoint.long)
-                    ),
-                    icon = ContextCompat.getDrawable(
-                        context,
-                        iconResId
-                    ),
-                    title = checkpoint.name,
-                    onClick = {
-                        onCheckpointClick(checkpoint)
-                        true
+                    val iconResId = if (checkpoint.completed) {
+                        R.drawable.ic_checkpoint_completed
+                    } else {
+                        R.drawable.ic_checkpoint_not_completed
                     }
-                )
+
+                    Marker(
+                        state = rememberMarkerState(
+                            geoPoint = GeoPoint(checkpoint.lat, checkpoint.long)
+                        ),
+                        icon = ContextCompat.getDrawable(
+                            context,
+                            iconResId
+                        ),
+                        title = checkpoint.name,
+                        onClick = {
+                            onCheckpointClick(checkpoint)
+                            true
+                        }
+                    )
+                }
             }
         }
     }

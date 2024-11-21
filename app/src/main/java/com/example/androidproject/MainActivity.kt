@@ -14,30 +14,32 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.androidproject.ui.navigation.AppNavigation
 import com.example.androidproject.ui.navigation.BottomNavigationBar
+import com.example.androidproject.ui.navigation.Screens
 import com.example.androidproject.ui.theme.AndroidProjectTheme
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
-
-//import com.example.androidproject.viewmodels.QuestViewModel
-//import com.example.androidproject.viewmodels.QuestViewModelFactory
+import com.example.androidproject.data.UserPreferences
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val startDestination = if (UserPreferences.getUserName(this).isNullOrEmpty()) {
+            Screens.UserInput.name
+        } else {
+            Screens.Welcome.name
+        }
+
         setContent {
-            // create single instance of each classes to be used across the app
             val navController = rememberNavController()
             val questViewModel: QuestViewModel = viewModel()
             val taskViewModel: TaskViewModel = viewModel()
             val checkpointViewModel: CheckpointViewModel = viewModel()
             val cameraController = remember {
                 LifecycleCameraController(this).apply {
-                    setEnabledUseCases(
-                        CameraController.IMAGE_CAPTURE
-                    )
+                    setEnabledUseCases(CameraController.IMAGE_CAPTURE)
                 }
             }
 
@@ -56,8 +58,9 @@ class MainActivity : ComponentActivity() {
                         questViewModel = questViewModel,
                         taskViewModel = taskViewModel,
                         cameraController = cameraController,
-                        checkpointViewModel = checkpointViewModel
-                        )
+                        checkpointViewModel = checkpointViewModel,
+                        startDestination = startDestination
+                    )
                 }
             }
         }
