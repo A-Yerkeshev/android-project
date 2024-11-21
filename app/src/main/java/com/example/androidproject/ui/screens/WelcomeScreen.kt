@@ -54,9 +54,29 @@ fun WelcomeScreen(
                 onClick = { navCtrl.navigate(Screens.QuestsList.name) },
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
                 shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
             ) {
                 Text("Get Started", color = MaterialTheme.colorScheme.onSecondary)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    sharedPreferences.edit().clear().apply()
+                    navCtrl.navigate(Screens.UserInput.name) {
+                        popUpTo(Screens.Welcome.name) { inclusive = true }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
+            ) {
+                Text("Reset Name", color = MaterialTheme.colorScheme.onError)
             }
         }
     }
