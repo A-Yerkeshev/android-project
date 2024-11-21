@@ -243,11 +243,17 @@ fun QuestDetailScreen(
 
                 ) {
 
+                    // Calculate dynamic bottom padding for the map
+                    val bottomSheetOffset = swipeableState.offset.value
+                    val additionalOffsetPx = with(density) { 15.dp.toPx() } // Adjust this value as needed
+                    val mapBottomPaddingPx = maxOf(maxHeightPx - bottomSheetOffset - additionalOffsetPx, 0f)
+                    val mapBottomPaddingDp = with(density) { mapBottomPaddingPx.toDp() }
+
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .padding(bottom = collapsedHeightDp)
+                            .padding(bottom = mapBottomPaddingDp)
                     ) {
                         // key() wrapper is used to force recomposition of map, when checkpoints' state changes
 //                        key(checkpoints, myLocation) {
