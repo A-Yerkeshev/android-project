@@ -20,10 +20,12 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -425,53 +427,79 @@ fun QuestDetailScreen(
                                 modifier = Modifier.padding(vertical = 8.dp)
                             )
 
-                            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
                                 items(checkpoints) { checkpoint ->
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
+                                    Card(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(8.dp, 0.dp)
+                                            .padding(vertical = 8.dp),
+                                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+                                        shape = MaterialTheme.shapes.medium
                                     ) {
-                                        // Highlight checkpoint in list if it matches selectedCheckpoint
-                                        Text(
-                                            text = checkpoint.name,
-                                            color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier
-                                                .clickable {
-                                                    selectedCheckpoint = checkpoint
-                                                }
-                                        )
-                                        var btnColor = if (checkpoint in completableCheckpoints) MaterialTheme.colorScheme.primary else Color.Gray
-                                        if (checkpoint.completed) { btnColor = Color.Green }
-
-                                        Button(
-                                            onClick = {
-                                                if (checkpoint in completableCheckpoints) {
-                                                    if (cameraPermissionGranted) {
-                                                        showCameraView = true
-                                                        photoForCheckpoint = checkpoint
-                                                    } else {
-                                                        Toast.makeText(context, "Camera permission required.", Toast.LENGTH_SHORT).show()
-                                                    }
-                                                } else {
-                                                    Toast.makeText(context, "Reach the checkpoint to activate the camera.", Toast.LENGTH_SHORT).show()
-                                                }
-                                            },
-                                            modifier = Modifier
-                                                .size(76.dp)
-                                                .padding(16.dp),
-                                            colors = ButtonDefaults.buttonColors(btnColor),
-                                            shape = CircleShape,
-                                            contentPadding = PaddingValues(4.dp)
+                                                .fillMaxWidth()
+                                                .padding(8.dp, 0.dp)
                                         ) {
-                                            val icon = if (checkpoint.completed) R.drawable.ic_checkpoint_completed else R.drawable.baseline_photo_camera_24
-                                            Icon(
-                                                painter = painterResource(id = icon),
-                                                contentDescription = "Take a photo",
-                                                tint = MaterialTheme.colorScheme.onPrimary,
-                                                modifier = Modifier.size(36.dp)
+                                            // Highlight checkpoint in list if it matches selectedCheckpoint
+                                            Text(
+                                                text = checkpoint.name,
+                                                color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                                modifier = Modifier
+                                                    .clickable {
+                                                        selectedCheckpoint = checkpoint
+                                                    }
+                                                    .weight(1f)
                                             )
+                                            Spacer(modifier = Modifier.height(8.dp))
+
+                                            var btnColor =
+                                                if (checkpoint in completableCheckpoints) MaterialTheme.colorScheme.primary else Color.Gray
+                                            if (checkpoint.completed) {
+                                                btnColor = Color.Green
+                                            }
+
+                                            Button(
+                                                onClick = {
+                                                    if (checkpoint in completableCheckpoints) {
+                                                        if (cameraPermissionGranted) {
+                                                            showCameraView = true
+                                                            photoForCheckpoint = checkpoint
+                                                        } else {
+                                                            Toast.makeText(
+                                                                context,
+                                                                "Camera permission required.",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Reach the checkpoint to activate the camera.",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
+                                                },
+                                                modifier = Modifier
+                                                    .size(76.dp)
+                                                    .padding(16.dp),
+                                                colors = ButtonDefaults.buttonColors(btnColor),
+                                                shape = CircleShape,
+                                                contentPadding = PaddingValues(4.dp)
+                                            ) {
+                                                val icon =
+                                                    if (checkpoint.completed) R.drawable.ic_checkpoint_completed else R.drawable.baseline_photo_camera_24
+                                                Icon(
+                                                    painter = painterResource(id = icon),
+                                                    contentDescription = "Take a photo",
+                                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                                    modifier = Modifier.size(36.dp)
+                                                )
+                                            }
                                         }
                                     }
                                 }
