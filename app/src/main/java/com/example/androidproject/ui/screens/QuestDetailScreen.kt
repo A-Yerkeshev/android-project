@@ -79,6 +79,7 @@ import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
@@ -227,6 +228,14 @@ fun QuestDetailScreen(
                 bottomSheetState = swipeableState.currentValue
             }
 
+            LaunchedEffect(showCameraView) {
+                if (showCameraView) {
+                    coroutineScope.launch {
+                        swipeableState.animateTo(BottomSheetState.Collapsed)
+                    }
+                }
+            }
+
             val toggleBottomSheet: () -> Unit = {
                 val nextState = when (swipeableState.currentValue) {
                     BottomSheetState.Collapsed -> BottomSheetState.HalfExpanded
@@ -345,7 +354,7 @@ fun QuestDetailScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.BottomCenter)
-                                .absoluteOffset(y = -124.dp)
+                                .absoluteOffset(y = -148.dp)
                                 .border(2.dp, Color.White)
                         )
                     }
@@ -371,7 +380,8 @@ fun QuestDetailScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .clickable {
-                                val targetState = if (swipeableState.currentValue == BottomSheetState.HalfExpanded) BottomSheetState.Expanded else BottomSheetState.HalfExpanded
+                                val targetState =
+                                    if (swipeableState.currentValue == BottomSheetState.HalfExpanded) BottomSheetState.Expanded else BottomSheetState.HalfExpanded
                                 coroutineScope.launch {
                                     swipeableState.animateTo(targetState)
                                 }
