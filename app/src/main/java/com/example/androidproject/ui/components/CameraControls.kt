@@ -1,5 +1,7 @@
 package com.example.androidproject.ui.components
 
+import androidx.camera.core.CameraSelector
+import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +23,7 @@ import com.example.androidproject.R
 // like photo capture button and close button.
 @Composable
 fun CameraControls(
+    controller: LifecycleCameraController,
     onPhotoCapture: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
@@ -30,8 +33,21 @@ fun CameraControls(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Spacer(modifier = Modifier
-            .size(64.dp))
+        IconButton(onClick = {
+            controller.cameraSelector = if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                CameraSelector.DEFAULT_FRONT_CAMERA
+            } else {
+                CameraSelector.DEFAULT_BACK_CAMERA
+            }
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_cameraswitch_24),
+                contentDescription = "Switch camera",
+                tint = Color.White,
+                modifier = Modifier
+                    .size(64.dp)
+            )
+        }
         IconButton(onClick = onPhotoCapture) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_photo_camera_24),

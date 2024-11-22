@@ -327,6 +327,7 @@ fun QuestDetailScreen(
                             modifier = Modifier.fillMaxSize(),
                         )
                         CameraControls(
+                            controller = cameraController,
                             onPhotoCapture = {
                                 val checkpoint = photoForCheckpoint
                                 if (checkpoint != null) {
