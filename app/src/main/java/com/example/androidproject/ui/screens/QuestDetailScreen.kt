@@ -316,18 +316,6 @@ fun QuestDetailScreen(
                         }
                     }
                 }
-
-                    // Display the quest title
-                    selectedQuest?.let {
-                        Text(
-                            text = it.description.orEmpty(),  // Use 'description' if 'name' is not available
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(8.dp)
-                        )
-
-                    }
-
-
                 }else{
                     Box(
                         modifier = Modifier
