@@ -421,11 +421,6 @@ fun QuestDetailScreen(
 
                         }
                         if (bottomSheetState != BottomSheetState.Collapsed) {
-                            Text(
-                                "List of Checkpoints:",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
 
                             LazyColumn(
                                 modifier = Modifier.fillMaxWidth(),
