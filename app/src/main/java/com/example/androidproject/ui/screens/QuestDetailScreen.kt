@@ -1,6 +1,7 @@
 package com.example.androidproject.ui.screens
 
 //import androidx.compose.material.icons.filled.ExpandMore
+
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -12,12 +13,16 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,15 +33,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -46,18 +43,25 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.wear.compose.material.ExperimentalWearMaterialApi
+import androidx.wear.compose.material.FractionalThreshold
+import androidx.wear.compose.material.rememberSwipeableState
+import androidx.wear.compose.material.swipeable
 import com.example.androidproject.R
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.TaskEntity
@@ -75,10 +79,20 @@ import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
+import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+enum class BottomSheetState {
+    Collapsed,
+    HalfExpanded,
+    Expanded
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalWearMaterialApi::class)
 @Composable
 fun QuestDetailScreen(
     modifier: Modifier = Modifier,
@@ -191,41 +205,79 @@ fun QuestDetailScreen(
 
 
         // Persistent bottom sheet state
-        var isBottomSheetExpanded by remember { mutableStateOf(false) }
-        val sheetHeight = if (isBottomSheetExpanded) 350.dp else 140.dp
-        val bottomSheetPadding = 50.dp
 
-        // Main UI layout
-        Box(modifier = Modifier.fillMaxSize()) {
+        var bottomSheetState by remember { mutableStateOf(BottomSheetState.HalfExpanded) }
+
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+
+            val density = LocalDensity.current
+            val maxHeightPx = with(density) { maxHeight.toPx() }
+            val collapsedHeightDp = 150.dp
+            val collapsedHeightPx = with(density) { collapsedHeightDp.toPx() }
+
+            val swipeableState = rememberSwipeableState(initialValue = bottomSheetState)
+            val anchors = mapOf(
+                maxHeightPx - collapsedHeightPx to BottomSheetState.Collapsed,
+                maxHeightPx / 2 to BottomSheetState.HalfExpanded,
+                0f to BottomSheetState.Expanded
+            )
+
+            val coroutineScope = rememberCoroutineScope()
+
+            LaunchedEffect(swipeableState.currentValue) {
+                bottomSheetState = swipeableState.currentValue
+            }
+
+            LaunchedEffect(showCameraView) {
+                if (showCameraView) {
+                    coroutineScope.launch {
+                        swipeableState.animateTo(BottomSheetState.Collapsed)
+                    }
+                }
+            }
+
+            val toggleBottomSheet: () -> Unit = {
+                val nextState = when (swipeableState.currentValue) {
+                    BottomSheetState.Collapsed -> BottomSheetState.HalfExpanded
+                    BottomSheetState.HalfExpanded -> BottomSheetState.Expanded
+                    BottomSheetState.Expanded -> BottomSheetState.Collapsed
+                }
+                coroutineScope.launch {
+                    swipeableState.animateTo(nextState)
+                }
+            }
+
             if (!showCameraView) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
 
                 ) {
-                    // Destimated height of the navigation bar
-                    val navigationBarHeight = 40.dp
 
-                    // Calculate the combined padding
-                    val combinedPadding = sheetHeight + navigationBarHeight
-                    // Map with specified height
+                    // Calculate dynamic bottom padding for the map
+                    val bottomSheetOffset = swipeableState.offset.value
+                    val additionalOffsetPx = with(density) { 15.dp.toPx() } // Adjust this value as needed
+                    val mapBottomPaddingPx = maxOf(maxHeightPx - bottomSheetOffset - additionalOffsetPx, 0f)
+                    val mapBottomPaddingDp = with(density) { mapBottomPaddingPx.toDp() }
+
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = combinedPadding)
+                            .weight(1f)
+                            .padding(bottom = mapBottomPaddingDp)
                     ) {
                         // key() wrapper is used to force recomposition of map, when checkpoints' state changes
 //                        key(checkpoints, myLocation) {
-                            ShowMap(
-                                checkpoints = checkpoints,
-                                myLocation = myLocation,
-                                cameraState = cameraState,
-                                selectedCheckpoint = selectedCheckpoint,
-                                onCheckpointClick = { checkpoint ->
-                                    selectedCheckpoint = checkpoint
-                                }
-                            )
-//                        }
+                        ShowMap(
+                            checkpoints = checkpoints,
+                            myLocation = myLocation,
+                            cameraState = cameraState,
+                            selectedCheckpoint = selectedCheckpoint,
+                            onCheckpointClick = { checkpoint ->
+                                selectedCheckpoint = checkpoint
+                            }
+                        )
+//
 
                         // Add the Recenter Button overlaid on the map
                         Button(
@@ -263,6 +315,7 @@ fun QuestDetailScreen(
                             )
                         }
                     }
+                }
 
                     // Display the quest title
                     selectedQuest?.let {
@@ -274,28 +327,74 @@ fun QuestDetailScreen(
 
                     }
 
-                    //Spacer(modifier = Modifier.weight(1f)) // Push the button to the bottom
+
+                }else{
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+//                        .padding(0.dp, 0.dp, 0.dp, 100.dp)
+                    ) {
+                        CameraPreview(
+                            controller = cameraController,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                        CameraControls(
+                            onPhotoCapture = {
+                                val checkpoint = photoForCheckpoint
+                                if (checkpoint != null) {
+                                    checkpointViewModel.markCompleted(checkpoint)
+                                    showCameraView = false
+                                    photoForCheckpoint = null
+                                }
+                            },
+                            onClose = {
+                                showCameraView = false
+                                photoForCheckpoint = null
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter)
+                                .absoluteOffset(y = -148.dp)
+                                .border(2.dp, Color.White)
+                        )
+                    }
                 }
                 // Persistent Bottom Sheet
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(sheetHeight)
-                        .align(Alignment.BottomCenter)
-                        .offset(y = -bottomSheetPadding) // Move up by navbar height
+                        .fillMaxHeight()
+                        .offset { IntOffset(0, swipeableState.offset.value.roundToInt()) }
+                        .swipeable(
+                            state = swipeableState,
+                            anchors = anchors,
+                            thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                            orientation = Orientation.Vertical
+                        )
                         .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                         .background(MaterialTheme.colorScheme.surface)
-                        .clickable { isBottomSheetExpanded = !isBottomSheetExpanded },
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = if (isBottomSheetExpanded) Arrangement.Top else Arrangement.Center,
-                        modifier = Modifier.fillMaxSize()
+                        verticalArrangement = Arrangement.Top,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable {
+                                val targetState =
+                                    if (swipeableState.currentValue == BottomSheetState.HalfExpanded) BottomSheetState.Expanded else BottomSheetState.HalfExpanded
+                                coroutineScope.launch {
+                                    swipeableState.animateTo(targetState)
+                                }
+                            }
                     ) {
                         BottomSheetDefaults.DragHandle(
                             modifier = Modifier
-
-                                .clickable { isBottomSheetExpanded = !isBottomSheetExpanded }
+                                .clickable {
+                                    val targetState = if (swipeableState.currentValue == BottomSheetState.HalfExpanded) BottomSheetState.Expanded else BottomSheetState.HalfExpanded
+                                    coroutineScope.launch {
+                                        swipeableState.animateTo(targetState)
+                                    }
+                                }
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -331,60 +430,81 @@ fun QuestDetailScreen(
                             )
 
                         }
-                        if (isBottomSheetExpanded) {
-                            Text(
-                                "List of Checkpoints:",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
+                        if (bottomSheetState != BottomSheetState.Collapsed) {
 
-                            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
                                 items(checkpoints) { checkpoint ->
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
+                                    Card(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(8.dp, 0.dp)
+                                            .padding(vertical = 8.dp),
+                                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+                                        shape = MaterialTheme.shapes.medium
                                     ) {
-                                        // Highlight checkpoint in list if it matches selectedCheckpoint
-                                        Text(
-                                            text = checkpoint.name,
-                                            color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier
-                                                .clickable {
-                                                    selectedCheckpoint = checkpoint
-                                                }
-                                        )
-                                        var btnColor = if (checkpoint in completableCheckpoints) MaterialTheme.colorScheme.primary else Color.Gray
-                                        if (checkpoint.completed) { btnColor = Color.Green }
-
-                                        Button(
-                                            onClick = {
-                                                if (checkpoint in completableCheckpoints) {
-                                                    if (cameraPermissionGranted) {
-                                                        showCameraView = true
-                                                        photoForCheckpoint = checkpoint
-                                                    } else {
-                                                        Toast.makeText(context, "Camera permission required.", Toast.LENGTH_SHORT).show()
-                                                    }
-                                                } else {
-                                                    Toast.makeText(context, "Reach the checkpoint to activate the camera.", Toast.LENGTH_SHORT).show()
-                                                }
-                                            },
-                                            modifier = Modifier
-                                                .size(76.dp)
-                                                .padding(16.dp),
-                                            colors = ButtonDefaults.buttonColors(btnColor),
-                                            shape = CircleShape,
-                                            contentPadding = PaddingValues(4.dp)
+                                                .fillMaxWidth()
+                                                .padding(8.dp, 0.dp)
                                         ) {
-                                            val icon = if (checkpoint.completed) R.drawable.ic_checkpoint_completed else R.drawable.baseline_photo_camera_24
-                                            Icon(
-                                                painter = painterResource(id = icon),
-                                                contentDescription = "Take a photo",
-                                                tint = MaterialTheme.colorScheme.onPrimary,
-                                                modifier = Modifier.size(36.dp)
+                                            // Highlight checkpoint in list if it matches selectedCheckpoint
+                                            Text(
+                                                text = checkpoint.name,
+                                                color = if (checkpoint == selectedCheckpoint) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                                modifier = Modifier
+                                                    .clickable {
+                                                        selectedCheckpoint = checkpoint
+                                                    }
+                                                    .weight(1f)
                                             )
+                                            Spacer(modifier = Modifier.height(8.dp))
+
+                                            var btnColor =
+                                                if (checkpoint in completableCheckpoints) MaterialTheme.colorScheme.primary else Color.Gray
+                                            if (checkpoint.completed) {
+                                                btnColor = Color.Green
+                                            }
+
+                                            Button(
+                                                onClick = {
+                                                    if (checkpoint in completableCheckpoints) {
+                                                        if (cameraPermissionGranted) {
+                                                            showCameraView = true
+                                                            photoForCheckpoint = checkpoint
+                                                        } else {
+                                                            Toast.makeText(
+                                                                context,
+                                                                "Camera permission required.",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Reach the checkpoint to activate the camera.",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
+                                                },
+                                                modifier = Modifier
+                                                    .size(76.dp)
+                                                    .padding(16.dp),
+                                                colors = ButtonDefaults.buttonColors(btnColor),
+                                                shape = CircleShape,
+                                                contentPadding = PaddingValues(4.dp)
+                                            ) {
+                                                val icon =
+                                                    if (checkpoint.completed) R.drawable.ic_checkpoint_completed else R.drawable.baseline_photo_camera_24
+                                                Icon(
+                                                    painter = painterResource(id = icon),
+                                                    contentDescription = "Take a photo",
+                                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                                    modifier = Modifier.size(36.dp)
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -392,38 +512,8 @@ fun QuestDetailScreen(
                         }
                     }
                 }
-            } else {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-//                        .padding(0.dp, 0.dp, 0.dp, 100.dp)
-                ) {
-                    CameraPreview(
-                        controller = cameraController,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                    CameraControls(
-                        onPhotoCapture = {
-                            val checkpoint = photoForCheckpoint
-                            if (checkpoint != null) {
-                                checkpointViewModel.markCompleted(checkpoint)
-                                showCameraView = false
-                                photoForCheckpoint = null
-                            }
-                        },
-                        onClose = {
-                            showCameraView = false
-                            photoForCheckpoint = null
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomCenter)
-                            .absoluteOffset(y = -124.dp)
-                            .border(2.dp, Color.White)
-                    )
-                }
             }
-        }
+
     } else {
         Text(text = "Location permission is required to display the map.")
     }
