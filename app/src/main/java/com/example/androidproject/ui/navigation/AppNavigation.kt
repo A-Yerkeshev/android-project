@@ -39,6 +39,7 @@ fun AppNavigation(
         composable(route = Screens.Welcome.name) {
             WelcomeScreen(
                 navCtrl = navController,
+                questViewModel = questViewModel
             )
         }
         composable(route = Screens.QuestsList.name) {

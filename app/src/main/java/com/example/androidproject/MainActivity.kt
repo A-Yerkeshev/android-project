@@ -1,5 +1,6 @@
 package com.example.androidproject
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,17 +20,19 @@ import com.example.androidproject.ui.theme.AndroidProjectTheme
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
-import com.example.androidproject.data.UserPreferences
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val startDestination = if (UserPreferences.getUserName(this).isNullOrEmpty()) {
-            Screens.UserInput.name
-        } else {
+        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val isUserNameSet = sharedPreferences.getBoolean("is_user_name_set", false)
+
+        val startDestination = if (isUserNameSet) {
             Screens.Welcome.name
+        } else {
+            Screens.UserInput.name
         }
 
         setContent {
