@@ -53,6 +53,11 @@ android {
 }
 
 dependencies {
+    val compose_version = "1.4.0"
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
+    implementation(libs.androidx.rules)
+
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation(libs.androidx.compose.material)
 
@@ -77,10 +82,6 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-
-    // OSMDroid for OpenStreetMap
-//    implementation("org.osmdroid:osmdroid-android:6.1.12")
-
     implementation("com.google.accompanist:accompanist-permissions:0.28.0")
 
     implementation(libs.androidx.core.ktx)

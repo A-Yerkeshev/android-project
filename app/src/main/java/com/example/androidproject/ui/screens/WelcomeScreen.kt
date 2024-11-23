@@ -39,8 +39,6 @@ fun WelcomeScreen(
     val userName = sharedPreferences.getString("user_name", "User")
     val completedQuests by questViewModel.completedQuests.collectAsState()
 
-    Log.d("CompletedQuests", "Completed quests size: ${completedQuests.size}, Data: $completedQuests")
-
     Box(
         modifier = modifier
             .fillMaxSize()
