@@ -47,7 +47,6 @@ fun QuestsListScreen(
   
     val questsWithCheckpoints by questViewModel.questsWithCheckpoints.collectAsState()
     val completedQuests by questViewModel.completedQuests.collectAsState()
-    Log.d("DBG", "Give achievements for ${completedQuests[0].description}")
 
     LazyColumn(
         modifier = modifier

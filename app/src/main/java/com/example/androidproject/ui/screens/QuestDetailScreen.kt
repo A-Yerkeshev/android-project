@@ -74,6 +74,7 @@ import com.example.androidproject.ui.viewmodels.TaskViewModel
 import com.example.androidproject.utils.Constants.CHECKPOINT_PROXIMITY_METERS
 import com.example.androidproject.utils.cameraPermission
 import com.example.androidproject.utils.locationPermission
+import com.example.androidproject.utils.savePhoto
 import com.utsman.osmandcompose.CameraState
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
@@ -330,11 +331,17 @@ fun QuestDetailScreen(
                             controller = cameraController,
                             onPhotoCapture = {
                                 val checkpoint = photoForCheckpoint
-                                if (checkpoint != null) {
-                                    checkpointViewModel.markCompleted(checkpoint)
-                                    showCameraView = false
-                                    photoForCheckpoint = null
-                                }
+
+                                savePhoto(
+                                    controller = cameraController,
+                                    onCompleted = {
+                                        if (checkpoint != null) {
+                                            checkpointViewModel.markCompleted(checkpoint)
+                                            showCameraView = false
+                                            photoForCheckpoint = null
+                                        }
+                                    }
+                                )
                             },
                             onClose = {
                                 showCameraView = false
