@@ -11,11 +11,15 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class QuestRepository(
     private val questDao: QuestDao,
-    private val checkpointDao: CheckpointDao,
+    private val checkpointDao: CheckpointDao
 ) {
+    private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+
     // Fetch all quests
     fun getAllQuests(): Flow<List<QuestEntity>> = questDao.getAll()
 
@@ -34,6 +38,11 @@ class QuestRepository(
     suspend fun setQuestCurrent(quest: QuestEntity) {
         questDao.unsetAllCurrent()
         quest.current = true
+        questDao.update(quest)
+    }
+
+    suspend fun markCompleted(quest: QuestEntity) {
+        quest.completedAt = LocalDateTime.now().format(formatter)
         questDao.update(quest)
     }
 }

@@ -111,6 +111,14 @@ class QuestViewModel : ViewModel() {
 //            getCurrentQuest()
         }
     }
+
+    fun markCompleted(quest: QuestEntity?) {
+        if (quest != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.markCompleted(quest)
+            }
+        }
+    }
 }
 
 data class QuestWithCheckpoints(

@@ -175,7 +175,7 @@ abstract class AppDB : RoomDatabase() {
 
         val armanCheckpoints = listOf(
             CheckpointEntity(id = 19, questId = 4, lat = 60.235610, long = 25.006100, name = "Home"),
-            CheckpointEntity(id = 20, questId = 4, lat = 60.234281, long = 25.011228, name = "S-market Pihlajamäki"),
+            CheckpointEntity(id = 20, questId = 4, lat = 60.234281, long = 25.011228, name = "S-market Pihlajamäki", completed = true),
             CheckpointEntity(id = 21, questId = 4, lat = 60.237243, long = 24.999844, name = "Helsingin uusi yhteiskoulu", completed = true)
         )
         armanCheckpoints.forEach { checkpoint ->

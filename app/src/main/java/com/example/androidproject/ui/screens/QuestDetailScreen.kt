@@ -337,6 +337,14 @@ fun QuestDetailScreen(
                                     onCompleted = {
                                         if (checkpoint != null) {
                                             checkpointViewModel.markCompleted(checkpoint)
+
+                                            // If this was last uncompleted checkpoint - mark quest as completed
+                                            val allOtherCompleted = checkpoints.filter { it != checkpoint }.all { it.completed }
+                                            if (allOtherCompleted) {
+                                                questViewModel.markCompleted(selectedQuest)
+                                            }
+
+                                            // Close camera
                                             showCameraView = false
                                             photoForCheckpoint = null
                                         }
