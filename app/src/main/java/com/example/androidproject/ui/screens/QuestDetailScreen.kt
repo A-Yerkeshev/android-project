@@ -134,7 +134,7 @@ fun QuestDetailScreen(
         // Observe checkpoints and selected quest from the ViewModel
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
-        val completableCheckpoints = completableCheckpoints(checkpoints)
+        val completableCheckpoints = completableCheckpoints(myLocation, checkpoints)
 
         // Calculate number of completed checkpoints
         val totalCheckpoints = checkpoints.size
@@ -596,56 +596,24 @@ fun ShowMap(
 
 // Returns list of checkpoints, which are near the user's location and not yet completed
 @Composable
-fun completableCheckpoints(checkpoints: List<CheckpointEntity>): List<CheckpointEntity> {
+fun completableCheckpoints(location: Location?, checkpoints: List<CheckpointEntity>): List<CheckpointEntity> {
+    if (location == null) return emptyList()
     val context = LocalContext.current
 
     return checkpoints.filter { checkpoint ->
-        !checkpoint.completed && isNear(checkpoint, context)
-    }
-}
-
-// Returns list of tasks, whose associated checkpoint is near the user's location
-@Composable
-fun completableTasks(tasks: List<TaskEntity>, checkpoints: List<CheckpointEntity>): List<TaskEntity> {
-    return tasks.filter { task ->
-        completableCheckpoints(checkpoints).any { checkpoint ->
-            task.checkpointId == checkpoint.id
-        }
+        !checkpoint.completed && isNear(location, checkpoint, context)
     }
 }
 
 // Checks whether current location is within proximity of a checkpoint
-fun isNear(checkpoint: CheckpointEntity, context: Context): Boolean {
-    val location = getLocation(context)
-
-    if (location != null) {
-        val distance = FloatArray(1)
-        Location.distanceBetween(
-            location.latitude,
-            location.longitude,
-            checkpoint.lat,
-            checkpoint.long,
-            distance
-        )
-        return distance[0] < CHECKPOINT_PROXIMITY_METERS
-    } else {
-        return false
-    }
-}
-
-fun getLocation(context: Context): Location? {
-    // User location marker
-    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-    val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
-
-    return if (hasFineLocationPermission) {
-        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-    } else {
-        null
-    }
+fun isNear(location: Location, checkpoint: CheckpointEntity, context: Context): Boolean {
+    val distance = FloatArray(1)
+    Location.distanceBetween(
+        location.latitude,
+        location.longitude,
+        checkpoint.lat,
+        checkpoint.long,
+        distance
+    )
+    return distance[0] < CHECKPOINT_PROXIMITY_METERS
 }
