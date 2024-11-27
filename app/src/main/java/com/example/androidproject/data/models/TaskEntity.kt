@@ -7,6 +7,10 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "tasks",
+
+    // Tasks belong to checkpoints.
+    // Checkpoint can have only one task.
+    // Task can belong to only one checkpoint.
     foreignKeys = [
         ForeignKey(
             entity = CheckpointEntity::class,

@@ -7,6 +7,10 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "checkpoints",
+
+    // Checkpoints belong to quests.
+    // One quest can have many checkpoints.
+    // Checkpoint can belong to only one quest.
     foreignKeys = [
         ForeignKey(
             entity = QuestEntity::class,
