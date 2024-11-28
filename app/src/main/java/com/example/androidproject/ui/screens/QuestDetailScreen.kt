@@ -424,14 +424,6 @@ fun QuestDetailScreen(
                                     modifier = Modifier.padding(8.dp)
                                 )
                             }
-                            // Linear progress indicator below quest title
-                            LinearProgressIndicator(
-                                progress = { if (totalCheckpoints > 0) completedCheckpoints / totalCheckpoints.toFloat() else 0f },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                                color = MaterialTheme.colorScheme.primary,
-                            )
 
                         }
                         if (bottomSheetState != BottomSheetState.Collapsed) {
