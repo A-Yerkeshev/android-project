@@ -1,7 +1,5 @@
 package com.example.androidproject.ui.screens
 
-//import androidx.compose.material.icons.filled.ExpandMore
-
 import android.content.Context
 import android.location.Location
 import android.widget.Toast
@@ -67,6 +65,7 @@ import com.example.androidproject.R
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
+import com.example.androidproject.ui.components.ConfettiAnimation
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.MapViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
@@ -99,6 +98,7 @@ fun QuestDetailScreen(
     val context = LocalContext.current
 
     val myLocation by mapViewModel.myLocation.collectAsState()
+    var showConfetti by remember { mutableStateOf(false) }
 
     // Request location permission
     val locationPermissionGranted = locationPermission()
@@ -241,6 +241,7 @@ fun QuestDetailScreen(
                                             if (allOtherCompleted) {
                                                 questViewModel.markCompleted(selectedQuest)
                                             }
+                                            showConfetti = true
 
                                             // Close camera
                                             showCameraView = false
@@ -406,8 +407,14 @@ fun QuestDetailScreen(
                         }
                     }
                 }
+            if (showConfetti) {
+                ConfettiAnimation()
+                LaunchedEffect(Unit) {
+                    kotlinx.coroutines.delay(3000)
+                    showConfetti = false
+                }
             }
-
+        }
     } else {
         Text(text = "Location permission is required to display the map.")
     }
