@@ -184,7 +184,7 @@ fun QuestDetailScreen(
                             myLocation = myLocation,
                             isLiveTracking = isLiveTracking,
                             selectedCheckpoint = selectedCheckpoint,
-                            onMapTouch = {
+                            onMapCameraMove = {
                                 isLiveTracking = false
                             },
                             onCheckpointClick = { checkpoint ->

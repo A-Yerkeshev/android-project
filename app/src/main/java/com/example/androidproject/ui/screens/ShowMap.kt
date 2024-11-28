@@ -36,8 +36,8 @@ fun ShowMap(
     myLocation: Location?,
     isLiveTracking: Boolean,
     selectedCheckpoint: CheckpointEntity?,
-    onMapTouch: () -> Unit,
-    onCheckpointClick: (CheckpointEntity) -> Unit
+    onMapCameraMove: () -> Unit,
+    onCheckpointClick: (CheckpointEntity?) -> Unit
 ) {
 //    val context = LocalContext.current
     val context = App.appContext
@@ -50,26 +50,30 @@ fun ShowMap(
     var isCameraInitialized by remember { mutableStateOf(false) }
 
     LaunchedEffect(isCameraInitialized, isLiveTracking, myLocation) {
+        // camera center to the current location on 1st load
         if (!isCameraInitialized && myLocation != null) {
             cameraState.geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
 
             isCameraInitialized = true
         }
 
+        // camera center to current location if live tracking is on
         if (isLiveTracking && myLocation != null) {
             cameraState.animateTo(GeoPoint(myLocation.latitude, myLocation.longitude))
         }
     }
 
+    // unselect live tracking if user move map camera away from current location more than 2 meters
     LaunchedEffect(cameraState.geoPoint) {
         if (myLocation != null) {
             if (isLiveTracking &&
                 cameraState.geoPoint.distanceToAsDouble(GeoPoint(myLocation.latitude, myLocation.longitude)) > 2.0 ) {
-                onMapTouch()
+                onMapCameraMove()
             }
         }
     }
 
+    // camera center on selected checkpoint
     LaunchedEffect(selectedCheckpoint) {
         if (selectedCheckpoint != null) {
             cameraState.geoPoint = GeoPoint(selectedCheckpoint.lat, selectedCheckpoint.long)
@@ -91,7 +95,6 @@ fun ShowMap(
             .copy(maxZoomLevel = 22.0) // default is 26.0
             .copy(isFlingEnable = false) // fling gesture on map, default is true
             .copy(isAnimating = true) // default is true
-
     }
 
     Surface(
@@ -101,6 +104,9 @@ fun ShowMap(
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState,
             properties = mapProperties,
+            onMapClick = {
+                onCheckpointClick(null) // unselect currently selected checkpoint if user clicks on map
+            }
         ) {
             key(myLocation) {
                 if (myLocation != null) {
@@ -116,7 +122,6 @@ fun ShowMap(
 
             key(checkpoints) {
                 checkpoints.forEach { checkpoint ->
-
                     val iconResId = if (checkpoint.completed) {
                         R.drawable.ic_checkpoint_completed
                     } else {
