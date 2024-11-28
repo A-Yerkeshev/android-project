@@ -190,5 +190,7 @@ abstract class AppDB : RoomDatabase() {
         armanTasks.forEach { task ->
             taskDao.insert(task)
         }
+
+        
     }
 }

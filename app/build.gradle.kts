@@ -53,7 +53,7 @@ android {
 }
 
 dependencies {
-    val compose_version = "1.5.0"
+    val compose_version = "1.4.0"
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
     implementation(libs.androidx.rules)
