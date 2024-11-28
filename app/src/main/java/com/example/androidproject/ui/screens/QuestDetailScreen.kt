@@ -29,9 +29,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -68,7 +76,6 @@ import com.example.androidproject.utils.cameraPermission
 import com.example.androidproject.utils.locationPermission
 import com.example.androidproject.utils.savePhoto
 import kotlinx.coroutines.launch
-import org.osmdroid.config.Configuration
 import kotlin.math.roundToInt
 
 
@@ -94,13 +101,13 @@ fun QuestDetailScreen(
     val myLocation by mapViewModel.myLocation.collectAsState()
 
     // Initialize OSMDroid configuration
-    DisposableEffect(Unit) {
-        Configuration.getInstance().load(
-            context,
-            context.getSharedPreferences("osmdroid", Context.MODE_PRIVATE)
-        )
-        onDispose { }
-    }
+//    DisposableEffect(Unit) {
+//        Configuration.getInstance().load(
+//            context,
+//            context.getSharedPreferences("osmdroid", Context.MODE_PRIVATE)
+//        )
+//        onDispose { }
+//    }
 
     // Request location permission
     val locationPermissionGranted = locationPermission()
@@ -198,6 +205,9 @@ fun QuestDetailScreen(
 //                            cameraState = cameraState,
                             isLiveTracking = isLiveTracking,
                             selectedCheckpoint = selectedCheckpoint,
+                            onMapTouch = {
+                                isLiveTracking = false
+                            },
                             onCheckpointClick = { checkpoint ->
                                 selectedCheckpoint = checkpoint
                             }
