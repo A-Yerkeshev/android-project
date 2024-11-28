@@ -42,7 +42,10 @@ fun ShowMap(
 //    val context = LocalContext.current
     val context = App.appContext
 
-    val cameraState = rememberCameraState()
+    val cameraState = rememberCameraState{
+        geoPoint = GeoPoint(60.17057, 24.941521) // Central Railway Station
+        zoom = 20.0
+    }
 
     var isCameraInitialized by remember { mutableStateOf(false) }
 
@@ -98,10 +101,6 @@ fun ShowMap(
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState,
             properties = mapProperties,
-            onFirstLoadListener = {
-                cameraState.geoPoint = GeoPoint(60.17057, 24.941521) // Central Railway Station
-                cameraState.zoom = 20.0
-            }
         ) {
             key(myLocation) {
                 if (myLocation != null) {
