@@ -100,15 +100,6 @@ fun QuestDetailScreen(
 
     val myLocation by mapViewModel.myLocation.collectAsState()
 
-    // Initialize OSMDroid configuration
-//    DisposableEffect(Unit) {
-//        Configuration.getInstance().load(
-//            context,
-//            context.getSharedPreferences("osmdroid", Context.MODE_PRIVATE)
-//        )
-//        onDispose { }
-//    }
-
     // Request location permission
     val locationPermissionGranted = locationPermission()
 
@@ -169,17 +160,6 @@ fun QuestDetailScreen(
                 }
             }
 
-            val toggleBottomSheet: () -> Unit = {
-                val nextState = when (swipeableState.currentValue) {
-                    BottomSheetState.Collapsed -> BottomSheetState.HalfExpanded
-                    BottomSheetState.HalfExpanded -> BottomSheetState.Expanded
-                    BottomSheetState.Expanded -> BottomSheetState.Collapsed
-                }
-                coroutineScope.launch {
-                    swipeableState.animateTo(nextState)
-                }
-            }
-
             if (!showCameraView) {
                 Column(
                     modifier = Modifier
@@ -202,7 +182,6 @@ fun QuestDetailScreen(
                         ShowMap(
                             checkpoints = checkpoints,
                             myLocation = myLocation,
-//                            cameraState = cameraState,
                             isLiveTracking = isLiveTracking,
                             selectedCheckpoint = selectedCheckpoint,
                             onMapTouch = {
@@ -212,9 +191,8 @@ fun QuestDetailScreen(
                                 selectedCheckpoint = checkpoint
                             }
                         )
-//
 
-                        // Add the Recenter Button overlaid on the map
+                        // Button for centering at current location
                         Button(
                             onClick = { isLiveTracking = !isLiveTracking },
                             modifier = Modifier
@@ -237,7 +215,7 @@ fun QuestDetailScreen(
                         }
                     }
                 }
-                }else{
+            } else {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
