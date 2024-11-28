@@ -53,7 +53,7 @@ android {
 }
 
 dependencies {
-    val compose_version = "1.4.0"
+    val compose_version = "1.5.0"
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
     implementation(libs.androidx.rules)
@@ -83,6 +83,8 @@ dependencies {
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     implementation("com.google.accompanist:accompanist-permissions:0.28.0")
+
+    implementation ("nl.dionsegijn:konfetti-compose:2.0.4")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
