@@ -11,9 +11,13 @@ import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.data.models.TaskEntity
 import kotlinx.coroutines.flow.firstOrNull
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 
 @Database(entities = [CheckpointEntity::class, TaskEntity::class, QuestEntity::class], version = 1, exportSchema = false)
 abstract class AppDB : RoomDatabase() {
+
     abstract fun checkpointDao(): CheckpointDao
     abstract fun taskDao(): TaskDao
     abstract fun questDao(): QuestDao
@@ -76,8 +80,9 @@ abstract class AppDB : RoomDatabase() {
         val checkpointDao = db.checkpointDao() // Get the CheckpointDao instance
         val taskDao = db.taskDao()     // Get the TaskDao instance
 
-        // Add test data for quests and checkpoints
-        val yesterday = System.currentTimeMillis() - 24 * 60 * 60 * 1000
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+        val currentDate = LocalDateTime.now().format(formatter)
+
 
         questDao.insert(
             QuestEntity(
@@ -119,7 +124,7 @@ abstract class AppDB : RoomDatabase() {
                 description = "Completed Quest Example",
                 category = "Test",
                 current = false,
-                completedAt = yesterday.toString()
+                completedAt = currentDate
             )
         )
 
@@ -129,7 +134,7 @@ abstract class AppDB : RoomDatabase() {
                 description = "BULL RUN 2025",
                 category = "Test2",
                 current = false,
-                completedAt = yesterday.toString()
+                completedAt = currentDate
             )
         )
 
