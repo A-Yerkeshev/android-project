@@ -1,7 +1,6 @@
 package com.example.androidproject.ui.screens
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
@@ -11,8 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -95,32 +92,29 @@ fun WelcomeScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Completed Quests",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.align(Alignment.Start)
+            )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 8.dp)
             ) {
-                val chunkedQuests = completedQuests.chunked(2)
-                Log.d("CompletedQuests", "Chunked quests: $chunkedQuests")
-
-                items(chunkedQuests) { rowQuests ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        rowQuests.forEach { quest ->
-                            CompletedQuestCard(
-                                quest = quest,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(8.dp)
-                                    .wrapContentHeight()
-                            )
-                        }
-                        if (rowQuests.size < 2) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
-                    }
+                items(completedQuests) { quest ->
+                    CompletedQuestItem(
+                        quest = quest,
+                        completedDate = quest.completedAt ?: "Unknown",
+                        onNavigateToMap = { /* Add navigation logic */ },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    )
                 }
             }
         }
@@ -128,32 +122,34 @@ fun WelcomeScreen(
 }
 
 @Composable
-fun CompletedQuestCard(quest: QuestEntity, modifier: Modifier = Modifier) {
-    Card(
+fun CompletedQuestItem(
+    quest: QuestEntity,
+    completedDate: String,
+    onNavigateToMap: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
         modifier = modifier
-            .padding(vertical = 4.dp)
             .fillMaxWidth()
-            .height(120.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
-        shape = MaterialTheme.shapes.medium
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Route: ${quest.description}",
-                style = MaterialTheme.typography.titleMedium
+                text = quest.description,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Status: ${if (quest.completedAt != null) "Completed" else "Not Completed"}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (quest.completedAt != null) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                text = "Completed on: $completedDate",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
             )
         }
     }

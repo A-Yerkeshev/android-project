@@ -1,6 +1,5 @@
 package com.example.androidproject.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,22 +30,25 @@ import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.navigation.Screens
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
+
+    // val viewModel = QuestViewModel()
+    // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
+    // ViewModel from the provider, and persists through recomposition of the composable. It means when
+    // the composable recomposes, the ViewModel stays the same, with all its state variables/data
+    // val viewModel: QuestViewModel = viewModel()
+
 @Composable
 fun QuestsListScreen(
     modifier: Modifier = Modifier,
     navCtrl: NavController,
     questViewModel: QuestViewModel
 ) {
-  
-//    val viewModel = QuestViewModel()
-
-    // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
-    // ViewModel from the provider, and persists through recomposition of the composable. It means when
-    // the composable recomposes, the ViewModel stays the same, with all its state variables/data
-//    val viewModel: QuestViewModel = viewModel()
-  
     val questsWithCheckpoints by questViewModel.questsWithCheckpoints.collectAsState()
-    val completedQuests by questViewModel.completedQuests.collectAsState()
+
+    // Filter out completed quests
+    val uncompletedQuestsWithCheckpoints = questsWithCheckpoints.filter {
+        it.quest.completedAt == null
+    }
 
     LazyColumn(
         modifier = modifier
@@ -54,7 +56,7 @@ fun QuestsListScreen(
             .padding(bottom = 56.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
-        items(questsWithCheckpoints) { questWithCheckpoints ->
+        items(uncompletedQuestsWithCheckpoints) { questWithCheckpoints ->
             var isExpanded by remember { mutableStateOf(questWithCheckpoints.quest.current) }
 
             QuestItem(
