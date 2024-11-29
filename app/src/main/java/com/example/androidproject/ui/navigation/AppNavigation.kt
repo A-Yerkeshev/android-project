@@ -3,6 +3,7 @@ package com.example.androidproject.ui.navigation
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,6 +15,7 @@ import com.example.androidproject.ui.screens.QuestsListScreen
 import com.example.androidproject.ui.screens.UserInputScreen
 import com.example.androidproject.ui.screens.WelcomeScreen
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
+import com.example.androidproject.ui.viewmodels.MapViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 
@@ -27,6 +29,8 @@ fun AppNavigation(
     checkpointViewModel: CheckpointViewModel,
     startDestination: String // Dynamically set start destination
 ) {
+    val mapViewModel: MapViewModel = viewModel()
+
     NavHost(
         navController = navController as NavHostController,
         startDestination = startDestination
@@ -54,6 +58,7 @@ fun AppNavigation(
         ) { backStackEntry ->
             val questId = backStackEntry.arguments?.getInt("questId") ?: 0
             QuestDetailScreen(
+                mapViewModel = mapViewModel,
                 questViewModel = questViewModel,
                 taskViewModel = taskViewModel,
                 questId = questId,

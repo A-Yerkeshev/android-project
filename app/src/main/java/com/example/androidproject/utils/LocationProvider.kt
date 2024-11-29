@@ -25,7 +25,7 @@ class LocationProvider {
     private val locationRequest = LocationRequest.Builder(LocReqConstants.INTERVAL_MS) // interval between updates
         .setPriority(LocReqConstants.PRIORITY_HIGH_ACC) // priority for trade off between accuracy and power
         .setMinUpdateIntervalMillis(LocReqConstants.FASTEST_INTERVAL_MS) // minimum update interval
-        .setMaxUpdateDelayMillis(LocReqConstants.INTERVAL_MS) // maximum update delay, even if accurate location is not available yet
+        .setMaxUpdateDelayMillis(LocReqConstants.MAX_DELAY_MS) // maximum update delay, even if accurate location is not available yet
         .setMinUpdateDistanceMeters(LocReqConstants.MIN_DISTANT_METERS) // minimum distance between updates
         .build()
 
