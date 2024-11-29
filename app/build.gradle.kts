@@ -84,7 +84,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     implementation("com.google.accompanist:accompanist-permissions:0.28.0")
 
-    implementation (libs.konfetti.compose)
+    implementation ("nl.dionsegijn:konfetti-compose:2.0.4")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
