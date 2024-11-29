@@ -100,8 +100,6 @@ fun QuestDetailScreen(
     val myLocation by mapViewModel.myLocation.collectAsState()
     var showConfetti by remember { mutableStateOf(false) }
 
-    var showConfetti by remember { mutableStateOf(false) }
-
     // Request location permission
     val locationPermissionGranted = locationPermission()
 

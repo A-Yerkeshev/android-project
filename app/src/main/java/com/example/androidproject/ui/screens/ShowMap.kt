@@ -89,10 +89,10 @@ fun ShowMap(
     SideEffect {
         mapProperties = mapProperties
             .copy(isTilesScaledToDpi = false) // default is false
-            .copy(tileSources = TileSourceFactory.MAPNIK)
-            .copy(isEnableRotationGesture = false)
-            .copy(zoomButtonVisibility = ZoomButtonVisibility.ALWAYS)
-            .copy(maxZoomLevel = 22.0) // default is 26.0
+            .copy(tileSources = TileSourceFactory.MAPNIK) // default is null
+            .copy(isEnableRotationGesture = false) // rotate map gesture
+            .copy(zoomButtonVisibility = ZoomButtonVisibility.ALWAYS) // always, never or fading out
+            .copy(maxZoomLevel = 22.0) // default is 26.0 (min default is 9.0)
             .copy(isFlingEnable = false) // fling gesture on map, default is true
             .copy(isAnimating = true) // default is true
     }
