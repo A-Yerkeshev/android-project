@@ -7,9 +7,9 @@ This application was developed as school project for Mobile Application Developm
 - [Features](#features)
 - [Technologies](#technologies)
 - [Architecture](#architecture)
-    - []()
-    - []()
-    - []()
+  - [Data flow](#data-flow)
+  - [Database structure](#database-structure)
+  - [Project structure](#project-structure)
 - [Contributing](#contributing)
 
 ## Features
@@ -19,11 +19,13 @@ This application was developed as school project for Mobile Application Developm
 Application adheres to MVVM (Model-View-ViewModel) architecture. Data flow from database to UI looks like this:
 
 ```mermaid
-%%{init: {
+%%{
+init: {
 	'theme':'base',
 	'themeVariables': {
 		'primaryBorderColor': '#000000'
-	}
+	},
+	'htmlLabels': false
 }}%%
 flowchart LR;
     DataEntity-->DAO-->Repository-->ViewModel-->Composable;
@@ -36,7 +38,8 @@ When user performs some action, which requires update in the database, data flow
 	'theme':'base',
 	'themeVariables': {
 		'primaryBorderColor': '#000000'
-	}
+	},
+	'htmlLabels': false
 }}%%
 flowchart LR;
     Composable-->ViewModel-->Repository-->DAO-->DataEntity;
@@ -48,20 +51,22 @@ Logical structure of data models is expressed in the following picture. Actual i
 ![ERD-diagram](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/Android-project-ERD.png)
 
 Quests are collections of unordered locations (Checkpoints), at which user is expected to perform certain tasks. Quests have names, descriptions and belong to a category (can be anything). System keeps track of whether or not quest was completed and if so, when. Only one quest can be active at a time.
+
 Checkpoints represent locations, to which user needs to arrive in order to progress with the quest. Checkpoints have names, geo-coordinates and an indicator, whether or not checkpoint is completed. Checkpoint can belong to only one quest. Orphan checkpoints are not allowed. Checkpoints can, optionally, have tasks associated with them.
+
 Tasks describe what actions are required from user. They can have a type, denoting which sort of action is expected from user (ex. take a picture, record an audio, answer a question etc.) Additionally, they can hold an answer to the question, when applicable, which can be used to validate user's response. Currently, both `type` and `answer` properties are <ins>not in use</ins>. Tasks can belong to only one checkpoint. Orphan tasks are not allowed.
 ### Project structure
 ```
 |--- com.example.androidproject
 	|--- data
 		|--- daos
-		|--- models				// i.e. Room Entities
+		|--- models             // i.e. Room Entities
 	|--- repository
 	|--- ui
-		|--- components			// UI elements, used in screens
+		|--- components         // UI elements, used in screens
 		|--- navigation
-		|--- screens			// Logically independent composables, used in navigation
-		|--- theme				// Colours, shapes etc.
+		|--- screens            // Logically independent composables, used in navigation
+		|--- theme              // Colours, shapes etc.
 		|--- viewmodels
 	|--- utils
 ```
