@@ -1,11 +1,14 @@
 package com.example.androidproject.utils
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import com.example.androidproject.App
+import com.example.androidproject.data.models.CheckpointEntity
+import com.example.androidproject.utils.Constants.CHECKPOINT_PROXIMITY_METERS
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -70,4 +73,17 @@ class LocationProvider {
     fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
+}
+
+// Checks whether current location is within proximity of a checkpoint
+fun isNear(location: Location, checkpoint: CheckpointEntity, context: Context): Boolean {
+    val distance = FloatArray(1)
+    Location.distanceBetween(
+        location.latitude,
+        location.longitude,
+        checkpoint.lat,
+        checkpoint.long,
+        distance
+    )
+    return distance[0] < CHECKPOINT_PROXIMITY_METERS
 }

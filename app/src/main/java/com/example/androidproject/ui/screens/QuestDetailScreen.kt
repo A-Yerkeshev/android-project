@@ -1,6 +1,5 @@
 package com.example.androidproject.ui.screens
 
-import android.content.Context
 import android.location.Location
 import android.widget.Toast
 import androidx.camera.view.LifecycleCameraController
@@ -70,9 +69,8 @@ import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.MapViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
-import com.example.androidproject.utils.Constants.CHECKPOINT_PROXIMITY_METERS
-import com.example.androidproject.utils.cameraPermission
-import com.example.androidproject.utils.locationPermission
+import com.example.androidproject.utils.isNear
+import com.example.androidproject.utils.requestPermissions
 import com.example.androidproject.utils.savePhoto
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -96,15 +94,8 @@ fun QuestDetailScreen(
     cameraController: LifecycleCameraController
 ) {
     val context = LocalContext.current
-
     val myLocation by mapViewModel.myLocation.collectAsState()
     var showConfetti by remember { mutableStateOf(false) }
-
-    // Request location permission
-    val locationPermissionGranted = locationPermission()
-
-    val cameraPermissionGranted = cameraPermission()
-
     var showCameraView by remember { mutableStateOf(false) }
     var photoForCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
 
@@ -113,7 +104,12 @@ fun QuestDetailScreen(
         questViewModel.selectQuest(questId)
     }
 
-    if (locationPermissionGranted) {
+    // Request permissions
+    val permissionsGranted = requestPermissions()
+
+    if (!permissionsGranted) {
+        RejectedPermissionsScreen()
+    } else {
         // Observe checkpoints and selected quest from the ViewModel
         val checkpoints by questViewModel.checkpoints.observeAsState(emptyList())
         val selectedQuest by questViewModel.selectedQuest.observeAsState()
@@ -179,7 +175,7 @@ fun QuestDetailScreen(
                             .weight(1f)
                             .padding(bottom = mapBottomPaddingDp)
                     ) {
-                        ShowMap(
+                        com.example.androidproject.ui.components.ShowMap(
                             checkpoints = checkpoints,
                             myLocation = myLocation,
                             isLiveTracking = isLiveTracking,
@@ -366,16 +362,8 @@ fun QuestDetailScreen(
                                             Button(
                                                 onClick = {
                                                     if (checkpoint in completableCheckpoints) {
-                                                        if (cameraPermissionGranted) {
-                                                            showCameraView = true
-                                                            photoForCheckpoint = checkpoint
-                                                        } else {
-                                                            Toast.makeText(
-                                                                context,
-                                                                "Camera permission required.",
-                                                                Toast.LENGTH_SHORT
-                                                            ).show()
-                                                        }
+                                                        showCameraView = true
+                                                        photoForCheckpoint = checkpoint
                                                     } else {
                                                         Toast.makeText(
                                                             context,
@@ -415,8 +403,6 @@ fun QuestDetailScreen(
                 }
             }
         }
-    } else {
-        Text(text = "Location permission is required to display the map.")
     }
 }
 
@@ -429,17 +415,4 @@ fun completableCheckpoints(location: Location?, checkpoints: List<CheckpointEnti
     return checkpoints.filter { checkpoint ->
         !checkpoint.completed && isNear(location, checkpoint, context)
     }
-}
-
-// Checks whether current location is within proximity of a checkpoint
-fun isNear(location: Location, checkpoint: CheckpointEntity, context: Context): Boolean {
-    val distance = FloatArray(1)
-    Location.distanceBetween(
-        location.latitude,
-        location.longitude,
-        checkpoint.lat,
-        checkpoint.long,
-        distance
-    )
-    return distance[0] < CHECKPOINT_PROXIMITY_METERS
 }
