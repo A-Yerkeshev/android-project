@@ -25,6 +25,8 @@ import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 
+// This composable contains map with markers for checkpoints and user location.
+// Additionally, it has controls for zooming the map and scrolling camera to the current location.
 @Composable
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
@@ -34,21 +36,17 @@ fun ShowMap(
     onMapCameraMove: () -> Unit,
     onCheckpointClick: (CheckpointEntity?) -> Unit
 ) {
-//    val context = LocalContext.current
     val context = App.appContext
-
     val cameraState = rememberCameraState{
         geoPoint = GeoPoint(60.17057, 24.941521) // Central Railway Station
         zoom = 20.0
     }
-
     var isCameraInitialized by remember { mutableStateOf(false) }
 
     LaunchedEffect(isCameraInitialized, isLiveTracking, myLocation) {
         // camera center to the current location on 1st load
         if (!isCameraInitialized && myLocation != null) {
             cameraState.geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
-
             isCameraInitialized = true
         }
 
