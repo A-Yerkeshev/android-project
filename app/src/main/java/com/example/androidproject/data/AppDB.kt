@@ -34,35 +34,18 @@ abstract class AppDB : RoomDatabase() {
                     AppDB::class.java,
                     "quest_app_database"
                 )
-
-                    .fallbackToDestructiveMigration()
-                    .build().also { Instance = it }
+                .fallbackToDestructiveMigration()
+                .build().also { Instance = it }
             }
         }
     }
 
+    // If this is the first time user launches the app - set the first quest as current.
+    // Otherwise, current quest is the one user selected last time.
     suspend fun setCurrentIfNotExists() {
         val db: AppDB = getDatabase()
         val questDao = db.questDao()
 
-        // using Flow causes database to update questsWithCheckpoints and currentQuest repeatedly in
-        // the viewModel and subsequently in the bottomNavigation, which makes the bottomNavigation
-        // to recompose all the time (check the Logcat with tag "XXX", it's in the currentRoute function)
-//        val currentQuestFlow = questDao.getCurrent()
-//        currentQuestFlow.collect { currentQuest ->
-//            if (currentQuest.firstOrNull() == null) {
-//                questDao.getAll().collect {
-//                    if (it.isNotEmpty()) {
-//                        val quest = it[0]
-//                        quest.current = true
-//                        questDao.update(quest)
-//                    }
-//                }
-//            }
-//        }
-
-        // maybe check this just one time (when the app starts, in the onCreate in App),
-        // no need to use Flow
         val currentQuest = questDao.getCurrent().firstOrNull()
         if (currentQuest == null) {
             val allQuests = questDao.getAll().firstOrNull()
@@ -74,6 +57,7 @@ abstract class AppDB : RoomDatabase() {
         }
     }
 
+    // Fill the database with some test data
     suspend fun fillWithTestData() {
         val db: AppDB = getDatabase()  // Get the database instance
         val questDao = db.questDao()   // Get the QuestDao instance

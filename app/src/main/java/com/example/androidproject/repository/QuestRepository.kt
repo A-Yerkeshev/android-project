@@ -5,12 +5,7 @@ import com.example.androidproject.data.daos.CheckpointDao
 import com.example.androidproject.data.daos.QuestDao
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -29,18 +24,23 @@ class QuestRepository(
     // Fetch checkpoints for a quest
     fun getCheckpointsByQuestId(questId: Int): Flow<List<CheckpointEntity>> = checkpointDao.getAll(questId)
 
+    // Fetch all checkpoints
     fun getAllCheckpoints(): Flow<List<CheckpointEntity>> = checkpointDao.getAllCheckpoints()
 
+    // Fetch current quest
     fun getCurrentQuest(): Flow<List<QuestEntity>> = questDao.getCurrent()
 
+    // Fetch completed quests
     fun getCompletedQuests(): Flow<List<QuestEntity>> = questDao.getCompletedQuests()
 
+    // Set quest as current
     suspend fun setQuestCurrent(quest: QuestEntity) {
         questDao.unsetAllCurrent()
         quest.current = true
         questDao.update(quest)
     }
 
+    // Mark quest as completed
     suspend fun markCompleted(quest: QuestEntity) {
         quest.completedAt = LocalDateTime.now().format(formatter)
         questDao.update(quest)
