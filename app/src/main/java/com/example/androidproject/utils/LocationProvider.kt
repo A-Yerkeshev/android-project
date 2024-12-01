@@ -21,8 +21,8 @@ class LocationProvider {
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(App.appContext)
 
-    private val _location = MutableStateFlow<Location?>(null)
-    val location: StateFlow<Location?> = _location
+    private val _currentLocation = MutableStateFlow<Location?>(null)
+    val currentLocation: StateFlow<Location?> = _currentLocation
 
     // configs for the request and build it
     private val locationRequest = LocationRequest.Builder(LocReqConstants.INTERVAL_MS) // interval between updates
@@ -37,8 +37,8 @@ class LocationProvider {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
 
-            for (location in locationResult.locations) {
-                _location.value = location
+            locationResult.lastLocation?.let { location ->
+                _currentLocation.value = location
             }
         }
     }

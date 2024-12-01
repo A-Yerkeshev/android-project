@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MapViewModel : ViewModel() {
+class LocationViewModel : ViewModel() {
     private val locationProvider = LocationProvider()
 
     // expose location updates to be observe by the UI
@@ -20,7 +20,7 @@ class MapViewModel : ViewModel() {
         locationProvider.startLocationUpdates()
 
         viewModelScope.launch {
-            locationProvider.location.collect { location ->
+            locationProvider.currentLocation.collect { location ->
                 _myLocation.value = location
             }
         }

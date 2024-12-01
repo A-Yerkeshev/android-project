@@ -66,7 +66,7 @@ import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
 import com.example.androidproject.ui.components.ConfettiAnimation
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
-import com.example.androidproject.ui.viewmodels.MapViewModel
+import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 import com.example.androidproject.utils.isNear
@@ -86,7 +86,7 @@ enum class BottomSheetState {
 @Composable
 fun QuestDetailScreen(
     modifier: Modifier = Modifier,
-    mapViewModel: MapViewModel = viewModel(),
+    locationViewModel: LocationViewModel = viewModel(),
     questViewModel: QuestViewModel,
     taskViewModel: TaskViewModel,
     checkpointViewModel: CheckpointViewModel,
@@ -94,7 +94,7 @@ fun QuestDetailScreen(
     cameraController: LifecycleCameraController
 ) {
     val context = LocalContext.current
-    val myLocation by mapViewModel.myLocation.collectAsState()
+    val myLocation by locationViewModel.myLocation.collectAsState()
     var showConfetti by remember { mutableStateOf(false) }
     var showCameraView by remember { mutableStateOf(false) }
     var photoForCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
