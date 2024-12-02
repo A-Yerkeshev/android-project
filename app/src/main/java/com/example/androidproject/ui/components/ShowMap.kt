@@ -31,7 +31,7 @@ import org.osmdroid.util.GeoPoint
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
     myLocation: Location?,
-    isLiveTracking: Boolean,
+    isLiveTrackingSelected: Boolean,
     selectedCheckpoint: CheckpointEntity?,
     onMapCameraMove: () -> Unit,
     onCheckpointClick: (CheckpointEntity?) -> Unit
@@ -43,7 +43,7 @@ fun ShowMap(
     }
     var isCameraInitialized by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isCameraInitialized, isLiveTracking, myLocation) {
+    LaunchedEffect(isCameraInitialized, isLiveTrackingSelected, myLocation) {
         // camera center to the current location on 1st load
         if (!isCameraInitialized && myLocation != null) {
             cameraState.geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
@@ -51,7 +51,7 @@ fun ShowMap(
         }
 
         // camera center to current location if live tracking is on
-        if (isLiveTracking && myLocation != null) {
+        if (isLiveTrackingSelected && myLocation != null) {
             cameraState.animateTo(GeoPoint(myLocation.latitude, myLocation.longitude))
         }
     }
@@ -59,7 +59,7 @@ fun ShowMap(
     // unselect live tracking if user move map camera away from current location more than 2 meters
     LaunchedEffect(cameraState.geoPoint) {
         if (myLocation != null) {
-            if (isLiveTracking &&
+            if (isLiveTrackingSelected &&
                 cameraState.geoPoint.distanceToAsDouble(GeoPoint(myLocation.latitude, myLocation.longitude)) > 2.0 ) {
                 onMapCameraMove()
             }

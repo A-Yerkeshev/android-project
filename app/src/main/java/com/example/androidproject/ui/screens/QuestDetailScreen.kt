@@ -66,7 +66,7 @@ import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
 import com.example.androidproject.ui.components.ConfettiAnimation
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
-import com.example.androidproject.ui.viewmodels.MapViewModel
+import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 import com.example.androidproject.utils.isNear
@@ -86,7 +86,7 @@ enum class BottomSheetState {
 @Composable
 fun QuestDetailScreen(
     modifier: Modifier = Modifier,
-    mapViewModel: MapViewModel = viewModel(),
+    locationViewModel: LocationViewModel = viewModel(),
     questViewModel: QuestViewModel,
     taskViewModel: TaskViewModel,
     checkpointViewModel: CheckpointViewModel,
@@ -94,7 +94,7 @@ fun QuestDetailScreen(
     cameraController: LifecycleCameraController
 ) {
     val context = LocalContext.current
-    val myLocation by mapViewModel.myLocation.collectAsState()
+    val myLocation by locationViewModel.myLocation.collectAsState()
     var showConfetti by remember { mutableStateOf(false) }
     var showCameraView by remember { mutableStateOf(false) }
     var photoForCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
@@ -123,7 +123,7 @@ fun QuestDetailScreen(
         var selectedCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
 
         // State of the live tracking map's camera
-        var isLiveTracking by remember { mutableStateOf(false) }
+        var isLiveTrackingSelected by remember { mutableStateOf(false) }
 
         // Persistent bottom sheet state
         var bottomSheetState by remember { mutableStateOf(BottomSheetState.HalfExpanded) }
@@ -178,10 +178,10 @@ fun QuestDetailScreen(
                         com.example.androidproject.ui.components.ShowMap(
                             checkpoints = checkpoints,
                             myLocation = myLocation,
-                            isLiveTracking = isLiveTracking,
+                            isLiveTrackingSelected = isLiveTrackingSelected,
                             selectedCheckpoint = selectedCheckpoint,
                             onMapCameraMove = {
-                                isLiveTracking = false
+                                isLiveTrackingSelected = false
                             },
                             onCheckpointClick = { checkpoint ->
                                 selectedCheckpoint = checkpoint
@@ -190,14 +190,14 @@ fun QuestDetailScreen(
 
                         // Button for centering at current location
                         Button(
-                            onClick = { isLiveTracking = !isLiveTracking },
+                            onClick = { isLiveTrackingSelected = !isLiveTrackingSelected },
                             modifier = Modifier
                                 .size(76.dp)
                                 .align(Alignment.BottomEnd)
                                 .padding(16.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isLiveTracking) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-                                contentColor = if (isLiveTracking) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+                                containerColor = if (isLiveTrackingSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                                contentColor = if (isLiveTrackingSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
                             ),
                             shape = CircleShape,
                             contentPadding = PaddingValues(4.dp)
@@ -205,7 +205,7 @@ fun QuestDetailScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_rounded_my_location),
                                 contentDescription = "Center to my position",
-                                tint = if (isLiveTracking) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                                tint = if (isLiveTrackingSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(36.dp)
                             )
                         }

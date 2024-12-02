@@ -15,7 +15,7 @@ import com.example.androidproject.ui.screens.QuestsListScreen
 import com.example.androidproject.ui.screens.UserInputScreen
 import com.example.androidproject.ui.screens.WelcomeScreen
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
-import com.example.androidproject.ui.viewmodels.MapViewModel
+import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 
@@ -29,7 +29,7 @@ fun AppNavigation(
     checkpointViewModel: CheckpointViewModel,
     startDestination: String // Dynamically set start destination
 ) {
-    val mapViewModel: MapViewModel = viewModel()
+    val locationViewModel: LocationViewModel = viewModel()
 
     NavHost(
         navController = navController as NavHostController,
@@ -58,7 +58,7 @@ fun AppNavigation(
         ) { backStackEntry ->
             val questId = backStackEntry.arguments?.getInt("questId") ?: 0
             QuestDetailScreen(
-                mapViewModel = mapViewModel,
+                locationViewModel = locationViewModel,
                 questViewModel = questViewModel,
                 taskViewModel = taskViewModel,
                 questId = questId,
