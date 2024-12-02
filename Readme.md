@@ -14,6 +14,17 @@ This application was developed as school project for Mobile Application Developm
 
 ## Features
 ## Technologies
+Programming language of this project is Kotlin v1.9.0
+
+Interactions with the database are handled using Room database. You can find documentation [here](https://developer.android.com/jetpack/androidx/releases/room). All data is saved in phone's local memory. Additionally, Room requires an annotation processor, which, for this project, is KSP.
+
+Interface is created using [Jetpack Compose](https://developer.android.com/compose) toolkit.
+
+Application uses Open Street Map, version for [Composable](https://github.com/utsmannn/osm-android-compose) (credit goes to [utsmannn](https://github.com/utsmannn)).
+
+For camera, CameraX is used. Documentation can be found [here](https://developer.android.com/media/camera/camerax).
+
+Lastly, [JUnit 4](https://junit.org/junit4/) is used for instrumented tests.
 ## Architecture
 ### Data flow
 Application adheres to MVVM (Model-View-ViewModel) architecture. Data flow from database to UI looks like this:
