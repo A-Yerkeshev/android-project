@@ -13,7 +13,7 @@ object LocReqConstants {
     const val INTERVAL_MS: Long = 1500
     const val FASTEST_INTERVAL_MS: Long = 500
     const val MAX_DELAY_MS: Long = 3000
-    const val MIN_DISTANT_METERS: Float = 2f
+    const val MIN_DISTANT_METERS: Float = 1f
 }
 
 

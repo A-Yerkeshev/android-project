@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -64,16 +65,12 @@ class LocationProvider {
         // request location updates
         startLocationUpdates()
 
-        // get last known location from device's cache while waiting for the live tracking to be ready
-        getLastLocation()?.let { lastLocation ->
-            _currentLocation.value = lastLocation
-        }
+        // get initial data quickly while waiting for the live tracking to be ready
+        getLastLocation()
     }
 
-    // not private, can be used later by different functionalities
-    fun getLastLocation(): Location? {
-        var lastLocation: Location? = null
-
+    // get last known location from cache from fused location provider
+    private fun getLastLocation() {
         // will need to implement properly later in Permission util
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -83,18 +80,45 @@ class LocationProvider {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location ->
                     if (location != null) {
-                        lastLocation = location
+                        _currentLocation.value = location
+                    } else {
+                        // use fallback function
+                        _currentLocation.value = getLastLocationFromLocationManager()
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Log.d("XXX", "Failed to fetch last known location: ${exception.message}")
+                    Log.d("XXX", "Failed to fetch last known location from Fused Location Provider: ${exception.message}")
+
+                    //use fallback function
+                    _currentLocation.value = getLastLocationFromLocationManager()
                 }
         }
+    }
 
-        return lastLocation
+    // get last known location from location manager as fallback in case fused location provider cannot
+    private fun getLastLocationFromLocationManager(): Location? {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val providers = locationManager.getProviders(true)
+            for (provider in providers) {
+                val lastLocation = locationManager.getLastKnownLocation(provider)
+                if (lastLocation != null)
+                    return lastLocation
+            }
+        }
+
+        return null
     }
 
     private fun startLocationUpdates() {
