@@ -72,3 +72,12 @@ Tasks describe what actions are required from user. They can have a type, denoti
 ```
 
 ## Contributing
+In order to start working on this project you will need Android Studio. Download it from [here](https://developer.android.com/studio).
+Set up Android Studio. For Windows, you can follow [this](https://www.geeksforgeeks.org/guide-to-install-and-set-up-android-studio/) guide.
+
+Download this project as .zip and extract or clone it using this command:
+`git clone git@github.com:A-Yerkeshev/android-project.git`
+
+Open project in Android Studio, go to "Gradle Scripts" -> build.gradle.kts. If Android Studio is configured correctly, you will see the top bar with "Sync Now" option. Click it and wait until sync finishes.
+
+You can launch the application on emulator, inside Android Studio (see instructions [here](https://developer.android.com/studio/run/emulator)) or on real Android phone (instructions [here](https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#2)). Note, that application's target Android API is **31**, so if you have smaller version, it might not function correctly.
