@@ -128,18 +128,13 @@ fun QuestDetailScreen(
             val density = LocalDensity.current
             val maxHeightPx = with(density) { maxHeight.toPx() }
 
-            // Calculate the navigation bar height
-            val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density).toFloat()
-
-            // Adjust the maximum height
-            val adjustedMaxHeightPx = maxHeightPx - navigationBarHeightPx
             val collapsedHeightDp = 150.dp
             val collapsedHeightPx = with(density) { collapsedHeightDp.toPx() }
 
             val swipeableState = rememberSwipeableState(initialValue = bottomSheetState)
             val anchors = mapOf(
-                adjustedMaxHeightPx - collapsedHeightPx to BottomSheetState.Collapsed,
-                adjustedMaxHeightPx / 2 to BottomSheetState.HalfExpanded,
+                maxHeightPx - collapsedHeightPx to BottomSheetState.Collapsed,
+                maxHeightPx / 2 to BottomSheetState.HalfExpanded,
                 0f to BottomSheetState.Expanded
             )
 
