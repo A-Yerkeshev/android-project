@@ -1,7 +1,5 @@
 package com.example.androidproject.ui.viewmodels
 
-import android.util.Log
-import androidx.compose.material3.rememberTimePickerState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -44,6 +42,7 @@ class QuestViewModel : ViewModel() {
         getCompletedQuests()
     }
 
+    // Fetches all quests with their checkpoints
     private fun getQuestsWithCheckpoints() {
         viewModelScope.launch {
             val questsFlow = repository.getAllQuests()
@@ -67,7 +66,6 @@ class QuestViewModel : ViewModel() {
             repository.getCurrentQuest().let { quest ->
                 _currentQuest.value = quest.firstOrNull()?.first()
             }
-            Log.d("XXX", "Load from DB currentQuestId: ${_currentQuest.value?.id}")
         }
     }
 
@@ -78,9 +76,6 @@ class QuestViewModel : ViewModel() {
             }
         }
     }
-
-    // LiveData for all quests
-    val allQuests: LiveData<List<QuestEntity>> = repository.getAllQuests().asLiveData()
 
     // LiveData for a specific quest
     private val _selectedQuestId = MutableLiveData<Int>()
@@ -106,9 +101,6 @@ class QuestViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             repository.setQuestCurrent(quest)
-
-            // update currentQuest variable when setting new quest as current
-//            getCurrentQuest()
         }
     }
 

@@ -15,10 +15,7 @@ class CheckpointViewModel : ViewModel() {
     private val checkpointDao = db.checkpointDao()
     private val repository = CheckpointRepository(checkpointDao)
 
-    fun getAll(questId: Int): Flow<List<CheckpointEntity>> {
-        return checkpointDao.getAll(questId)
-    }
-
+    // Mark checkpoint completed
     fun markCompleted(checkpoint: CheckpointEntity?) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.markCompleted(checkpoint)
