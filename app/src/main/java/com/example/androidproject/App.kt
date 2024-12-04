@@ -1,7 +1,6 @@
 package com.example.androidproject
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import com.example.androidproject.data.AppDB
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -12,6 +11,8 @@ class App: Application() {
         lateinit var appContext: Context
     }
 
+    // When application is launched - sets global appContext variable,
+    // fills database with test data and sets current quest.
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext

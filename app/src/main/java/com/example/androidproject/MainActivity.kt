@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val isUserNameSet = sharedPreferences.getBoolean("is_user_name_set", false)
 
+        // If application is launched for the first time, show UserInput screen, else show Welcome screen
         val startDestination = if (isUserNameSet) {
             Screens.Welcome.name
         } else {
