@@ -13,6 +13,13 @@ This application was developed as school project for Mobile Application Developm
 - [Contributing](#contributing)
 
 ## Features
+![Map screen]() ![Quest lists screen]() ![Camera view]() ![Achievements screen]()
+
+Application contains several quests, consisting of checkpoints, associated with tasks. User can select a quest to follow and perform quest tasks as he progresses. Tasks can be completed in any order. Upon completion of the whole quest  user receives an achievement.
+
+Checkpoints are displayed on the map, along with user's current location marker, which updates in real-time.
+
+User  needs  to  be  physically  present  on a location  in  order  to  start  the  task. Currently, only type of quest tasks supported is to take a picture with phone's camera. But in theory, these can be for  example,  “answer  some  question  about  landmark”, "record an audio of the ambiance " etc.
 ## Technologies
 Programming language of this project is Kotlin v1.9.0
 
