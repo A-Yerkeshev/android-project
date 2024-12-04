@@ -13,7 +13,7 @@ import nl.dionsegijn.konfetti.core.emitter.Emitter
 import nl.dionsegijn.konfetti.core.models.Shape
 import java.util.concurrent.TimeUnit
 
-// is component is used to display the confetti animation when the user completes a quest
+// This component is used to display the confetti animation when the user completes a quest
 @Composable
 fun ConfettiAnimation() {
     val party = remember {

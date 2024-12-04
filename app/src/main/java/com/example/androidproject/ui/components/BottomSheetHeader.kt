@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
+// Header of the expandable bottom sheet, which used on the QuestDetailsScreen
+// and is always visible, regardless of the sheet's state.
 @Composable
 fun BottomSheetHeader(
     selectedQuestDescription: String?,
