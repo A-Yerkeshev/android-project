@@ -22,6 +22,8 @@ import com.example.androidproject.R
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
+// Bottom navigation bar with icons for navigating to WelcomeScreen, QuestsListScreen, and QuestDetailScreen.
+// This navbar is always visible.
 @Composable
 fun BottomNavigationBar(
     modifier: Modifier = Modifier,
@@ -35,8 +37,6 @@ fun BottomNavigationBar(
     // when its value changes. This nav bar only needs to remember the current quest Id for the
     // correct navigation of the icons
     val questId: Int by rememberUpdatedState(currentQuest?.id ?: 0)
-
-    Log.d("XXX", "NavBar currentQuest Id updated: ${currentQuest?.id ?: 0}")
 
     NavigationBar(
         containerColor = Color.White,
@@ -65,7 +65,6 @@ fun BottomNavigationBar(
             },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.Black,
-//                unselectedIconColor = Color.Gray,
                 indicatorColor = Color.Transparent
             )
         )
@@ -93,7 +92,6 @@ fun BottomNavigationBar(
             },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.Black,
-//                unselectedIconColor = Color.Gray,
                 indicatorColor = Color.Transparent
             )
         )
@@ -113,7 +111,6 @@ fun BottomNavigationBar(
                 ) },
             selected = currentRoute == "${Screens.QuestDetail.name}/{questId}",
             onClick = {
-
                 if (currentRoute != "${Screens.QuestDetail.name}/{questId}") {
                     navController.navigate("${Screens.QuestDetail.name}/${questId}") {
                         popUpTo(Screens.QuestDetail.name) { inclusive = true }
@@ -122,7 +119,6 @@ fun BottomNavigationBar(
             },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.Black,
-//                unselectedIconColor = Color.Gray,
                 indicatorColor = Color.Transparent
             )
         )
@@ -132,6 +128,5 @@ fun BottomNavigationBar(
 @Composable
 fun currentRoute(navController: NavController): String? {
     val backStackEntry = navController.currentBackStackEntryAsState().value
-    Log.d("XXX", "${backStackEntry?.destination?.route}")
     return backStackEntry?.destination?.route
 }

@@ -19,6 +19,8 @@ import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 
+// Component, responsible for navigation between screens.
+// Currently supports 4 screens: UserInput, Welcome, QuestsList, QuestDetail.
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier,
