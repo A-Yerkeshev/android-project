@@ -36,6 +36,12 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            // val viewModel = QuestViewModel()
+            // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
+            // ViewModel from the provider, and persists through recomposition of the composable. It means when
+            // the composable recomposes, the ViewModel stays the same, with all its state variables/data
+            // val viewModel: QuestViewModel = viewModel()
+
             val navController = rememberNavController()
             val questViewModel: QuestViewModel = viewModel()
             val taskViewModel: TaskViewModel = viewModel()

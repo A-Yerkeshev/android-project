@@ -25,6 +25,9 @@ import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.navigation.Screens
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
+// First screen of the application, where user's name is shown, together with the list of
+// all completed quests. Quests have their name and completion date. From here, user can
+// navigate to QuestsListScreen or reset his name.
 @Composable
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
@@ -110,7 +113,6 @@ fun WelcomeScreen(
                     CompletedQuestItem(
                         quest = quest,
                         completedDate = quest.completedAt ?: "Unknown",
-                        onNavigateToMap = { /* Add navigation logic */ },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
@@ -125,7 +127,6 @@ fun WelcomeScreen(
 fun CompletedQuestItem(
     quest: QuestEntity,
     completedDate: String,
-    onNavigateToMap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(

@@ -12,12 +12,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -54,6 +52,7 @@ import androidx.wear.compose.material.rememberSwipeableState
 import androidx.wear.compose.material.swipeable
 import com.example.androidproject.R
 import com.example.androidproject.data.models.CheckpointEntity
+import com.example.androidproject.ui.components.BottomSheetContent
 import com.example.androidproject.ui.components.BottomSheetHeader
 import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
@@ -67,9 +66,6 @@ import com.example.androidproject.utils.requestPermissions
 import com.example.androidproject.utils.savePhoto
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import com.example.androidproject.ui.components.BottomSheetContent
-
-
 
 enum class BottomSheetState {
     Collapsed,
@@ -77,6 +73,7 @@ enum class BottomSheetState {
     Expanded
 }
 
+// Screen, which contains map with markers, bottom sheet with checkpoint details and camera view.
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalWearMaterialApi::class)
 @Composable
 fun QuestDetailScreen(
@@ -92,6 +89,8 @@ fun QuestDetailScreen(
     val myLocation by locationViewModel.myLocation.collectAsState()
     var showConfetti by remember { mutableStateOf(false) }
     var showCameraView by remember { mutableStateOf(false) }
+
+    // Used to determine, for which checkpoint user attempts to take a photo
     var photoForCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
 
     // Set the selected quest ID in the ViewModel
@@ -211,7 +210,6 @@ fun QuestDetailScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-//                        .padding(0.dp, 0.dp, 0.dp, 100.dp)
                     ) {
                         CameraPreview(
                             controller = cameraController,

@@ -11,6 +11,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.androidproject.ui.navigation.Screens
 
+// Screen which is displayed only upon application's first launch or when user chooses to reset his name.
+// Username is stored in sharedPreferences.
 @Composable
 fun UserInputScreen(
     modifier: Modifier = Modifier,

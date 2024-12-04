@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// Screen that is shown when user rejects camera and/or location permissions
 @Composable
 fun RejectedPermissionsScreen() {
     Column(

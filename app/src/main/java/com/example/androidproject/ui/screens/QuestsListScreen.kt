@@ -30,13 +30,8 @@ import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.navigation.Screens
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
-
-    // val viewModel = QuestViewModel()
-    // using viewModel() instead of manually creating new instance of ViewModel(). viewModel() gets the
-    // ViewModel from the provider, and persists through recomposition of the composable. It means when
-    // the composable recomposes, the ViewModel stays the same, with all its state variables/data
-    // val viewModel: QuestViewModel = viewModel()
-
+// List of quests which are not completed. Each quest contains name, category, checkpoints, and status.
+// By tapping on quest user goes to QuestDetailScreen and can proceed with completing the quest.
 @Composable
 fun QuestsListScreen(
     modifier: Modifier = Modifier,
