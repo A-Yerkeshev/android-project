@@ -155,7 +155,6 @@ fun QuestDetailScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-
                 ) {
 
                     // Calculate dynamic bottom padding for the map
@@ -257,6 +256,7 @@ fun QuestDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight()
+                        .padding(top = 8.dp)
                         .offset { IntOffset(0, swipeableState.offset.value.roundToInt()) }
                         .swipeable(
                             state = swipeableState,
