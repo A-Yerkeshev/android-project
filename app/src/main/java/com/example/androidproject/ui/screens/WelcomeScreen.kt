@@ -65,7 +65,7 @@ fun WelcomeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
+/*                Button(
                     onClick = { navCtrl.navigate(Screens.QuestsList.name) },
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
                     shape = RoundedCornerShape(20.dp),
@@ -76,7 +76,7 @@ fun WelcomeScreen(
                     Text("Get Started", color = MaterialTheme.colorScheme.onSecondary)
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))*/
 
                 Button(
                     onClick = {
