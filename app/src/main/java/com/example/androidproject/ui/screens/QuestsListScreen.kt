@@ -48,6 +48,7 @@ fun QuestsListScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
+            .padding(top = 16.dp)
             .padding(bottom = 56.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
