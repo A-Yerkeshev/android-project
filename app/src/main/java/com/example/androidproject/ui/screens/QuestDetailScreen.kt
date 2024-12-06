@@ -281,15 +281,25 @@ fun QuestDetailScreen(
                                 }
                             }
                     ) {
-                        BottomSheetDefaults.DragHandle(
+
+                        // Modified Drag Handle
+                        Box(
                             modifier = Modifier
+                                .padding(top = 16.dp) // Add padding from the top
+                                .size(width = 160.dp, height = 6.dp) // Adjust thickness by changing height
+                                .clip(RoundedCornerShape(50))
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                                 .clickable {
-                                    val targetState = if (swipeableState.currentValue == BottomSheetState.HalfExpanded) BottomSheetState.Expanded else BottomSheetState.HalfExpanded
+                                    val targetState =
+                                        if (swipeableState.currentValue == BottomSheetState.HalfExpanded) BottomSheetState.Expanded else BottomSheetState.HalfExpanded
                                     coroutineScope.launch {
                                         swipeableState.animateTo(targetState)
                                     }
                                 }
+                                .padding(vertical = 8.dp)
+                                .align(Alignment.CenterHorizontally)
                         )
+
                         BottomSheetHeader(
                             selectedQuestDescription = selectedQuest?.description,
                             completedCheckpoints = completedCheckpoints,
