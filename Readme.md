@@ -13,7 +13,7 @@ This application was developed as school project for Mobile Application Developm
 - [Contributing](#contributing)
 
 ## Features
-![Map screen]() ![Quest lists screen]() ![Camera view]() ![Achievements screen]()
+![Map screen](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/map-screen.png) ![Quests list screen](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/quests-list-screen.png) ![Camera view](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/camera-view.png) ![Achievements screen](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/achievements-screen.png)
 
 Application contains several quests, consisting of checkpoints, associated with tasks. User can select a quest to follow and perform quest tasks as he progresses. Tasks can be completed in any order. Upon completion of the whole quest  user receives an achievement.
 
