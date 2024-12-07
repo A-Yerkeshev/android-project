@@ -87,6 +87,7 @@ fun QuestDetailScreen(
 ) {
     val context = LocalContext.current
     val myLocation by locationViewModel.myLocation.collectAsState()
+    val locationSignal by locationViewModel.isLiveTrackingAvailable.collectAsState()
     var showConfetti by remember { mutableStateOf(false) }
     var showCameraView by remember { mutableStateOf(false) }
 
@@ -172,6 +173,7 @@ fun QuestDetailScreen(
                         com.example.androidproject.ui.components.ShowMap(
                             checkpoints = checkpoints,
                             myLocation = myLocation,
+                            locationSignal = locationSignal,
                             isLiveTrackingSelected = isLiveTrackingSelected,
                             selectedCheckpoint = selectedCheckpoint,
                             onMapCameraMove = {

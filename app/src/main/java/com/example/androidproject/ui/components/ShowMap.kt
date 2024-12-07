@@ -31,6 +31,7 @@ import org.osmdroid.util.GeoPoint
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
     myLocation: Location?,
+    locationSignal: Boolean?,
     isLiveTrackingSelected: Boolean,
     selectedCheckpoint: CheckpointEntity?,
     onMapCameraMove: () -> Unit,
@@ -103,11 +104,18 @@ fun ShowMap(
         ) {
             key(myLocation) {
                 if (myLocation != null) {
+
+                    // Determine current location's marker color, based on location signal's availability
+                    val iconDrawable = if (locationSignal == true)
+                        R.drawable.ic_my_location_marker
+                    else
+                        R.drawable.ic_my_location_marker_disabled
+
                     Marker(
                         state = rememberMarkerState(
                             geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
                         ),
-                        icon = ContextCompat.getDrawable(context, R.drawable.ic_my_location_marker),
+                        icon = ContextCompat.getDrawable(context, iconDrawable),
                         title = "Your Location"
                     )
                 }
