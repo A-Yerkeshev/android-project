@@ -33,9 +33,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="2e40b3" />
-                            <entry key="outputName" value="ic_my_location_marker" />
-                            <entry key="sourceFile" value="C:\Users\annlinde\AndroidStudioProjects\android-project" />
+                            <entry key="outputName" value="ic_current_location_no_pointer_disable" />
+                            <entry key="sourceFile" value="C:\Users\antia\Desktop\ICT22-SW\Android-project-autumn24\current-location-no-pointer.svg" />
                           </map>
                         </option>
                       </PersistentState>

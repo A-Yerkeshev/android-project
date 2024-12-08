@@ -24,7 +24,7 @@ class LocationProvider {
     val context = App.appContext
 
     private val fusedLocationClient: FusedLocationProviderClient =
-        LocationServices.getFusedLocationProviderClient(App.appContext)
+        LocationServices.getFusedLocationProviderClient(context)
 
     private val _currentLocation = MutableStateFlow<Location?>(null)
     val currentLocation: StateFlow<Location?> = _currentLocation
@@ -124,10 +124,10 @@ class LocationProvider {
     private fun startLocationUpdates() {
         // will need to implement properly later in Permission util
         if (ActivityCompat.checkSelfPermission(
-                App.appContext,
+                context,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                App.appContext,
+                context,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {

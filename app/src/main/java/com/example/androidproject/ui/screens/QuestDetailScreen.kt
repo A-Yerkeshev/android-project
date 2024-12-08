@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,13 +18,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,13 +43,14 @@ import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import androidx.wear.compose.material.FractionalThreshold
 import androidx.wear.compose.material.rememberSwipeableState
 import androidx.wear.compose.material.swipeable
-import com.example.androidproject.R
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.ui.components.BottomSheetContent
 import com.example.androidproject.ui.components.BottomSheetHeader
 import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
 import com.example.androidproject.ui.components.ConfettiAnimation
+import com.example.androidproject.ui.components.RecenterButton
+import com.example.androidproject.ui.components.ShowMap
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
@@ -86,8 +80,14 @@ fun QuestDetailScreen(
     cameraController: LifecycleCameraController
 ) {
     val context = LocalContext.current
+
+    // collect current location data
     val myLocation by locationViewModel.myLocation.collectAsState()
-    val locationSignal by locationViewModel.isLiveTrackingAvailable.collectAsState()
+    // collect status of live tracking viability
+    val isLiveTrackingAvailable by locationViewModel.isLiveTrackingAvailable.collectAsState()
+    // collect orientation (heading degrees)
+    val azimuth by locationViewModel.headingDegrees.collectAsState()
+
     var showConfetti by remember { mutableStateOf(false) }
     var showCameraView by remember { mutableStateOf(false) }
 
@@ -170,10 +170,11 @@ fun QuestDetailScreen(
                             .weight(1f)
                             .padding(bottom = mapBottomPaddingDp)
                     ) {
-                        com.example.androidproject.ui.components.ShowMap(
+                        ShowMap(
                             checkpoints = checkpoints,
                             myLocation = myLocation,
-                            locationSignal = locationSignal,
+                            isLiveTrackingAvailable = isLiveTrackingAvailable,
+                            azimuth = azimuth,
                             isLiveTrackingSelected = isLiveTrackingSelected,
                             selectedCheckpoint = selectedCheckpoint,
                             onMapCameraMove = {
@@ -185,26 +186,15 @@ fun QuestDetailScreen(
                         )
 
                         // Button for centering at current location
-                        Button(
-                            onClick = { isLiveTrackingSelected = !isLiveTrackingSelected },
-                            modifier = Modifier
-                                .size(76.dp)
-                                .align(Alignment.BottomEnd)
-                                .padding(16.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isLiveTrackingSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-                                contentColor = if (isLiveTrackingSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
-                            ),
-                            shape = CircleShape,
-                            contentPadding = PaddingValues(4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_rounded_my_location),
-                                contentDescription = "Center to my position",
-                                tint = if (isLiveTrackingSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(36.dp)
-                            )
-                        }
+                        RecenterButton(
+                            context = context,
+                            isLiveTrackingAvailable = isLiveTrackingAvailable,
+                            isLiveTrackingSelected = isLiveTrackingSelected,
+                            onClick = {
+                                isLiveTrackingSelected = !isLiveTrackingSelected
+                            },
+                            modifier = Modifier.align(Alignment.BottomEnd)
+                        )
                     }
                 }
             } else {

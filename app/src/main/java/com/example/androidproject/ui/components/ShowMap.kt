@@ -22,7 +22,7 @@ import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.ZoomButtonVisibility
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK
 import org.osmdroid.util.GeoPoint
 
 // This composable contains map with markers for checkpoints and user location.
@@ -31,7 +31,8 @@ import org.osmdroid.util.GeoPoint
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
     myLocation: Location?,
-    locationSignal: Boolean?,
+    isLiveTrackingAvailable: Boolean?,
+    azimuth: Float?,
     isLiveTrackingSelected: Boolean,
     selectedCheckpoint: CheckpointEntity?,
     onMapCameraMove: () -> Unit,
@@ -83,9 +84,9 @@ fun ShowMap(
     SideEffect {
         mapProperties = mapProperties
             .copy(isTilesScaledToDpi = false) // default is false
-            .copy(tileSources = TileSourceFactory.MAPNIK) // default is null
+            .copy(tileSources = MAPNIK) // default is null
             .copy(isEnableRotationGesture = false) // rotate map gesture
-            .copy(zoomButtonVisibility = ZoomButtonVisibility.ALWAYS) // always, never or fading out
+            .copy(zoomButtonVisibility = ZoomButtonVisibility.ALWAYS) // ALWAYS, NEVER or SHOW_AND_FADEOUT
             .copy(maxZoomLevel = 22.0) // default is 26.0 (min default is 9.0)
             .copy(isFlingEnable = false) // fling gesture on map, default is true
             .copy(isAnimating = true) // default is true
@@ -102,21 +103,26 @@ fun ShowMap(
                 onCheckpointClick(null) // unselect currently selected checkpoint if user clicks on map
             }
         ) {
-            key(myLocation) {
+            key(isLiveTrackingAvailable, myLocation) {
                 if (myLocation != null) {
-
                     // Determine current location's marker color, based on location signal's availability
-                    val iconDrawable = if (locationSignal == true)
-                        R.drawable.ic_my_location_marker
+                    val iconDrawable = if (isLiveTrackingAvailable != false)
+                        R.drawable.ic_current_location_no_pointer
                     else
-                        R.drawable.ic_my_location_marker_disabled
+                        R.drawable.ic_current_location_no_pointer_disable
+
+//                    val iconDrawable = if (azimuth != null)
+//                        R.drawable.ic_current_location_pointer
+//                    else
+//                        R.drawable.ic_current_location_no_pointer
 
                     Marker(
                         state = rememberMarkerState(
                             geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
                         ),
                         icon = ContextCompat.getDrawable(context, iconDrawable),
-                        title = "Your Location"
+                        title = "Your Location",
+
                     )
                 }
             }
