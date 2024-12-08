@@ -31,7 +31,7 @@ import org.osmdroid.util.GeoPoint
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
     myLocation: Location?,
-    isTrackingAvailable: Boolean?,
+    isLiveTrackingAvailable: Boolean?,
     azimuth: Float?,
     isLiveTrackingSelected: Boolean,
     selectedCheckpoint: CheckpointEntity?,
@@ -103,10 +103,10 @@ fun ShowMap(
                 onCheckpointClick(null) // unselect currently selected checkpoint if user clicks on map
             }
         ) {
-            key(isTrackingAvailable, myLocation) {
+            key(isLiveTrackingAvailable, myLocation) {
                 if (myLocation != null) {
                     // Determine current location's marker color, based on location signal's availability
-                    val iconDrawable = if (isTrackingAvailable != false)
+                    val iconDrawable = if (isLiveTrackingAvailable != false)
                         R.drawable.ic_current_location_no_pointer
                     else
                         R.drawable.ic_current_location_no_pointer_disable

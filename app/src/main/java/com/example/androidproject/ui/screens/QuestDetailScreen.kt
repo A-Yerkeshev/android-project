@@ -91,7 +91,7 @@ fun QuestDetailScreen(
     // collect current location data
     val myLocation by locationViewModel.myLocation.collectAsState()
     // collect status of live tracking viability
-    val isTrackingAvailable by locationViewModel.isLiveTrackingAvailable.collectAsState()
+    val isLiveTrackingAvailable by locationViewModel.isLiveTrackingAvailable.collectAsState()
     // collect orientation (heading degrees)
     val azimuth by locationViewModel.headingDegrees.collectAsState()
 
@@ -180,7 +180,7 @@ fun QuestDetailScreen(
                         ShowMap(
                             checkpoints = checkpoints,
                             myLocation = myLocation,
-                            isTrackingAvailable = isTrackingAvailable,
+                            isLiveTrackingAvailable = isLiveTrackingAvailable,
                             azimuth = azimuth,
                             isLiveTrackingSelected = isLiveTrackingSelected,
                             selectedCheckpoint = selectedCheckpoint,
@@ -194,14 +194,30 @@ fun QuestDetailScreen(
 
                         // Button for centering at current location
                         Button(
-                            onClick = { isLiveTrackingSelected = !isLiveTrackingSelected },
+                            onClick = {
+                                if (isLiveTrackingAvailable != false) {
+                                    isLiveTrackingSelected = !isLiveTrackingSelected
+                                } else {
+                                    Toast.makeText(context, "Live tracking is currently unavailable", Toast.LENGTH_LONG).show()
+                                }
+                            },
                             modifier = Modifier
                                 .size(76.dp)
                                 .align(Alignment.BottomEnd)
                                 .padding(16.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isLiveTrackingSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-                                contentColor = if (isLiveTrackingSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+                                containerColor = when {
+                                    isLiveTrackingAvailable == false -> Color.Gray
+                                    isLiveTrackingSelected -> MaterialTheme.colorScheme.primary
+                                    else -> MaterialTheme.colorScheme.surface
+                                },
+//                                if (isLiveTrackingSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                                contentColor = when {
+                                    isLiveTrackingAvailable == false -> MaterialTheme.colorScheme.primary
+                                    isLiveTrackingSelected -> MaterialTheme.colorScheme.onPrimary
+                                    else -> MaterialTheme.colorScheme.onPrimary
+                                }
+//                                if (isLiveTrackingSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
                             ),
                             shape = CircleShape,
                             contentPadding = PaddingValues(4.dp)
@@ -209,7 +225,15 @@ fun QuestDetailScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_rounded_my_location),
                                 contentDescription = "Center to my position",
-                                tint = if (isLiveTrackingSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                                tint = if (isLiveTrackingAvailable != false) {
+                                    if (isLiveTrackingSelected)
+                                        MaterialTheme.colorScheme.onPrimary
+                                    else
+                                        MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onPrimary
+                                },
+//                                        (isLiveTrackingSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(36.dp)
                             )
                         }
