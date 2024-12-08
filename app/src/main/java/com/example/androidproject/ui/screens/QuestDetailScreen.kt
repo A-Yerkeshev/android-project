@@ -88,8 +88,11 @@ fun QuestDetailScreen(
 ) {
     val context = LocalContext.current
 
+    // collect current location data
     val myLocation by locationViewModel.myLocation.collectAsState()
+    // collect status of live tracking viability
     val isTrackingAvailable by locationViewModel.isLiveTrackingAvailable.collectAsState()
+    // collect orientation (heading degrees)
     val azimuth by locationViewModel.headingDegrees.collectAsState()
 
     var showConfetti by remember { mutableStateOf(false) }

@@ -32,7 +32,6 @@ class OrientationProvider {
 
     private val listener: DeviceOrientationListener =
         DeviceOrientationListener { orientation: DeviceOrientation ->
-            Log.d("XXX", "Azimuth: ${orientation.headingDegrees}")
             _headingDegrees.value = orientation.headingDegrees
     }
 
