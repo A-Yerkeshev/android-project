@@ -267,7 +267,7 @@ fun QuestDetailScreen(
                             orientation = Orientation.Vertical
                         )
                         .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                        .background(MaterialTheme.colorScheme.surface)
+                        .background(MaterialTheme.colorScheme.primary)
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
