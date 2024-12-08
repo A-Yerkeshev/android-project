@@ -1,5 +1,6 @@
 package com.example.androidproject.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -39,6 +41,7 @@ import com.example.androidproject.data.models.CheckpointEntity
 // - Active camera - user is within the checkpoint's radius and can take a photo;
 // - Disabled camera - user is not within the checkpoint's radius;
 // - Completed - this checkpoint has already been completed.
+
 @Composable
 fun BottomSheetContent(
     checkpoints: List<CheckpointEntity>,
@@ -62,11 +65,12 @@ fun BottomSheetContent(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(vertical = 8.dp)
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp)), // Add background here
                 elevation = CardDefaults.elevatedCardElevation(
                     defaultElevation = 4.dp
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
