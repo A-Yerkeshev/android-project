@@ -1,6 +1,7 @@
 package com.example.androidproject.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.WhitePoint
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
@@ -23,3 +24,5 @@ val MetroOrange = Color(0xFFFF5000)
 val KesaYellow = Color(0xFFFFD700)
 val SuomenlinnaPink = Color(0xFFFFB6C1)
 val SparaGreen = Color(0xFF2E8B57)
+
+val White = Color(0xFFFFFFFF)

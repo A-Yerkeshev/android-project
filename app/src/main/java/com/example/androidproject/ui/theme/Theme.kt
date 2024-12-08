@@ -16,7 +16,9 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = KultaGold,
     background = HopeaSilver,
     surface = TiiliRed,
-    onSurface = SparaGreen
+    onSurface = SparaGreen,
+    onTertiary = KesaYellow,
+    onPrimary = White
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -25,7 +27,9 @@ private val LightColorScheme = lightColorScheme(
     tertiary = KultaGold,
     background = HopeaSilver,
     surface = TiiliRed,
-    onSurface = SparaGreen
+    onSurface = SparaGreen,
+    onTertiary = KesaYellow,
+    onPrimary = White
 )
 
 /* Other default colors to override
