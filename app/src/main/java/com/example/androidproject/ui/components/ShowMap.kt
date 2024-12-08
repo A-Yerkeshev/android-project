@@ -1,7 +1,9 @@
 package com.example.androidproject.ui.components
 
 import android.location.Location
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,6 +14,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.example.androidproject.App
 import com.example.androidproject.R
@@ -23,6 +27,7 @@ import com.utsman.osmandcompose.ZoomButtonVisibility
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK
 import org.osmdroid.util.GeoPoint
 
 // This composable contains map with markers for checkpoints and user location.
@@ -31,7 +36,8 @@ import org.osmdroid.util.GeoPoint
 fun ShowMap(
     checkpoints: List<CheckpointEntity>,
     myLocation: Location?,
-    locationSignal: Boolean?,
+    isTrackingAvailable: Boolean?,
+    azimuth: Float?,
     isLiveTrackingSelected: Boolean,
     selectedCheckpoint: CheckpointEntity?,
     onMapCameraMove: () -> Unit,
@@ -83,12 +89,12 @@ fun ShowMap(
     SideEffect {
         mapProperties = mapProperties
             .copy(isTilesScaledToDpi = false) // default is false
-            .copy(tileSources = TileSourceFactory.MAPNIK) // default is null
+            .copy(tileSources = MAPNIK) // default is null
             .copy(isEnableRotationGesture = false) // rotate map gesture
-            .copy(zoomButtonVisibility = ZoomButtonVisibility.ALWAYS) // always, never or fading out
+            .copy(zoomButtonVisibility = ZoomButtonVisibility.ALWAYS) // ALWAYS, NEVER or SHOW_AND_FADEOUT
             .copy(maxZoomLevel = 22.0) // default is 26.0 (min default is 9.0)
             .copy(isFlingEnable = false) // fling gesture on map, default is true
-            .copy(isAnimating = true) // default is true
+            .copy(isAnimating = false) // default is true
     }
 
     Surface(
@@ -102,18 +108,22 @@ fun ShowMap(
                 onCheckpointClick(null) // unselect currently selected checkpoint if user clicks on map
             }
         ) {
-            key(myLocation) {
-                if (myLocation != null) {
-
+            key(isTrackingAvailable, myLocation) {
+                if (isTrackingAvailable != false && myLocation != null) {
                     // Determine current location's marker color, based on location signal's availability
-                    val iconDrawable = if (locationSignal == true)
-                        R.drawable.ic_my_location_marker
+//                    val iconDrawable = if (isTrackingAvailable == true)
+//                        R.drawable.ic_my_location_marker
+//                    else
+//                        R.drawable.ic_my_location_marker_disabled
+                    val iconDrawable = if (azimuth != null)
+                        R.drawable.ic_current_location_pointer
                     else
-                        R.drawable.ic_my_location_marker_disabled
+                        R.drawable.ic_current_location_no_pointer
 
                     Marker(
                         state = rememberMarkerState(
-                            geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude)
+                            geoPoint = GeoPoint(myLocation.latitude, myLocation.longitude),
+                            rotation = azimuth?: 0f
                         ),
                         icon = ContextCompat.getDrawable(context, iconDrawable),
                         title = "Your Location"

@@ -1,6 +1,11 @@
 package com.example.androidproject.utils
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.util.Log
+import androidx.core.content.getSystemService
 import com.example.androidproject.App
 import com.google.android.gms.location.DeviceOrientation
 import com.google.android.gms.location.DeviceOrientationListener
@@ -27,7 +32,8 @@ class OrientationProvider {
 
     private val listener: DeviceOrientationListener =
         DeviceOrientationListener { orientation: DeviceOrientation ->
-        _headingDegrees.value = orientation.headingDegrees
+            Log.d("XXX", "Azimuth: ${orientation.headingDegrees}")
+            _headingDegrees.value = orientation.headingDegrees
     }
 
     init {

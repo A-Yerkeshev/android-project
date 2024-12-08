@@ -14,6 +14,7 @@ osmdroidAndroid = "6.1.16"
 osmAndroidCompose = "0.0.5"
 composeMaterial = "1.4.0"
 rules = "1.6.1"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,6 +39,7 @@ osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "os
 osm-android-compose = { group = "tech.utsmankece", name = "osm-android-compose", version.ref = "osmAndroidCompose" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 androidx-rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

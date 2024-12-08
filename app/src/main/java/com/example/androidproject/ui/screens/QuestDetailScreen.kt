@@ -57,6 +57,7 @@ import com.example.androidproject.ui.components.BottomSheetHeader
 import com.example.androidproject.ui.components.CameraControls
 import com.example.androidproject.ui.components.CameraPreview
 import com.example.androidproject.ui.components.ConfettiAnimation
+import com.example.androidproject.ui.components.ShowMap
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
@@ -86,8 +87,11 @@ fun QuestDetailScreen(
     cameraController: LifecycleCameraController
 ) {
     val context = LocalContext.current
+
     val myLocation by locationViewModel.myLocation.collectAsState()
-    val locationSignal by locationViewModel.isLiveTrackingAvailable.collectAsState()
+    val isTrackingAvailable by locationViewModel.isLiveTrackingAvailable.collectAsState()
+    val azimuth by locationViewModel.headingDegrees.collectAsState()
+
     var showConfetti by remember { mutableStateOf(false) }
     var showCameraView by remember { mutableStateOf(false) }
 
@@ -170,10 +174,11 @@ fun QuestDetailScreen(
                             .weight(1f)
                             .padding(bottom = mapBottomPaddingDp)
                     ) {
-                        com.example.androidproject.ui.components.ShowMap(
+                        ShowMap(
                             checkpoints = checkpoints,
                             myLocation = myLocation,
-                            locationSignal = locationSignal,
+                            isTrackingAvailable = isTrackingAvailable,
+                            azimuth = azimuth,
                             isLiveTrackingSelected = isLiveTrackingSelected,
                             selectedCheckpoint = selectedCheckpoint,
                             onMapCameraMove = {
