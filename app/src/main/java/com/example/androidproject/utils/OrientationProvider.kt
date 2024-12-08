@@ -9,6 +9,7 @@ import com.google.android.gms.location.FusedOrientationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class OrientationProvider {
@@ -37,7 +38,11 @@ class OrientationProvider {
         val executor = Executors.newSingleThreadExecutor()
 
         fusedOrientationProviderClient
-            .requestOrientationUpdates(orientationRequest, executor, listener)
+            .requestOrientationUpdates(
+                orientationRequest,
+                executor,
+                listener
+            )
             .addOnSuccessListener {
                 Log.d("XXX", "Fused Orientation Provider: registration success")
             }
