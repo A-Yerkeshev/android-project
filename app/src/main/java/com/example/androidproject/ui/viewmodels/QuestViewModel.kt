@@ -96,6 +96,7 @@ class QuestViewModel : ViewModel() {
         _selectedQuestId.value = questId
     }
 
+    // Sets selected quest as current
     fun setQuestCurrent(quest: QuestEntity) {
         _currentQuest.value = quest
 
@@ -104,11 +105,19 @@ class QuestViewModel : ViewModel() {
         }
     }
 
+    // Marks quest as completed
     fun markCompleted(quest: QuestEntity?) {
         if (quest != null) {
             viewModelScope.launch(Dispatchers.IO) {
                 repository.markCompleted(quest)
             }
+        }
+    }
+
+    // Resets quest's progress
+    fun reset(quest: QuestEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.reset(quest)
         }
     }
 }

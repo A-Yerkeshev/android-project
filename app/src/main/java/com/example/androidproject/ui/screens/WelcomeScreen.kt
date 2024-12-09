@@ -113,6 +113,7 @@ fun WelcomeScreen(
                     CompletedQuestItem(
                         quest = quest,
                         completedDate = quest.completedAt ?: "Unknown",
+                        questViewModel = questViewModel,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
@@ -127,6 +128,7 @@ fun WelcomeScreen(
 fun CompletedQuestItem(
     quest: QuestEntity,
     completedDate: String,
+    questViewModel: QuestViewModel,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -147,11 +149,29 @@ fun CompletedQuestItem(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = "Completed on: $completedDate",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Completed on: $completedDate",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+
+                Button(
+                    onClick = {
+                        questViewModel.reset(quest)
+                    },
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
+                    shape = RoundedCornerShape(5.dp)
+                ) {
+                    Text(
+                        text = "Start over",
+                        fontSize = 12.sp,
+                    )
+                }
+            }
         }
     }
 }

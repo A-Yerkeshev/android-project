@@ -45,4 +45,16 @@ class QuestRepository(
         quest.completedAt = LocalDateTime.now().format(formatter)
         questDao.update(quest)
     }
+
+    // Reset quest
+    suspend fun reset(quest: QuestEntity) {
+        quest.completedAt = null
+        questDao.update(quest)
+        checkpointDao.getAll(quest.id).collect { checkpoints ->
+            checkpoints.forEach { checkpoint ->
+                checkpoint.completed = false
+                checkpointDao.update(checkpoint)
+            }
+        }
+    }
 }
