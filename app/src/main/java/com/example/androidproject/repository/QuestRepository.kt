@@ -6,6 +6,8 @@ import com.example.androidproject.data.daos.QuestDao
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -50,7 +52,7 @@ class QuestRepository(
     suspend fun reset(quest: QuestEntity) {
         quest.completedAt = null
         questDao.update(quest)
-        checkpointDao.getAll(quest.id).collect { checkpoints ->
+        checkpointDao.getAll(quest.id).firstOrNull()?.let { checkpoints ->
             checkpoints.forEach { checkpoint ->
                 checkpoint.completed = false
                 checkpointDao.update(checkpoint)
