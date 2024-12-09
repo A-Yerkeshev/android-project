@@ -1,6 +1,8 @@
 package com.example.androidproject.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -28,6 +31,7 @@ import androidx.navigation.NavController
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.navigation.Screens
+import com.example.androidproject.ui.theme.SparaGreen
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
 // List of quests which are not completed. Each quest contains name, category, checkpoints, and status.
@@ -45,26 +49,32 @@ fun QuestsListScreen(
         it.quest.completedAt == null
     }
 
-    LazyColumn(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 16.dp)
-            .padding(bottom = 56.dp),
-        contentPadding = PaddingValues(16.dp)
+            .background(MaterialTheme.colorScheme.primary) // Apply background color here
     ) {
-        items(uncompletedQuestsWithCheckpoints) { questWithCheckpoints ->
-            var isExpanded by remember { mutableStateOf(questWithCheckpoints.quest.current) }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 16.dp)
+                .padding(bottom = 56.dp),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            items(uncompletedQuestsWithCheckpoints) { questWithCheckpoints ->
+                var isExpanded by remember { mutableStateOf(questWithCheckpoints.quest.current) }
 
-            QuestItem(
-                quest = questWithCheckpoints.quest,
-                checkpoints = questWithCheckpoints.checkpoints,
-                isExpanded = isExpanded,
-                onExpandChanged = { isExpanded = it },
-                onNavigateToMap = {
-                    questViewModel.setQuestCurrent(questWithCheckpoints.quest)
-                    navCtrl.navigate("${Screens.QuestDetail.name}/${questWithCheckpoints.quest.id}")
-                }
-            )
+                QuestItem(
+                    quest = questWithCheckpoints.quest,
+                    checkpoints = questWithCheckpoints.checkpoints,
+                    isExpanded = isExpanded,
+                    onExpandChanged = { isExpanded = it },
+                    onNavigateToMap = {
+                        questViewModel.setQuestCurrent(questWithCheckpoints.quest)
+                        navCtrl.navigate("${Screens.QuestDetail.name}/${questWithCheckpoints.quest.id}")
+                    }
+                )
+            }
         }
     }
 }
@@ -83,7 +93,10 @@ fun QuestItem(
             .padding(vertical = 8.dp)
             .clickable { onExpandChanged(!isExpanded) },
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
-        shape = MaterialTheme.shapes.medium
+        shape = RoundedCornerShape(8.dp), // Define shape here
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface // Set the background color here
+        )
     ) {
         Column(
             modifier = Modifier
@@ -98,14 +111,12 @@ fun QuestItem(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Category and Status displayed in separate rows for clarity
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "Category: ${quest.category ?: "Uncategorized"}",
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                // Display completedAt status on a new line
                 val completedAtText = if (quest.completedAt != null) {
                     "Completed: ${quest.completedAt}"
                 } else {
@@ -123,7 +134,7 @@ fun QuestItem(
 
             Button(
                 onClick = onNavigateToMap,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                colors = ButtonDefaults.buttonColors(containerColor = SparaGreen),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                 modifier = Modifier.height(32.dp)
             ) {

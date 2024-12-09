@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.navigation.Screens
+import com.example.androidproject.ui.theme.SparaGreen
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
 // First screen of the application, where user's name is shown, together with the list of
@@ -85,7 +86,7 @@ fun WelcomeScreen(
                             popUpTo(Screens.Welcome.name) { inclusive = true }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
+                    colors = ButtonDefaults.buttonColors(SparaGreen),
                     shape = RoundedCornerShape(20.dp),
                     modifier = Modifier
                         .fillMaxWidth()
