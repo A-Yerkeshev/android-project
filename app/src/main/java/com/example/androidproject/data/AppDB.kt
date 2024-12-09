@@ -115,7 +115,7 @@ abstract class AppDB : RoomDatabase() {
         questDao.insert(
             QuestEntity(
                 id = 6,
-                description = "BULL RUN 2024",
+                description = "Coffee & Cake Run",
                 category = "Test2",
                 current = false,
                 completedAt = currentDate
