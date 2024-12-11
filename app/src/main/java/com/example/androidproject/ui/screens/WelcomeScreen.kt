@@ -2,11 +2,13 @@ package com.example.androidproject.ui.screens
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,6 +31,7 @@ import com.example.androidproject.ui.viewmodels.QuestViewModel
 // First screen of the application, where user's name is shown, together with the list of
 // all completed quests. Quests have their name and completion date. From here, user can
 // navigate to QuestsListScreen or reset his name.
+
 @Composable
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
@@ -50,53 +53,60 @@ fun WelcomeScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header Section
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(bottom = 16.dp)
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Box(
+                modifier = Modifier.size(120.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Welcome, $userName!",
-                    fontSize = 28.sp,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 45.dp)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-/*                Button(
-                    onClick = { navCtrl.navigate(Screens.QuestsList.name) },
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
-                    shape = RoundedCornerShape(20.dp),
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 32.dp)
+                        .size(120.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text("Get Started", color = MaterialTheme.colorScheme.onSecondary)
+                    Text(
+                        text = "👤",
+                        fontSize = 48.sp,
+                        textAlign = TextAlign.Center
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))*/
-
-                Button(
-                    onClick = {
-                        sharedPreferences.edit().clear().apply()
-                        navCtrl.navigate(Screens.UserInput.name) {
-                            popUpTo(Screens.Welcome.name) { inclusive = true }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(SparaGreen),
-                    shape = RoundedCornerShape(20.dp),
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 32.dp)
+                        .size(24.dp)
+                        .align(Alignment.TopEnd)
+                        .clickable {
+                            sharedPreferences.edit().clear().apply()
+                            navCtrl.navigate(Screens.UserInput.name) {
+                                popUpTo(Screens.Welcome.name) { inclusive = true }
+                            }
+                        }
                 ) {
-                    Text("Reset Name", color = MaterialTheme.colorScheme.onError)
+                    Text(
+                        text = "⚙️",
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Welcome, $userName!",
+                fontSize = 28.sp,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                //modifier = Modifier.padding(top = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(45.dp))
 
             Text(
                 text = "Completed Quests",
