@@ -103,5 +103,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation ("com.google.mlkit:pose-detection:18.0.0-beta5")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+
+
     implementation("androidx.compose.material3:material3:1.3.1")
 }
