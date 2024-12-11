@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -99,7 +100,7 @@ fun QuestDetailScreen(
     // Used to determine, for which checkpoint user attempts to take a photo
     var photoForCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
 
-    var showThumbsUpHint by remember { mutableStateOf(false) }
+    var showThumbsUpHint by remember { mutableStateOf(true) }
 
     // Set the selected quest ID in the ViewModel
     LaunchedEffect(questId) {
@@ -276,9 +277,10 @@ fun QuestDetailScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 androidx.compose.material3.Text(
-                                    text = "Please show a thumbs up pose!",
+                                    text = "Show a thumb up and take a photo when you are ready.\n\nOK",
                                     style = MaterialTheme.typography.headlineMedium,
-                                    color = Color.White
+                                    color = Color.White,
+                                    textAlign = TextAlign.Center
                                 )
                             }
                         }
