@@ -99,6 +99,8 @@ fun QuestDetailScreen(
     // Used to determine, for which checkpoint user attempts to take a photo
     var photoForCheckpoint by remember { mutableStateOf<CheckpointEntity?>(null) }
 
+    var showThumbsUpHint by remember { mutableStateOf(false) }
+
     // Set the selected quest ID in the ViewModel
     LaunchedEffect(questId) {
         questViewModel.selectQuest(questId)
@@ -228,7 +230,7 @@ fun QuestDetailScreen(
                                             val thumbsUpDetected = detectThumbsUp(context, bitmap)
                                             withContext(Dispatchers.Main) {
 
-                                                if (checkpoint != null) {
+                                                if (thumbsUpDetected && checkpoint != null) {
                                                     checkpointViewModel.markCompleted(checkpoint)
 
                                                     // If this was last uncompleted checkpoint - mark quest as completed
@@ -241,13 +243,10 @@ fun QuestDetailScreen(
                                                     // Close camera
                                                     showCameraView = false
                                                     photoForCheckpoint = null
+                                                    showThumbsUpHint = false
                                                 } else if (!thumbsUpDetected) {
                                                     // No thumbs up detected, let the user know
-                                                    Toast.makeText(
-                                                        context,
-                                                        "No thumbs up detected. Try again!",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
+                                                    showThumbsUpHint = true
                                                 }
                                             }
                                         }
@@ -264,6 +263,25 @@ fun QuestDetailScreen(
                                 .absoluteOffset(y = -148.dp)
                                 .border(2.dp, Color.White)
                         )
+                        // If no thumbs up was detected, show a large overlay message
+                        if (showThumbsUpHint) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color.Black.copy(alpha = 0.6f))
+                                    .clickable {
+                                        // maybe allow user to tap to dismiss or try again
+                                        showThumbsUpHint = false
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                androidx.compose.material3.Text(
+                                    text = "Please show a thumbs up pose!",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = Color.White
+                                )
+                            }
+                        }
                     }
                 }
                 // Persistent Bottom Sheet
