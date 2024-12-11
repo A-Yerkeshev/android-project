@@ -14,7 +14,7 @@ This application was developed as school project for Mobile Application Developm
   - [Project structure](#project-structure)
 - [Contributing](#contributing)
 - [Known bugs](#known-bugs)
-- 
+
 ## Features
 
 | ![Map screen](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/map-screen.png) | ![Quests list screen](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/quests-list-screen.png) | ![Camera view](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/camera-view.png) | ![Achievements screen](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/achievements-screen.png) |
@@ -121,5 +121,6 @@ You can launch the application on emulator, inside Android Studio (see instructi
 
 ## Known bugs
 Map is zoomable only with **+** and **-** buttons - when zooming with gesture new zooming level is not remembered and zoom level is rolled back upon next map's recomposition.
+
 Related problem - when scrolling the map quickly app doesn't keep up and might not remember the last position and roll back slightly upon next recomposition.
 
