@@ -1,5 +1,6 @@
 package com.example.androidproject.ui.screens
 
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.widget.Toast
 import androidx.camera.view.LifecycleCameraController
@@ -55,10 +56,14 @@ import com.example.androidproject.ui.viewmodels.CheckpointViewModel
 import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
+import com.example.androidproject.utils.detectThumbsUp
 import com.example.androidproject.utils.isNear
 import com.example.androidproject.utils.requestPermissions
 import com.example.androidproject.utils.savePhoto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 enum class BottomSheetState {
@@ -212,21 +217,39 @@ fun QuestDetailScreen(
                                 val checkpoint = photoForCheckpoint
 
                                 savePhoto(
+                                    context = context,
                                     controller = cameraController,
-                                    onCompleted = {
-                                        if (checkpoint != null) {
-                                            checkpointViewModel.markCompleted(checkpoint)
+                                    onCompleted = {savedFilePath ->
+                                        // Decode the saved file into a Bitmap
+                                        val bitmap = BitmapFactory.decodeFile(savedFilePath)
 
-                                            // If this was last uncompleted checkpoint - mark quest as completed
-                                            val allOtherCompleted = checkpoints.filter { it != checkpoint }.all { it.completed }
-                                            if (allOtherCompleted) {
-                                                questViewModel.markCompleted(selectedQuest)
+                                        // Run pose detection in a coroutine
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            val thumbsUpDetected = detectThumbsUp(context, bitmap)
+                                            withContext(Dispatchers.Main) {
+
+                                                if (checkpoint != null) {
+                                                    checkpointViewModel.markCompleted(checkpoint)
+
+                                                    // If this was last uncompleted checkpoint - mark quest as completed
+                                                    val allOtherCompleted = checkpoints.filter { it != checkpoint }.all { it.completed }
+                                                    if (allOtherCompleted) {
+                                                        questViewModel.markCompleted(selectedQuest)
+                                                    }
+                                                    showConfetti = true
+
+                                                    // Close camera
+                                                    showCameraView = false
+                                                    photoForCheckpoint = null
+                                                } else if (!thumbsUpDetected) {
+                                                    // No thumbs up detected, let the user know
+                                                    Toast.makeText(
+                                                        context,
+                                                        "No thumbs up detected. Try again!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
                                             }
-                                            showConfetti = true
-
-                                            // Close camera
-                                            showCameraView = false
-                                            photoForCheckpoint = null
                                         }
                                     }
                                 )

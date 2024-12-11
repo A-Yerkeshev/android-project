@@ -1,5 +1,7 @@
 package com.example.androidproject.utils
 
+import android.content.Context
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.ImageCapture.OnImageCapturedCallback
@@ -10,13 +12,15 @@ import androidx.core.content.ContextCompat
 import com.example.androidproject.App
 import com.example.androidproject.R
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 // Saves photo to device's storage
 fun savePhoto(
+    context: Context,
     controller: LifecycleCameraController,
-    onCompleted: () -> Unit
+    onCompleted: (String) -> Unit
 ) {
     controller.takePicture(
         ContextCompat.getMainExecutor(App.appContext),
@@ -26,21 +30,27 @@ fun savePhoto(
 
                 val name = photoFileName()
 
-                MediaStore.Images.Media.insertImage(
-                    App.appContext.contentResolver,
-                    image.toBitmap(),
-                    name,
-                    name
-                )
+                val picturesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                val photoFile = File(picturesDir, name)
 
+                val bitmap = image.toBitmap()
                 image.close()
-                onCompleted()
+
+                try {
+                    FileOutputStream(photoFile).use { fos ->
+                        bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, fos)
+                    }
+                    onCompleted(photoFile.absolutePath)
+                } catch (e: Exception) {
+                    Log.e("DBG", "Failed to save photo to file", e)
+                    onCompleted("") // Return empty path
+                }
             }
 
             override fun onError(exception: ImageCaptureException) {
                 super.onError(exception)
                 Log.e("DBG", "Failed to save photo", exception)
-                onCompleted()
+                onCompleted("")
             }
         }
     )
