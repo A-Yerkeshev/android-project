@@ -13,7 +13,8 @@ This application was developed as school project for Mobile Application Developm
   - [Database structure](#database-structure)
   - [Project structure](#project-structure)
 - [Contributing](#contributing)
-
+- [Known bugs](#known-bugs)
+- 
 ## Features
 
 | ![Map screen](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/map-screen.png) | ![Quests list screen](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/quests-list-screen.png) | ![Camera view](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/camera-view.png) | ![Achievements screen](https://github.com/A-Yerkeshev/android-project/blob/main/Documents/achievements-screen.png) |
@@ -117,3 +118,8 @@ Download this project as .zip and extract or clone it using this command:
 Open project in Android Studio, go to "Gradle Scripts" -> build.gradle.kts. If Android Studio is configured correctly, you will see the top bar with "Sync Now" option. Click it and wait until sync finishes.
 
 You can launch the application on emulator, inside Android Studio (see instructions [here](https://developer.android.com/studio/run/emulator)) or on real Android phone (instructions [here](https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#2)). Note, that application's target Android API is **31**, so if you have smaller version, it might not function correctly.
+
+## Known bugs
+Map is zoomable only with **+** and **-** buttons - when zooming with gesture new zooming level is not remembered and zoom level is rolled back upon next map's recomposition.
+Related problem - when scrolling the map quickly app doesn't keep up and might not remember the last position and roll back slightly upon next recomposition.
+
