@@ -217,6 +217,7 @@ fun QuestItem(
                 onClick = onNavigateToMap,
                 colors = ButtonDefaults.buttonColors(containerColor = SparaGreen),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.height(32.dp)
             ) {
                 Text(
