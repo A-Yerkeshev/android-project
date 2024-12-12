@@ -1,5 +1,7 @@
 package com.example.androidproject.utils
 
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.ImageCapture.OnImageCapturedCallback
@@ -28,7 +30,7 @@ fun savePhoto(
 
                 MediaStore.Images.Media.insertImage(
                     App.appContext.contentResolver,
-                    image.toBitmap(),
+                    image.toBitmap().rotate(90f),
                     name,
                     name
                 )
@@ -50,3 +52,9 @@ fun savePhoto(
 private fun photoFileName() =
     SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.UK)
         .format(System.currentTimeMillis()) + ".jpg"
+
+// Rotates a Bitmap image
+fun Bitmap.rotate(degrees: Float): Bitmap {
+    val matrix = Matrix().apply { postRotate(degrees) }
+    return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+}

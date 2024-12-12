@@ -238,7 +238,7 @@ fun QuestDetailScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.BottomCenter)
-                                .absoluteOffset(y = -148.dp)
+                                .absoluteOffset(y = -96.dp)
                                 .border(2.dp, Color.White)
                         )
                     }
