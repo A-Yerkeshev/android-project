@@ -12,11 +12,13 @@ import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.repository.QuestRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import java.lang.Thread.State
 
 class QuestViewModel : ViewModel() {
     private val database = AppDB.getDatabase()
@@ -31,6 +33,12 @@ class QuestViewModel : ViewModel() {
     private val _completedQuests = MutableStateFlow<List<QuestEntity>>(emptyList())
     val completedQuests: StateFlow<List<QuestEntity>> = _completedQuests
 
+    private val _newQuestResult = MutableStateFlow<Boolean?>(null)
+    val newQuestResult: StateFlow<Boolean?> = _newQuestResult
+
+    private val _isLoading = MutableStateFlow<Boolean>(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     init {
         // get all quests information (with their checkpoints) to populate the QuestList screen (that
         // screen collects the questsWithCheckpoints variable here as State in the composable)
@@ -40,6 +48,24 @@ class QuestViewModel : ViewModel() {
         getCurrentQuest()
 
         getCompletedQuests()
+    }
+
+    fun createNewQuestWithCheckpoints(lat: Double, lon: Double, questDescription: String, amount: Int) {
+        viewModelScope.launch {
+            _isLoading.value = true
+
+            val result = repository.fetchAndInsertCheckpoints(lat, lon, questDescription, amount)
+            _newQuestResult.value = result
+            if (result) {
+                getQuestsWithCheckpoints()
+            }
+
+            _isLoading.value = false
+
+            // give time for the UI to collect the result
+            delay(1000)
+            _newQuestResult.value = null
+        }
     }
 
     // Fetches all quests with their checkpoints

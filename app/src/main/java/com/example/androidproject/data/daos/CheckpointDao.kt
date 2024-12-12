@@ -42,4 +42,8 @@ interface CheckpointDao {
     // Gets checkpoints, associated with the current quest
     @Query("select * from checkpoints where quest_id in (select id from quests where current = 1)")
     fun getCurrent(): Flow<List<CheckpointEntity>>
+
+    // Gets all checkpoint IDs for filtering API response
+    @Query("select id from checkpoints")
+    suspend fun getAllCheckpointId(): List<Int>
 }

@@ -34,5 +34,16 @@ data class CheckpointEntity(
     @ColumnInfo(name = "completed")
     var completed: Boolean = false,
     @ColumnInfo(name = "name")
-    val name: String = ""
+    val name: String = "",
+
+    @ColumnInfo(name = "name_fi")
+    val nameFi: String? = null,
+    @ColumnInfo(name = "description")
+    val description: String? = null,
+    @ColumnInfo(name = "type")
+    val type: String = "",
+    @ColumnInfo(name = "website")
+    val website: String? = null,
+    @ColumnInfo(name = "wikipedia")
+    val wikipedia: String? = null
 )
