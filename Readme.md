@@ -36,7 +36,16 @@ Interactions with the database are handled using Room database. You can find doc
 
 Interface is created using [Jetpack Compose](https://developer.android.com/compose) toolkit.
 
-Application uses Open Street Map, version for [Composable](https://github.com/utsmannn/osm-android-compose) (credit goes to [utsmannn](https://github.com/utsmannn)).
+[Retrofit](https://square.github.io/retrofit/), a type-safe HTTP Client for Android and Java, is used to communicate with Overpass API for retrieving Points of Interest data. It parsed the JSON responses into data models using Gson, enabling easy handling of structured data. The parsed data was then processed and inserted into the app's local database for offline access and further usage.
+
+[Overpass API](http://overpass-api.de/) is used to retrieve points of interest around a specified location through custom queries. Overpass API is a powerful web-based tool designed to query and retrieve data from the OpenStreetMap (OSM) database. It allows users to access specific map features, such as nodes, ways, and relations, by using a flexible query language called Overpass QL. Common applications include extracting geographic data for custom mapping, analyzing spatial information, or building location-based applications.
+
+For displaying of map and handling user interaction with map and map tile caching, the application uses OpenStreetMap's OSMDroid, version for [Composable](https://github.com/utsmannn/osm-android-compose) (credit goes to [utsmannn](https://github.com/utsmannn)).
+
+Location tracking and possibility of displaying heading directions utilize Fused Location Provider Client and Fused Orientation Provider Client. Both are Google Play services APIs designed for efficient sensor data fusion:
+
+- Fused Location Provider Client simplifies location tracking by combining GPS, Wi-Fi, cell signals, and other data sources. Documentation can be found [here](https://developer.android.com/develop/sensors-and-location/location/request-updates).
+- Fused Orientation Provider Client (introduced March 2024) provides consistent and reliable device orientation by fusing data from accelerometers, gyroscopes, and magnetometers. Documentation can be found [here](https://developers.google.com/android/reference/com/google/android/gms/location/DeviceOrientation).
 
 For camera, CameraX is used. Documentation can be found [here](https://developer.android.com/media/camera/camerax).
 
@@ -120,7 +129,7 @@ Open project in Android Studio, go to "Gradle Scripts" -> build.gradle.kts. If A
 You can launch the application on emulator, inside Android Studio (see instructions [here](https://developer.android.com/studio/run/emulator)) or on real Android phone (instructions [here](https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#2)). Note, that application's target Android API is **31**, so if you have smaller version, it might not function correctly.
 
 ## Known bugs
+
 Map is zoomable only with **+** and **-** buttons - when zooming with gesture new zooming level is not remembered and zoom level is rolled back upon next map's recomposition.
 
 Related problem - when scrolling the map quickly app doesn't keep up and might not remember the last position and roll back slightly upon next recomposition.
-
