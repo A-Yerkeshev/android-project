@@ -6,6 +6,8 @@ import com.example.androidproject.data.daos.QuestDao
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.network.Element
+import com.example.androidproject.network.OverpassQuery
+import com.example.androidproject.network.RetrofitInstance
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
@@ -89,5 +91,47 @@ class QuestRepository(
         )
 
         return questDao.insert(newQuest).toInt()
+    }
+
+    suspend fun fetchAndInsertCheckpoints(lat: Double, lon: Double, questDescription: String, amount: Int): Boolean {
+        val maxRadius = 3000 // 3km, max radius to find POIs
+        var radius = 1000 // starting radius 1km
+
+        val existingCheckpointIds = checkpointDao.getAllCheckpointId()
+
+        var collectedElements = mutableListOf<Element>()
+
+        while (radius <= maxRadius && collectedElements.size < amount) {
+            val query = OverpassQuery.buildQuery(radius, lat, lon)
+            val response = RetrofitInstance.api.getPointsOfInterest(query)
+
+            // filter existing checkpoints
+            val newElements = response.elements
+                .filterNot { existingCheckpointIds.contains(it.id.toInt()) }
+                .shuffled() // shuffle to get random checkpoints
+
+            collectedElements.addAll(newElements.take(amount - collectedElements.size))
+
+            if (collectedElements.size < amount) {
+                radius += 500
+            } else {
+                break
+            }
+        }
+
+        // if no POIs left in within max radius then return false
+        if (collectedElements.isEmpty()) {
+            return false
+        }
+
+        // if there's new POIs found then create new quest and add these new checkpointEntities to database
+        val newQuestId = createNewQuest(questDescription)
+
+        val checkpointsToInsert = collectedElements.map { mapElementToCheckpointEntity(it, newQuestId) }
+        checkpointsToInsert.forEach {
+            checkpointDao.insert(it)
+        }
+
+        return true
     }
 }
