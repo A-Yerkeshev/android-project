@@ -5,6 +5,7 @@ import com.example.androidproject.data.daos.CheckpointDao
 import com.example.androidproject.data.daos.QuestDao
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
+import com.example.androidproject.network.Element
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
@@ -58,5 +59,35 @@ class QuestRepository(
                 checkpointDao.update(checkpoint)
             }
         }
+    }
+
+    // converts results from API to CheckpointEntity
+    private fun mapElementToCheckpointEntity(element: Element, questId: Int): CheckpointEntity {
+        val type = element.tags?.tourism ?: element.tags?.historic ?: ""
+        return CheckpointEntity(
+            id = element.id.toInt(),
+            questId = questId,
+            lat = element.lat,
+            long = element.lon,
+            completed = false,
+            name = element.tags?.name ?: "",
+            nameFi = element.tags?.nameFi,
+            description = element.tags?.description,
+            wikipedia = element.tags?.wikipedia,
+            website = element.tags?.website,
+            type = type
+        )
+    }
+
+    private suspend fun createNewQuest(description: String): Int {
+        // use this to update newly created quest as the current one
+//        questDao.unsetAllCurrent()
+
+        val newQuest = QuestEntity(
+            description = description,
+//            current = true // use this to update newly created quest as the current one
+        )
+
+        return questDao.insert(newQuest).toInt()
     }
 }
