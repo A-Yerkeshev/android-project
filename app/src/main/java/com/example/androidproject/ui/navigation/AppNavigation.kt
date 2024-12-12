@@ -43,12 +43,14 @@ fun AppNavigation(
         }
         composable(route = Screens.Welcome.name) {
             WelcomeScreen(
+                modifier = modifier,
                 navCtrl = navController,
                 questViewModel = questViewModel
             )
         }
         composable(route = Screens.QuestsList.name) {
             QuestsListScreen(
+                modifier = modifier,
                 navCtrl = navController,
                 questViewModel = questViewModel,
                 locationViewModel = locationViewModel
@@ -60,6 +62,7 @@ fun AppNavigation(
         ) { backStackEntry ->
             val questId = backStackEntry.arguments?.getInt("questId") ?: 0
             QuestDetailScreen(
+                modifier = modifier,
                 locationViewModel = locationViewModel,
                 questViewModel = questViewModel,
                 taskViewModel = taskViewModel,

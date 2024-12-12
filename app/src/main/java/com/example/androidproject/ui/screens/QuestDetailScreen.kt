@@ -123,7 +123,7 @@ fun QuestDetailScreen(
         // Persistent bottom sheet state
         var bottomSheetState by remember { mutableStateOf(BottomSheetState.HalfExpanded) }
 
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        BoxWithConstraints(modifier = modifier.fillMaxSize()) {
 
             val density = LocalDensity.current
             val maxHeightPx = with(density) { maxHeight.toPx() }

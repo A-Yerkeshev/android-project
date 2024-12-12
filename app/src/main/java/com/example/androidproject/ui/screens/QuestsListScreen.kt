@@ -76,9 +76,8 @@ fun QuestsListScreen(
     ) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-//                .padding(top = 8.dp)
-                .padding(bottom = 8.dp),
+                .fillMaxSize(),
+//                .padding(top = 8.dp),
             contentPadding = PaddingValues(16.dp)
         ) {
             items(uncompletedQuestsWithCheckpoints) { questWithCheckpoints ->
