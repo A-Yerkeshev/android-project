@@ -40,7 +40,7 @@ fun WelcomeScreen(
 ) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    val userName = sharedPreferences.getString("user_name", "User")
+    val userName = sharedPreferences.getString("user_name", "User") ?: "User"
     val completedQuests by questViewModel.completedQuests.collectAsState()
 
     Box(
@@ -102,8 +102,7 @@ fun WelcomeScreen(
                 fontSize = 28.sp,
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                //modifier = Modifier.padding(top = 16.dp)
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(45.dp))
@@ -174,12 +173,15 @@ fun CompletedQuestItem(
                     onClick = {
                         questViewModel.reset(quest)
                     },
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
-                    shape = RoundedCornerShape(5.dp)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SparaGreen,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
                         text = "Start over",
-                        fontSize = 12.sp,
+                        fontSize = 12.sp
                     )
                 }
             }
