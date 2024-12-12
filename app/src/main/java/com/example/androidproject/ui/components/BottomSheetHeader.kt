@@ -1,6 +1,5 @@
 package com.example.androidproject.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,12 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.androidproject.ui.theme.HopeaSilver
 import com.example.androidproject.ui.theme.KesaYellow
 import com.example.androidproject.ui.theme.White
 
 // Header of the expandable bottom sheet, which used on the QuestDetailsScreen
 // and is always visible, regardless of the sheet's state.
+
 @Composable
 fun BottomSheetHeader(
     selectedQuestDescription: String?,

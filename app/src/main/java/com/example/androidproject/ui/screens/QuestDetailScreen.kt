@@ -132,10 +132,11 @@ fun QuestDetailScreen(
             val collapsedHeightPx = with(density) { collapsedHeightDp.toPx() }
 
             val swipeableState = rememberSwipeableState(initialValue = bottomSheetState)
+            val gapPx = with(density) { 24.dp.toPx() }
             val anchors = mapOf(
                 maxHeightPx - collapsedHeightPx to BottomSheetState.Collapsed,
                 maxHeightPx / 2 to BottomSheetState.HalfExpanded,
-                0f to BottomSheetState.Expanded
+                gapPx to BottomSheetState.Expanded
             )
 
             val coroutineScope = rememberCoroutineScope()

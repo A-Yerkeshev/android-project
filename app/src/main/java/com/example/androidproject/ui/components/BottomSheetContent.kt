@@ -50,7 +50,7 @@ fun BottomSheetContent(
     onCheckpointSelected: (CheckpointEntity) -> Unit,
     onCameraClick: (CheckpointEntity) -> Unit
 ) {
-    val context = LocalContext.current
+    LocalContext.current
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
