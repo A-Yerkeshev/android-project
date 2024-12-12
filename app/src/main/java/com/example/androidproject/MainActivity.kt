@@ -19,6 +19,7 @@ import com.example.androidproject.ui.navigation.BottomNavigationBar
 import com.example.androidproject.ui.navigation.Screens
 import com.example.androidproject.ui.theme.AndroidProjectTheme
 import com.example.androidproject.ui.viewmodels.CheckpointViewModel
+import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 import com.example.androidproject.ui.viewmodels.TaskViewModel
 
@@ -46,6 +47,7 @@ class MainActivity : ComponentActivity() {
 
             val navController = rememberNavController()
             val questViewModel: QuestViewModel = viewModel()
+            val locationViewModel: LocationViewModel = viewModel()
             val taskViewModel: TaskViewModel = viewModel()
             val checkpointViewModel: CheckpointViewModel = viewModel()
             val cameraController = remember {
@@ -67,6 +69,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         navController = navController,
                         questViewModel = questViewModel,
+                        locationViewModel = locationViewModel,
                         taskViewModel = taskViewModel,
                         cameraController = cameraController,
                         checkpointViewModel = checkpointViewModel,

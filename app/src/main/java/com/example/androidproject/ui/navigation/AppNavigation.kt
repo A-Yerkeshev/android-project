@@ -26,13 +26,12 @@ fun AppNavigation(
     modifier: Modifier = Modifier,
     navController: NavController,
     questViewModel: QuestViewModel,
+    locationViewModel: LocationViewModel,
     taskViewModel: TaskViewModel,
     cameraController: LifecycleCameraController,
     checkpointViewModel: CheckpointViewModel,
     startDestination: String // Dynamically set start destination
 ) {
-    val locationViewModel: LocationViewModel = viewModel()
-
     NavHost(
         navController = navController as NavHostController,
         startDestination = startDestination
@@ -51,7 +50,8 @@ fun AppNavigation(
         composable(route = Screens.QuestsList.name) {
             QuestsListScreen(
                 navCtrl = navController,
-                questViewModel = questViewModel
+                questViewModel = questViewModel,
+                locationViewModel = locationViewModel
             )
         }
         composable(

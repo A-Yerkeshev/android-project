@@ -1,5 +1,6 @@
 package com.example.androidproject.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,25 +14,35 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.navigation.Screens
 import com.example.androidproject.ui.theme.SparaGreen
+import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
 // List of quests which are not completed. Each quest contains name, category, checkpoints, and status.
@@ -40,9 +51,18 @@ import com.example.androidproject.ui.viewmodels.QuestViewModel
 fun QuestsListScreen(
     modifier: Modifier = Modifier,
     navCtrl: NavController,
-    questViewModel: QuestViewModel
+    questViewModel: QuestViewModel,
+    locationViewModel: LocationViewModel
 ) {
+    val context = LocalContext.current
+
     val questsWithCheckpoints by questViewModel.questsWithCheckpoints.collectAsState()
+
+    val isLoading by questViewModel.isLoading.collectAsState()
+    val newQuestResult by questViewModel.newQuestResult.collectAsState()
+
+    // collect current location data
+    val myLocation by locationViewModel.myLocation.collectAsState()
 
     // Filter out completed quests
     val uncompletedQuestsWithCheckpoints = questsWithCheckpoints.filter {
@@ -57,8 +77,8 @@ fun QuestsListScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 16.dp)
-                .padding(bottom = 56.dp),
+//                .padding(top = 8.dp)
+                .padding(bottom = 8.dp),
             contentPadding = PaddingValues(16.dp)
         ) {
             items(uncompletedQuestsWithCheckpoints) { questWithCheckpoints ->
@@ -74,6 +94,45 @@ fun QuestsListScreen(
                         navCtrl.navigate("${Screens.QuestDetail.name}/${questWithCheckpoints.quest.id}")
                     }
                 )
+            }
+        }
+
+        FloatingActionButton(
+            onClick = {
+                myLocation?.let {
+                    questViewModel.createNewQuestWithCheckpoints(
+                        lat = it.latitude,
+                        lon = it.longitude,
+                        questDescription = "New Quest",
+                        amount = 3
+                    )
+                }
+            },
+            modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
+            containerColor = MaterialTheme.colorScheme.secondary
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = "Add Quest")
+        }
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+
+        LaunchedEffect(newQuestResult) {
+            newQuestResult?.let {
+                if (!it) {
+                    Toast.makeText(context, "No more Points of Interest near your current location", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
