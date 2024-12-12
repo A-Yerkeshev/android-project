@@ -72,7 +72,7 @@ fun ShowMap(
     LaunchedEffect(selectedCheckpoint) {
         if (selectedCheckpoint != null) {
             cameraState.geoPoint = GeoPoint(selectedCheckpoint.lat, selectedCheckpoint.long)
-            cameraState.zoom = 20.0
+            cameraState.zoom = 17.0
         }
     }
 
@@ -89,7 +89,7 @@ fun ShowMap(
             .copy(zoomButtonVisibility = ZoomButtonVisibility.ALWAYS) // ALWAYS, NEVER or SHOW_AND_FADEOUT
             .copy(maxZoomLevel = 22.0) // default is 26.0 (min default is 9.0)
             .copy(isFlingEnable = false) // fling gesture on map, default is true
-            .copy(isAnimating = true) // default is true
+            .copy(isAnimating = false) // default is true
     }
 
     Surface(
