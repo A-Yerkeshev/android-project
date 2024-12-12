@@ -48,6 +48,8 @@ import com.example.androidproject.ui.theme.SparaGreen
 import com.example.androidproject.ui.theme.Typography
 import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 // List of quests which are not completed. Each quest contains name, category, checkpoints, and status.
 // By tapping on quest user goes to QuestDetailScreen and can proceed with completing the quest.
@@ -72,6 +74,9 @@ fun QuestsListScreen(
     val uncompletedQuestsWithCheckpoints = questsWithCheckpoints.filter {
         it.quest.completedAt == null
     }
+
+    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+    val currentDateTime = LocalDateTime.now().format(formatter)
 
     Box(
         modifier = modifier
@@ -106,7 +111,7 @@ fun QuestsListScreen(
                     questViewModel.createNewQuestWithCheckpoints(
                         lat = it.latitude,
                         lon = it.longitude,
-                        questDescription = "New Quest",
+                        questDescription = currentDateTime,
                         amount = 3
                     )
                 }
@@ -127,11 +132,10 @@ fun QuestsListScreen(
                     contentDescription = "Add Quest"
                 )
                 Text(
-                    text = "New Quest",
+                    text = "Explore nearby",
                     style = Typography.titleMedium
                 )
             }
-//            Icon(Icons.Filled.Add, contentDescription = "Add Quest")
         }
 
         if (isLoading) {

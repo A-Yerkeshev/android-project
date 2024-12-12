@@ -72,7 +72,7 @@ class QuestRepository(
             lat = element.lat,
             long = element.lon,
             completed = false,
-            name = element.tags?.name ?: "",
+            name = element.tags?.name ?: element.tags?.nameFi ?: "Checkpoint",
             nameFi = element.tags?.nameFi,
             description = element.tags?.description,
             wikipedia = element.tags?.wikipedia,
@@ -99,7 +99,7 @@ class QuestRepository(
 
         val existingCheckpointIds = checkpointDao.getAllCheckpointId()
 
-        var collectedElements = mutableListOf<Element>()
+        val collectedElements = mutableListOf<Element>()
 
         while (radius <= maxRadius && collectedElements.size < amount) {
             val query = OverpassQuery.buildQuery(radius, lat, lon)
