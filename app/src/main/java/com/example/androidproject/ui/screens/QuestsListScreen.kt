@@ -3,9 +3,11 @@ package com.example.androidproject.ui.screens
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,7 +43,9 @@ import androidx.navigation.NavController
 import com.example.androidproject.data.models.CheckpointEntity
 import com.example.androidproject.data.models.QuestEntity
 import com.example.androidproject.ui.navigation.Screens
+import com.example.androidproject.ui.theme.KesaYellow
 import com.example.androidproject.ui.theme.SparaGreen
+import com.example.androidproject.ui.theme.Typography
 import com.example.androidproject.ui.viewmodels.LocationViewModel
 import com.example.androidproject.ui.viewmodels.QuestViewModel
 
@@ -110,9 +114,24 @@ fun QuestsListScreen(
             modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.secondary
+            shape = RoundedCornerShape(8.dp),
+            containerColor = KesaYellow
         ) {
-            Icon(Icons.Filled.Add, contentDescription = "Add Quest")
+            Row(
+                modifier = Modifier.padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Icon(
+                    Icons.Filled.Add,
+                    contentDescription = "Add Quest"
+                )
+                Text(
+                    text = "New Quest",
+                    style = Typography.titleMedium
+                )
+            }
+//            Icon(Icons.Filled.Add, contentDescription = "Add Quest")
         }
 
         if (isLoading) {

@@ -128,7 +128,7 @@ fun QuestDetailScreen(
             val density = LocalDensity.current
             val maxHeightPx = with(density) { maxHeight.toPx() }
 
-            val collapsedHeightDp = 150.dp
+            val collapsedHeightDp = 100.dp
             val collapsedHeightPx = with(density) { collapsedHeightDp.toPx() }
 
             val swipeableState = rememberSwipeableState(initialValue = bottomSheetState)
