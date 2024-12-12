@@ -52,7 +52,7 @@ fun savePhoto(
             override fun onError(exception: ImageCaptureException) {
                 super.onError(exception)
                 Log.e("DBG", "Failed to save photo", exception)
-                onCompleted()
+                onCompleted("")
             }
         }
     )
