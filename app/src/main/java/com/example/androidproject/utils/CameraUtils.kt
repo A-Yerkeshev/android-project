@@ -1,5 +1,7 @@
 package com.example.androidproject.utils
 
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.content.Context
 import android.os.Environment
 import android.provider.MediaStore
@@ -50,7 +52,7 @@ fun savePhoto(
             override fun onError(exception: ImageCaptureException) {
                 super.onError(exception)
                 Log.e("DBG", "Failed to save photo", exception)
-                onCompleted("")
+                onCompleted()
             }
         }
     )

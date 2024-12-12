@@ -131,12 +131,12 @@ fun QuestDetailScreen(
         // Persistent bottom sheet state
         var bottomSheetState by remember { mutableStateOf(BottomSheetState.HalfExpanded) }
 
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        BoxWithConstraints(modifier = modifier.fillMaxSize()) {
 
             val density = LocalDensity.current
             val maxHeightPx = with(density) { maxHeight.toPx() }
 
-            val collapsedHeightDp = 150.dp
+            val collapsedHeightDp = 100.dp
             val collapsedHeightPx = with(density) { collapsedHeightDp.toPx() }
 
             val swipeableState = rememberSwipeableState(initialValue = bottomSheetState)
@@ -261,7 +261,7 @@ fun QuestDetailScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.BottomCenter)
-                                .absoluteOffset(y = -148.dp)
+                                .absoluteOffset(y = -96.dp)
                                 .border(2.dp, Color.White)
                         )
                         // If no thumbs up was detected, show a large overlay message
