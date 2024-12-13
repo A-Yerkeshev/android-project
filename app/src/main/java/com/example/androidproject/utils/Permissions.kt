@@ -36,6 +36,5 @@ fun requestPermissions(): Boolean {
             locationPermissionState.status.isGranted && cameraPermissionState.status.isGranted
     }
 
-//    return locationPermissionState.status.isGranted && cameraPermissionState.status.isGranted
     return permissionsGranted.value
 }

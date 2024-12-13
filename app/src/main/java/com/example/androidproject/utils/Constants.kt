@@ -9,7 +9,6 @@ object Constants {
 
 object LocReqConstants {
     const val PRIORITY_HIGH_ACC = Priority.PRIORITY_HIGH_ACCURACY
-    const val PRIORITY_BALANCE = Priority.PRIORITY_BALANCED_POWER_ACCURACY
     const val INTERVAL_MS: Long = 1500
     const val FASTEST_INTERVAL_MS: Long = 500
     const val MAX_DELAY_MS: Long = 3000

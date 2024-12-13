@@ -3,6 +3,7 @@ package com.example.androidproject.network
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+// Used for communication with API
 object RetrofitInstance {
     private const val BASE_URL = "https://overpass-api.de/api/"
 

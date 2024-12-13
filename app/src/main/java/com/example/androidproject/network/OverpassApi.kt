@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+// API from where points of interest around current location are fetched
 interface OverpassApi {
     @GET("interpreter")
     suspend fun getPointsOfInterest(

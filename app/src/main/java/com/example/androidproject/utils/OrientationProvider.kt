@@ -1,11 +1,6 @@
 package com.example.androidproject.utils
 
-import android.content.Context
-import android.content.pm.PackageManager
-import android.hardware.Sensor
-import android.hardware.SensorManager
 import android.util.Log
-import androidx.core.content.getSystemService
 import com.example.androidproject.App
 import com.google.android.gms.location.DeviceOrientation
 import com.google.android.gms.location.DeviceOrientationListener
@@ -14,9 +9,10 @@ import com.google.android.gms.location.FusedOrientationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+// Is used to reflect device's orientation on the map.
+// Does not work on every phone model.
 class OrientationProvider {
     val context = App.appContext
 
@@ -39,6 +35,7 @@ class OrientationProvider {
         startOrientationUpdate()
     }
 
+    // Enables live-tracing of device's orientation
     private fun startOrientationUpdate() {
         val executor = Executors.newSingleThreadExecutor()
 

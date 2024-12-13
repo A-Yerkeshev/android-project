@@ -7,7 +7,6 @@ import com.example.androidproject.utils.LocationProvider
 import com.example.androidproject.utils.OrientationProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class LocationViewModel : ViewModel() {

@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import java.lang.Thread.State
 
 class QuestViewModel : ViewModel() {
     private val database = AppDB.getDatabase()

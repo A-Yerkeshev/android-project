@@ -9,7 +9,6 @@ import com.example.androidproject.network.Element
 import com.example.androidproject.network.OverpassQuery
 import com.example.androidproject.network.RetrofitInstance
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

@@ -10,8 +10,6 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.view.LifecycleCameraController
 import androidx.core.content.ContextCompat
 import com.example.androidproject.App
-import com.example.androidproject.R
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
